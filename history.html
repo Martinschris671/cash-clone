@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Activity</title>
+    <link rel="stylesheet" href="nav.css" />
+    <style>
+      /* CSS - Largely the same, minor adjustments possible if needed */
+      :root {
+        --primary-green: #00d54b;
+        --pending-orange: #ffa500;
+        --declined-red: #ff4136;
+        --refunded-blue: #0074d9;
+        --light-gray-border: #efefef;
+        --medium-gray-text: #8c8c8c;
+        --dark-gray-text: #4a4a4a;
+        --background-color: #ffffff;
+        --overlay-background: rgba(0, 0, 0, 0.3);
+        --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        font-family: var(--font-family);
+        background-color: #f0f0f0;
+        overflow: hidden;
+      }
+
+      .mobile-container {
+        width: 100%;
+        max-width: 450px;
+        height: 100vh;
+        margin: 0 auto;
+        background-color: var(--background-color);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Header */
+      .app-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--light-gray-border);
+        background-color: var(--background-color);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        height: 60px;
+      }
+      .back-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .back-button svg {
+        stroke: var(--dark-gray-text);
+      }
+      .header-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: black;
+        text-align: center;
+        flex-grow: 1;
+      }
+      .header-spacer {
+        width: 30px;
+        height: 24px;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-bottom: 70px;
+      }
+      .activity-list {
+        list-style: none;
+      }
+      .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        border-bottom: 1px solid var(--light-gray-border);
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+      .activity-item:hover {
+        background-color: #f9f9f9;
+      }
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+      .icon-container {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--primary-green);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+        margin-right: 16px;
+        flex-shrink: 0;
+      }
+      .icon-container.status-Pending {
+        background-color: var(--pending-orange);
+      }
+      .icon-container.status-Declined {
+        background-color: var(--declined-red);
+      }
+      .icon-container.status-Refunded {
+        background-color: var(--refunded-blue);
+      }
+      .info-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: hidden;
+        margin-right: 12px;
+      }
+      .date {
+        font-size: 15px;
+        font-weight: 600;
+        color: black;
+        margin-bottom: 2px;
+      }
+      .description {
+        font-size: 14px;
+        color: var(--medium-gray-text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .amount-container {
+        text-align: right;
+      }
+      .amount {
+        font-size: 15px;
+        font-weight: 600;
+        color: black;
+      }
+      .amount.positive {
+        color: var(--primary-green);
+      }
+      .amount.neutral {
+        color: black;
+      }
+      .amount.status-Declined,
+      .amount.status-Pending {
+        color: var(--medium-gray-text);
+        text-decoration: line-through;
+      }
+      .amount.status-Refunded {
+        color: var(--refunded-blue);
+      }
+
+      /* Overlays */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--background-color);
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out;
+        opacity: 0;
+        visibility: hidden;
+        overflow-y: auto;
+      }
+      .overlay.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+      }
+      .overlay-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--light-gray-border);
+        min-height: 60px;
+        position: sticky;
+        top: 0;
+        background-color: var(--background-color);
+        z-index: 5;
+      }
+      .overlay-close-button,
+      .options-menu-button,
+      .overlay-action-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .overlay-action-button {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--primary-green);
+        padding: 5px 10px;
+      }
+      .overlay-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: black;
+        text-align: center;
+        flex-grow: 1;
+      }
+      .overlay-content {
+        padding: 20px 16px;
+        flex-grow: 1;
+      }
+
+      /* Detail Overlay */
+      .detail-item {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--light-gray-border);
+      }
+      .detail-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+      .detail-label {
+        display: block;
+        font-size: 13px;
+        color: var(--medium-gray-text);
+        margin-bottom: 4px;
+      }
+      .detail-value {
+        display: block;
+        font-size: 16px;
+        color: black;
+        word-wrap: break-word;
+      }
+      #detail-amount {
+        font-weight: 600;
+      }
+      #detail-status {
+        font-weight: 600;
+      }
+      #detail-status.status-Success {
+        color: var(--primary-green);
+      }
+      #detail-status.status-Pending {
+        color: var(--pending-orange);
+      }
+      #detail-status.status-Declined {
+        color: var(--declined-red);
+      }
+      #detail-status.status-Refunded {
+        color: var(--refunded-blue);
+      }
+      #detail-note {
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--dark-gray-text);
+        margin-top: 5px;
+        white-space: pre-wrap;
+      }
+      .detail-message-item {
+        margin-top: 25px;
+      }
+
+      /* Options Menu */
+      .options-menu-button {
+        position: relative;
+      }
+      .options-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 5px);
+        right: 0;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 110;
+        overflow: hidden;
+        min-width: 150px;
+      }
+      .options-menu.show {
+        display: block;
+      }
+      .options-menu button {
+        display: block;
+        width: 100%;
+        padding: 12px 16px;
+        background: none;
+        border: none;
+        text-align: left;
+        font-size: 15px;
+        color: var(--dark-gray-text);
+        cursor: pointer;
+      }
+      .options-menu button:hover {
+        background-color: #f5f5f5;
+      }
+      .options-menu button:not(:last-child) {
+        border-bottom: 1px solid var(--light-gray-border);
+      }
+
+      /* Edit Overlay */
+      .edit-item {
+        margin-bottom: 20px;
+      }
+      .edit-label {
+        display: block;
+        font-size: 14px;
+        color: var(--medium-gray-text);
+        margin-bottom: 6px;
+        font-weight: 500;
+      }
+      .edit-input,
+      .edit-select,
+      .edit-textarea {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid var(--light-gray-border);
+        border-radius: 8px;
+        font-family: inherit;
+        background-color: #f9f9f9;
+      }
+      .edit-input:focus,
+      .edit-select:focus,
+      .edit-textarea:focus {
+        outline: none;
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 2px rgba(0, 213, 75, 0.2);
+        background-color: white;
+      }
+      .edit-textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+
+      /* Utility */
+      .hidden {
+        display: none;
+      }
+      @media (max-width: 450px) {
+        .mobile-container {
+          border-radius: 0;
+          border: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mobile-container">
+      <header class="app-header">
+        <button class="back-button" aria-label="Back">
+          <svg
+            width="12"
+            height="20"
+            viewBox="0 0 12 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M10.5371 18.4741L2.06152 9.99855L10.5371 1.523"
+              stroke="black"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <h1 class="header-title">Activity</h1>
+        <div class="header-spacer"></div>
+      </header>
+
+      <main class="main-content">
+        <ul class="activity-list" id="activity-list"></ul>
+      </main>
+
+      <nav class="bottom-nav">
+        <!-- Nav buttons omitted for brevity -->
+
+        <a href="home.html">
+          <button class="nav-button" aria-label="Home">
+            <span id="footer-balance-display">$0K</span>
+            <!-- ADD THIS SPAN (Placeholder text) -->
+          </button>
+        </a>
+
+        <button class="nav-button" aria-label="Cards">
+          <svg
+            id="icon-wallet"
+            width="24"
+            height="20"
+            viewBox="0 0 24 21"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              transform="translate(-126.25 -18)"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M131.25 21H145.25C146.355 21 147.25 21.8954 147.25 23V33C147.25 34.1046 146.355 35 145.25 35H131.25C130.145 35 129.25 34.1046 129.25 33V23C129.25 21.8954 130.145 21 131.25 21ZM126.25 23C126.25 20.2386 128.489 18 131.25 18H145.25C148.011 18 150.25 20.2386 150.25 23V33C150.25 35.7614 148.011 38 145.25 38H131.25C128.489 38 126.25 35.7614 126.25 33V23ZM134.25 24C133.145 24 132.25 24.8954 132.25 26C132.25 27.1046 133.145 28 134.25 28H135.25C136.355 28 137.25 27.1046 137.25 26C137.25 24.8954 136.355 24 135.25 24H134.25Z"
+              fill="#8c8c8c"
+              fill-opacity="0.7"
+            />
+          </svg>
+        </button>
+        <a href="pay.html">
+          <button class="nav-button" aria-label="Pay">
+            <svg
+              id="icon-dollar"
+              width="15"
+              height="22"
+              viewBox="0 0 15 23"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-205 -17)"
+                d="M217.675 23.8903C217.923 24.1401 218.336 24.1401 218.569 23.8903L219.811 22.5912C220.075 22.3414 220.06 21.8917 219.782 21.6218C218.805 20.7669 217.671 20.1148 216.442 19.7032L216.835 17.8045C216.919 17.3897 216.611 17 216.199 17H213.794C213.643 17.0016 213.498 17.0551 213.382 17.1515C213.267 17.2479 213.187 17.3814 213.158 17.5296L212.81 19.2185C209.61 19.3834 206.897 21.0173 206.897 24.365C206.897 27.263 209.138 28.5071 211.508 29.3616C213.749 30.221 214.937 30.5408 214.937 31.7499C214.937 32.9941 213.754 33.7236 212.005 33.7236C210.415 33.7236 208.745 33.189 207.453 31.8848C207.393 31.8244 207.322 31.7765 207.243 31.7438C207.165 31.7111 207.081 31.6942 206.996 31.6942C206.911 31.6942 206.827 31.7111 206.748 31.7438C206.67 31.7765 206.599 31.8244 206.539 31.8848L205.197 33.2339C205.071 33.3613 205 33.5338 205 33.7136C205 33.8934 205.071 34.0659 205.197 34.1933C206.241 35.2276 207.562 35.9771 209.069 36.3918L208.701 38.1756C208.617 38.5903 208.92 38.975 209.332 38.98L211.743 39C211.895 39.0007 212.042 38.9482 212.16 38.8516C212.278 38.755 212.359 38.6202 212.388 38.4704L212.736 36.7765C216.586 36.5167 218.932 34.3831 218.932 31.2703C218.932 28.4022 216.596 27.193 213.764 26.2087C212.144 25.6041 210.743 25.1894 210.743 23.9453C210.743 22.7361 212.05 22.2564 213.361 22.2564C215.031 22.2564 216.636 22.9509 217.685 23.9003L217.675 23.8903Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg>
+          </button>
+        </a>
+        <a href="search.html">
+          <button class="nav-button padding" aria-label="Search">
+            <svg
+              id="icon-search"
+              width="23"
+              height="23"
+              viewBox="0 0 23 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-276.25 -16.5)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M291.75 26.5C291.75 30.0899 288.84 33 285.25 33C281.66 33 278.75 30.0899 278.75 26.5C278.75 22.9101 281.66 20 285.25 20C288.84 20 291.75 22.9101 291.75 26.5ZM290.823 34.1944C289.258 35.3302 287.332 36 285.25 36C280.003 36 275.75 31.7467 275.75 26.5C275.75 21.2533 280.003 17 285.25 17C290.497 17 294.75 21.2533 294.75 26.5C294.75 28.582 294.08 30.5076 292.944 32.0731L297.882 37.0104C298.468 37.5962 298.468 38.546 297.882 39.1317C297.296 39.7175 296.346 39.7175 295.76 39.1317L290.823 34.1944Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg></button
+        ></a>
+        <a href="history.html">
+          <button class="nav-button" id="active" aria-label="Activity">
+            <svg
+              id="icon-clock"
+              width="24"
+              height="24"
+              viewBox="0 0 24 25"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-349 -16)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M370 28C370 32.9706 365.971 37 361 37C356.029 37 352 32.9706 352 28C352 23.0294 356.029 19 361 19C365.971 19 370 23.0294 370 28ZM373 28C373 34.6274 367.627 40 361 40C354.373 40 349 34.6274 349 28C349 21.3726 354.373 16 361 16C367.627 16 373 21.3726 373 28ZM362.5 24C362.5 23.1716 361.828 22.5 361 22.5C360.172 22.5 359.5 23.1716 359.5 24V27.4893C359.5 28.4591 360.061 29.3414 360.939 29.753L364.363 31.3582C365.113 31.7098 366.007 31.3868 366.358 30.6367C366.71 29.8865 366.387 28.9934 365.637 28.6418L362.5 27.1715V24Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg>
+          </button>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Transaction Detail Overlay -->
+    <div id="detail-overlay" class="overlay">
+      <div class="overlay-header">
+        <button class="overlay-close-button" aria-label="Close Details">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6L6 18"
+              stroke="#4A4A4A"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M6 6L18 18"
+              stroke="#4A4A4A"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <div class="overlay-title">Transaction Details</div>
+        <button
+          id="options-menu-button"
+          class="options-menu-button"
+          aria-label="Options"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z"
+              stroke="#4A4A4A"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z"
+              stroke="#4A4A4A"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z"
+              stroke="#4A4A4A"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <div class="options-menu">
+          <button id="edit-option">Edit Details</button>
+        </div>
+      </div>
+      <div class="overlay-content">
+        <div class="detail-item">
+          <!-- Moved Amount to top -->
+          <span class="detail-label">Amount</span>
+          <span class="detail-value" id="detail-amount">Loading...</span>
+        </div>
+        <div class="detail-item">
+          <!-- Added Action Phrase -->
+          <span class="detail-label">Action</span>
+          <span class="detail-value" id="detail-action-phrase">Loading...</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Status</span>
+          <span class="detail-value" id="detail-status">Loading...</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Date</span>
+          <span class="detail-value" id="detail-date">Loading...</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Timestamp</span>
+          <span class="detail-value" id="detail-timestamp">Loading...</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Cash Tag</span>
+          <span class="detail-value" id="detail-cashtag">Loading...</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Associated Name</span>
+          <span class="detail-value" id="detail-name">Loading...</span>
+        </div>
+        <div class="detail-item detail-message-item">
+          <span class="detail-label">Note</span>
+          <p id="detail-note" class="detail-value">Loading...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Details Overlay -->
+    <div id="edit-overlay" class="overlay">
+      <div class="overlay-header">
+        <button class="overlay-close-button edit-close" aria-label="Close Edit">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6L6 18"
+              stroke="#4A4A4A"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M6 6L18 18"
+              stroke="#4A4A4A"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <div class="overlay-title">Edit Details</div>
+        <button id="save-edits-button" class="overlay-action-button">
+          Save
+        </button>
+      </div>
+      <div class="overlay-content">
+        <div class="edit-item">
+          <label for="edit-list-action" class="edit-label">List Action</label>
+          <select id="edit-list-action" class="edit-select">
+            <option value="Payment to">Payment to</option>
+            <option value="Received from">Received from</option>
+            <option value="Added from">Added from</option>
+            <!-- For transfers in -->
+            <option value="Transfer to">Transfer to</option>
+            <!-- For transfers out -->
+            <option value="Interest Earned">Interest Earned</option>
+            <option value="Cash Out to">Cash Out to</option>
+            <option value="Fee Charged">Fee Charged</option>
+            <option value="Generic Transaction">Generic Transaction</option>
+            <!-- Fallback -->
+          </select>
+        </div>
+        <div class="edit-item">
+          <label for="edit-name" class="edit-label"
+            >Associated Name (e.g., User, Bank)</label
+          >
+          <input
+            type="text"
+            id="edit-name"
+            class="edit-input"
+            placeholder="e.g., John Doe or My Bank Account"
+          />
+        </div>
+        <div class="edit-item">
+          <label for="edit-cashtag" class="edit-label"
+            >Associated Cash Tag (Optional)</label
+          >
+          <input
+            type="text"
+            id="edit-cashtag"
+            class="edit-input"
+            placeholder="e.g., $johndoe"
+          />
+        </div>
+        <div class="edit-item">
+          <label for="edit-amount" class="edit-label">Amount ($)</label>
+          <input
+            type="number"
+            id="edit-amount"
+            class="edit-input"
+            placeholder="e.g., 25.50"
+            step="0.01"
+          />
+        </div>
+        <div class="edit-item">
+          <label for="edit-date" class="edit-label">Date (for List View)</label>
+          <input
+            type="text"
+            id="edit-date"
+            class="edit-input"
+            placeholder="e.g., Jun 7"
+          />
+        </div>
+        <div class="edit-item">
+          <label for="edit-status" class="edit-label">Status</label>
+          <select id="edit-status" class="edit-select">
+            <option value="Success">Success</option>
+            <option value="Pending">Pending</option>
+            <option value="Declined">Declined</option>
+            <option value="Refunded">Refunded</option>
+            <option value="Completed">Completed</option>
+            <!-- Alternative Success -->
+            <option value="Failed">Failed</option>
+            <!-- Alternative Decline -->
+          </select>
+        </div>
+        <div class="edit-item">
+          <label for="edit-timestamp" class="edit-label"
+            >Timestamp (Detailed View)</label
+          >
+          <input
+            type="text"
+            id="edit-timestamp"
+            class="edit-input"
+            placeholder="e.g., Jun 7, 2024 at 11:15 AM"
+          />
+        </div>
+        <div class="edit-item">
+          <label for="edit-note" class="edit-label">Note</label>
+          <textarea
+            id="edit-note"
+            class="edit-textarea"
+            rows="3"
+            placeholder="Add transaction details, reason for status, etc."
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // DOM Elements (Get references)
+        const activityList = document.getElementById("activity-list");
+        const detailOverlay = document.getElementById("detail-overlay");
+        const editOverlay = document.getElementById("edit-overlay");
+        const detailCloseButton = detailOverlay.querySelector(
+          ".overlay-close-button"
+        );
+        const editCloseButton = editOverlay.querySelector(".edit-close");
+        const optionsMenuButton = detailOverlay.querySelector(
+          ".options-menu-button"
+        );
+        const optionsMenu = detailOverlay.querySelector(".options-menu");
+        const editOptionButton = document.getElementById("edit-option");
+        const saveEditsButton = document.getElementById("save-edits-button");
+
+        // Detail Overlay Fields
+        const detailAmount = document.getElementById("detail-amount");
+        const detailActionPhrase = document.getElementById(
+          "detail-action-phrase"
+        ); // New
+        const detailStatus = document.getElementById("detail-status");
+        const detailDate = document.getElementById("detail-date");
+        const detailTimestamp = document.getElementById("detail-timestamp");
+        const detailCashtag = document.getElementById("detail-cashtag");
+        const detailName = document.getElementById("detail-name");
+        const detailNote = document.getElementById("detail-note");
+
+        // Edit Overlay Fields
+        const editListAction = document.getElementById("edit-list-action"); // New dropdown
+        const editAmount = document.getElementById("edit-amount");
+        const editDate = document.getElementById("edit-date");
+        const editStatus = document.getElementById("edit-status");
+        const editTimestamp = document.getElementById("edit-timestamp");
+        const editCashtag = document.getElementById("edit-cashtag");
+        const editName = document.getElementById("edit-name");
+        const editNote = document.getElementById("edit-note");
+
+        const STORAGE_KEY = "activityTransactions_v4"; // Key incremented
+
+        // --- Helper Functions ---
+        const formatCurrency = (amount) => {
+          let absAmount = Math.abs(amount);
+          // Show cents if not a whole number
+          let formattedAmount = absAmount.toFixed(
+            !Number.isInteger(absAmount) && absAmount !== 0 ? 2 : 0
+          );
+          return `$${formattedAmount}`;
+        };
+
+        const getAmountPrefix = (tx) => {
+          if (
+            tx.status === "Declined" ||
+            tx.status === "Pending" ||
+            tx.status === "Failed"
+          )
+            return "";
+          // Infer direction from common list actions if 'positive' isn't definitive
+          const action = tx.listAction || "";
+          if (
+            action.includes("Received") ||
+            action.includes("Added") ||
+            action.includes("Interest")
+          )
+            return "+ ";
+          if (
+            action.includes("Payment to") ||
+            action.includes("Transfer to") ||
+            action.includes("Cash Out") ||
+            action.includes("Fee")
+          )
+            return "- ";
+          // Fallback to positive field if action is ambiguous
+          if (tx.positive) return "+ ";
+          return ""; // Default no prefix or maybe '-' if negative amount?
+        };
+
+        // Derives initial listAction based on original type/direction
+        const deriveInitialListAction = (tx) => {
+          switch (tx.type) {
+            case "transfer":
+              return tx.positive ? "Added from" : "Transfer to";
+            case "interest":
+              return "Interest Earned";
+            case "payment_sent":
+              return "Payment to";
+            case "payment_received":
+              return "Received from";
+            case "cash_out":
+              return "Cash Out to"; // Example new type
+            case "fee":
+              return "Fee Charged"; // Example new type
+            default:
+              return "Generic Transaction";
+          }
+        };
+
+        // --- Default Data Structure ---
+        const defaultTransactions = [
+          // Added 'listAction' derived from type/positive
+          {
+            id: "t1",
+            editableDate: "Jun 7",
+            amount: 220,
+            type: "transfer",
+            positive: true,
+            listAction: "Added from",
+            status: "Success",
+            timestamp: "Jun 7, 2024 at 11:15 AM",
+            cashTag: "$SourceCard",
+            name: "MasterCard Debit",
+            note: "Added cash to balance.",
+          },
+          {
+            id: "t2",
+            editableDate: "Jun 3",
+            amount: 10,
+            type: "transfer",
+            positive: true,
+            listAction: "Added from",
+            status: "Success",
+            timestamp: "Jun 3, 2024 at 09:01 AM",
+            cashTag: "$SourceCard",
+            name: "MasterCard Debit",
+            note: "Quick top-up.",
+          },
+          {
+            id: "t3",
+            editableDate: "Jun 3",
+            amount: 20,
+            type: "payment_sent",
+            positive: false,
+            listAction: "Payment to",
+            status: "Declined",
+            timestamp: "Jun 3, 2024 at 08:30 PM",
+            cashTag: "$SomeUser",
+            name: "Some User",
+            note: "Insufficient funds. Transaction declined.",
+          },
+          {
+            id: "t4",
+            editableDate: "Jun 1",
+            amount: 0.28,
+            type: "interest",
+            positive: true,
+            listAction: "Interest Earned",
+            status: "Success",
+            timestamp: "Jun 1, 2024 at 12:05 AM",
+            cashTag: "$Savings",
+            name: "Savings Account",
+            note: "Interest for May.",
+          },
+          {
+            id: "t5",
+            editableDate: "May 24",
+            amount: 200,
+            type: "payment_received",
+            positive: true,
+            listAction: "Received from",
+            status: "Refunded",
+            timestamp: "May 24, 2024 at 02:45 PM",
+            cashTag: "$AnotherUser",
+            name: "Another User",
+            note: "Payment for canceled item. Sent refund.",
+          },
+          {
+            id: "t7",
+            editableDate: "May 10",
+            amount: 5,
+            type: "payment_sent",
+            positive: false,
+            listAction: "Payment to",
+            status: "Pending",
+            timestamp: "May 10, 2024 at 08:12 AM",
+            cashTag: "$CoffeeShop",
+            name: "Local Coffee",
+            note: "Morning coffee. Network issue, pending confirmation.",
+          },
+          {
+            id: "t8",
+            editableDate: "May 10",
+            amount: 250,
+            type: "transfer",
+            positive: true,
+            listAction: "Added from",
+            status: "Completed",
+            timestamp: "May 10, 2024 at 07:00 AM",
+            cashTag: "$SourceCard",
+            name: "MasterCard Debit",
+            note: "Weekly cash add.",
+          },
+          {
+            id: "t9",
+            editableDate: "May 9",
+            amount: 15,
+            type: "cash_out",
+            positive: false,
+            listAction: "Cash Out to",
+            status: "Success",
+            timestamp: "May 9, 2024 at 05:00 PM",
+            cashTag: "",
+            name: "My Bank Account",
+            note: "ATM Withdrawal.",
+          }, // Example New
+        ];
+
+        // --- Local Storage ---
+        const getFromStorage = (key, defaultValue) => {
+          const stored = localStorage.getItem(key);
+          try {
+            const parsed = stored ? JSON.parse(stored) : defaultValue;
+            // Check for essential fields including the new 'listAction'
+            if (
+              Array.isArray(parsed) &&
+              parsed.length > 0 &&
+              parsed[0].hasOwnProperty("editableDate") &&
+              parsed[0].hasOwnProperty("amount") &&
+              parsed[0].hasOwnProperty("listAction")
+            ) {
+              // Ensure all items have listAction, deriving if necessary (migration)
+              return parsed.map((tx) => ({
+                ...tx,
+                listAction: tx.listAction || deriveInitialListAction(tx),
+              }));
+            } else if (
+              Array.isArray(parsed) &&
+              parsed.length > 0 &&
+              parsed[0].hasOwnProperty("editableDate") &&
+              parsed[0].hasOwnProperty("amount")
+            ) {
+              // If only listAction is missing (older data), add it
+              console.warn(
+                "Older data structure detected. Adding 'listAction'."
+              );
+              return parsed.map((tx) => ({
+                ...tx,
+                listAction: deriveInitialListAction(tx),
+              }));
+            } else {
+              console.warn(
+                "Stored data structure mismatch or empty, using default."
+              );
+              return defaultValue.map((tx) => ({
+                ...tx,
+                listAction: tx.listAction || deriveInitialListAction(tx),
+              })); // Ensure defaults have it too
+            }
+          } catch (e) {
+            console.error("Error parsing/migrating storage item:", key, e);
+            return defaultValue.map((tx) => ({
+              ...tx,
+              listAction: tx.listAction || deriveInitialListAction(tx),
+            }));
+          }
+        };
+
+        const saveToStorage = (key, value) => {
+          localStorage.setItem(key, JSON.stringify(value));
+        };
+
+        let transactions = getFromStorage(STORAGE_KEY, defaultTransactions);
+
+        // Save corrected/initialized data back if it came from defaults or needed migration
+        if (
+          !localStorage.getItem(STORAGE_KEY) ||
+          transactions === defaultTransactions
+        ) {
+          console.log(
+            "Initializing or saving migrated transaction data to localStorage."
+          );
+          saveToStorage(STORAGE_KEY, transactions);
+        }
+
+        // --- Rendering Logic ---
+        const renderTransactions = () => {
+          activityList.innerHTML = "";
+          transactions.forEach((tx) => {
+            const li = document.createElement("li");
+            li.classList.add("activity-item");
+            li.dataset.id = tx.id;
+
+            const iconDiv = document.createElement("div");
+            iconDiv.className = `icon-container status-${tx.status}`;
+            iconDiv.textContent = "$"; // Could customize icon based on listAction
+
+            const infoDiv = document.createElement("div");
+            infoDiv.classList.add("info-container");
+            const dateSpan = document.createElement("span");
+            dateSpan.classList.add("date");
+            dateSpan.textContent = tx.editableDate || "Date N/A";
+            const descSpan = document.createElement("span");
+            descSpan.classList.add("description");
+            descSpan.textContent = generateListDescription(tx); // Use new function
+
+            infoDiv.appendChild(dateSpan);
+            infoDiv.appendChild(descSpan);
+
+            const amountDiv = document.createElement("div");
+            amountDiv.classList.add("amount-container");
+            const amountSpan = document.createElement("span");
+            amountSpan.className = "amount"; // Reset classes
+            amountSpan.classList.add(`status-${tx.status}`);
+            if (tx.status === "Success" || tx.status === "Completed") {
+              // Determine color based on inferred direction or positive flag
+              const action = tx.listAction || "";
+              if (
+                action.includes("Received") ||
+                action.includes("Added") ||
+                action.includes("Interest") ||
+                tx.positive
+              ) {
+                amountSpan.classList.add("positive");
+              } else {
+                amountSpan.classList.add("neutral");
+              }
+            } // Other statuses handled by status- class
+
+            amountSpan.textContent =
+              getAmountPrefix(tx) + formatCurrency(tx.amount);
+
+            amountDiv.appendChild(amountSpan);
+
+            li.appendChild(iconDiv);
+            li.appendChild(infoDiv);
+            li.appendChild(amountDiv);
+
+            li.addEventListener("click", () => showDetailOverlay(tx.id));
+            activityList.appendChild(li);
+          });
+        };
+
+        const generateListDescription = (tx) => {
+          const action = tx.listAction || "Transaction"; // Use saved action or default
+          const targetName = tx.name || "";
+          const targetTag = tx.cashTag || "";
+
+          // Choose the best target description: Name > Tag > Generic based on action
+          let targetDesc = targetName;
+          if (!targetDesc && targetTag) {
+            targetDesc = targetTag;
+          } else if (!targetDesc && !targetTag) {
+            if (action.includes(" to ")) targetDesc = "Recipient";
+            else if (action.includes(" from ")) targetDesc = "Source";
+            else if (action.includes("Interest"))
+              targetDesc = ""; // No target needed
+            else targetDesc = "Details"; // Generic fallback
+          }
+
+          // Special case for interest or actions without a target
+          if (
+            action === "Interest Earned" ||
+            action === "Fee Charged" ||
+            action === "Generic Transaction"
+          ) {
+            return action;
+          }
+
+          return `${action} ${targetDesc}`.trim(); // Combine action and target
+        };
+
+        // --- Overlay Logic ---
+        const updateDetailOverlayContent = (transaction) => {
+          if (!transaction) return;
+
+          const prefix = getAmountPrefix(transaction);
+          const formattedAmount = formatCurrency(transaction.amount);
+          detailAmount.textContent = prefix + formattedAmount;
+          detailAmount.className = "detail-value"; // Reset amount classes
+          detailAmount.classList.add(`status-${transaction.status}`);
+          if (
+            transaction.status === "Success" ||
+            transaction.status === "Completed"
+          ) {
+            if (prefix === "+ ") detailAmount.classList.add("positive");
+            else if (prefix === "- ") detailAmount.classList.add("neutral");
+          }
+
+          detailActionPhrase.textContent = transaction.listAction || "N/A"; // Show the selected action
+          detailStatus.textContent = transaction.status;
+          detailStatus.className = "detail-value";
+          detailStatus.classList.add(`status-${transaction.status}`);
+
+          detailDate.textContent = transaction.editableDate || "N/A";
+          detailTimestamp.textContent = transaction.timestamp || "N/A";
+          detailCashtag.textContent = transaction.cashTag || "N/A";
+          detailName.textContent = transaction.name || "N/A";
+          detailNote.textContent = transaction.note || "No note added.";
+
+          detailOverlay.dataset.currentId = transaction.id;
+        };
+
+        const showDetailOverlay = (transactionId) => {
+          const transaction = transactions.find(
+            (tx) => tx.id === transactionId
+          );
+          if (!transaction) return;
+          updateDetailOverlayContent(transaction);
+          optionsMenu.classList.remove("show");
+          detailOverlay.classList.add("active");
+        };
+
+        const hideDetailOverlay = () => {
+          detailOverlay.classList.remove("active");
+          optionsMenu.classList.remove("show");
+          detailOverlay.removeAttribute("data-current-id");
+        };
+
+        const showEditOverlay = () => {
+          const currentId = detailOverlay.dataset.currentId;
+          const transaction = transactions.find((tx) => tx.id === currentId);
+          if (!transaction) return;
+
+          // Populate edit fields
+          editListAction.value =
+            transaction.listAction || deriveInitialListAction(transaction); // Set dropdown
+          editAmount.value = transaction.amount.toFixed(2);
+          editDate.value = transaction.editableDate;
+          editStatus.value = transaction.status;
+          editTimestamp.value = transaction.timestamp;
+          editCashtag.value = transaction.cashTag;
+          editName.value = transaction.name;
+          editNote.value = transaction.note;
+
+          editOverlay.dataset.currentId = currentId;
+          optionsMenu.classList.remove("show");
+          editOverlay.classList.add("active");
+        };
+
+        const hideEditOverlay = () => {
+          editOverlay.classList.remove("active");
+          editOverlay.removeAttribute("data-current-id");
+        };
+
+        const saveEdits = () => {
+          const currentId = editOverlay.dataset.currentId;
+          if (!currentId) return;
+
+          const transactionIndex = transactions.findIndex(
+            (tx) => tx.id === currentId
+          );
+          if (transactionIndex === -1) return;
+
+          const updatedAmountRaw = editAmount.value;
+          const updatedAmount = parseFloat(updatedAmountRaw);
+
+          if (isNaN(updatedAmount)) {
+            alert("Invalid amount entered. Please enter a valid number.");
+            return;
+          }
+
+          // Get updated values including the new dropdown
+          const updatedListAction = editListAction.value;
+          const updatedDate =
+            editDate.value.trim() ||
+            transactions[transactionIndex].editableDate;
+          const updatedStatus = editStatus.value;
+          const updatedTimestamp = editTimestamp.value.trim();
+          const updatedCashTag = editCashtag.value.trim();
+          const updatedName = editName.value.trim();
+          const updatedNote = editNote.value.trim();
+
+          // Update the transaction object
+          transactions[transactionIndex] = {
+            ...transactions[transactionIndex], // Keep original id, type, positive etc.
+            listAction: updatedListAction, // Save selected action
+            amount: updatedAmount,
+            editableDate: updatedDate,
+            status: updatedStatus,
+            timestamp: updatedTimestamp,
+            cashTag: updatedCashTag,
+            name: updatedName,
+            note: updatedNote,
+          };
+
+          saveToStorage(STORAGE_KEY, transactions);
+          hideEditOverlay();
+          updateDetailOverlayContent(transactions[transactionIndex]); // Refresh detail
+          renderTransactions(); // Re-render list
+        };
+
+        // --- Event Listeners ---
+        detailCloseButton.addEventListener("click", hideDetailOverlay);
+        editOptionButton.addEventListener("click", showEditOverlay);
+        editCloseButton.addEventListener("click", hideEditOverlay);
+        saveEditsButton.addEventListener("click", saveEdits);
+
+        optionsMenuButton.addEventListener("click", (e) => {
+          e.stopPropagation();
+          optionsMenu.classList.toggle("show");
+        });
+
+        document.addEventListener("click", (e) => {
+          if (
+            !optionsMenu.contains(e.target) &&
+            !optionsMenuButton.contains(e.target)
+          ) {
+            optionsMenu.classList.remove("show");
+          }
+        });
+
+        // Placeholders
+        document.querySelectorAll(".nav-button").forEach((button) => {
+          button.addEventListener("click", () =>
+            console.log(
+              `Nav button "${button.getAttribute(
+                "aria-label"
+              )}" clicked (placeholder).`
+            )
+          );
+        });
+        document
+          .querySelector(".back-button")
+          .addEventListener("click", () =>
+            console.log("Back button clicked (placeholder).")
+          );
+
+        // --- Initial Render ---
+        renderTransactions();
+      });
+    </script>
+    <script src="nav.js"></script>
+  </body>
+</html>

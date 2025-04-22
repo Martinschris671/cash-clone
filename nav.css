@@ -1,0 +1,57 @@
+:root {
+  --primary-green: #00d54b;
+  --light-gray-border: #efefef;
+  --medium-gray-text: #8c8c8c;
+  --dark-gray-text: #4a4a4a;
+  --background-color: #ffffff;
+  --padding-screen: 18px;
+  --footer-height: 65px;
+  --accent-green: #00d54b; /* Cash App Green */
+}
+
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid var(--light-gray-border);
+  background-color: var(--background-color);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--footer-height);
+  padding: 0 var(--padding-screen);
+  z-index: 200;
+  flex-shrink: 0;
+}
+.nav-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8c8c8c;
+  transition: color 0.2s ease, transform 0.2s ease-in-out;
+}
+.nav-button svg {
+  fill: #8c8c8c;
+}
+#footer-balance-display {
+  font-size: 17px; /* Adjust size to match image */
+  font-weight: 550; /* Bold like the image */
+  line-height: 1;
+  white-space: nowrap; /* Prevent wrapping */
+  /* Color is inherited from .nav-item or .nav-item.active */
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+#active svg path {
+  fill: #000;
+}
+#active {
+  color: #000000c5;
+}

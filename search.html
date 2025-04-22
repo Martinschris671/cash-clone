@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Search - Cash App</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="nav.css" />
+    <style>
+      /* --- Global Styles & Variables --- */
+      :root {
+        --app-bg-color: #ffffff;
+        --content-bg-color: #f7f7f7;
+        --text-primary: #000000;
+        --text-secondary: #6c757d;
+        --text-placeholder: #b0b0b0;
+        --search-bg: #e9ecef;
+        --border-color: #e9ecef;
+        --icon-bg-default: #e9ecef;
+        --padding-screen: 18px;
+        --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        --footer-height: 65px;
+        --header-height: 60px;
+        /* Modal specific vars */
+        --input-border-focus: #00d54b;
+        --button-primary-bg: #00d54b;
+        --button-primary-text: #ffffff;
+        --button-secondary-bg: #e9ecef;
+        --button-secondary-text: #000000;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: #c0c0c0;
+        color: var(--text-primary);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .app-container {
+        max-width: 450px;
+        width: 100%;
+        height: 100vh;
+        max-height: 900px;
+        background-color: var(--app-bg-color);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* --- Search Header --- */
+      .search-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 var(--padding-screen);
+        height: var(--header-height);
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--app-bg-color);
+        flex-shrink: 0;
+        z-index: 100;
+      }
+      .search-header h1 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      /* --- Main Content Area --- */
+      .main-content {
+        flex-grow: 1;
+        overflow-y: hidden;
+        background-color: var(--app-bg-color);
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* --- Search Bar --- */
+      .search-bar-container {
+        padding: 15px var(--padding-screen);
+        background-color: var(--app-bg-color);
+        flex-shrink: 0;
+        position: relative;
+      }
+      .search-bar-container .search-icon {
+        position: absolute;
+        left: calc(var(--padding-screen) + 12px);
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+        font-size: 16px;
+        pointer-events: none;
+      }
+      #search-input {
+        width: 100%;
+        padding: 12px 15px 12px 40px;
+        font-size: 16px;
+        border: none;
+        border-radius: 10px;
+        background-color: var(--search-bg);
+        color: var(--text-primary);
+        outline: none;
+        -webkit-appearance: none;
+      }
+      #search-input::placeholder {
+        color: var(--text-placeholder);
+      }
+
+      /* --- Suggestions --- */
+      .suggestions-section {
+        padding: 0;
+        flex-grow: 1;
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        border-top: 1px solid var(--border-color);
+      }
+      .suggestions-section::-webkit-scrollbar {
+        display: none;
+      }
+      .suggestions-header {
+        font-size: 12px;
+        font-weight: 500;
+        color: #8e8e93;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        padding: 15px var(--padding-screen) 10px var(--padding-screen);
+        position: sticky;
+        top: 0;
+        background-color: var(--app-bg-color);
+        z-index: 10;
+      }
+      .suggestions-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .suggestion-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px var(--padding-screen);
+        cursor: pointer;
+        transition: background-color 0.1s ease;
+        position: relative;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .suggestion-item:last-child {
+        border-bottom: none;
+      }
+      .suggestion-item:hover {
+        background-color: #f8f9fa;
+      }
+      /* No .selected style needed */
+      .suggestion-avatar img,
+      .suggestion-avatar div {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        background-color: var(--icon-bg-default);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        font-size: 16px;
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        flex-shrink: 0;
+      }
+      .suggestion-details {
+        flex-grow: 1;
+        overflow: hidden;
+      }
+      .suggestion-name {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 2px;
+      }
+      .suggestion-cashtag {
+        font-size: 14px;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      /* **RESTORED**: Style for edit trigger button */
+      .suggestion-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+      }
+      .suggestion-action:hover {
+        background-color: #e9ecef;
+      }
+
+      /* --- Footer Navigation --- */
+      .app-footer {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: var(--app-bg-color);
+        border-top: 1px solid var(--border-color);
+        height: var(--footer-height);
+        padding: 0 var(--padding-screen);
+        z-index: 200;
+        flex-shrink: 0;
+      }
+      .nav-item {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        color: var(--text-secondary);
+        transition: color 0.2s ease, transform 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .nav-item.active {
+        color: var(--text-primary);
+        transform: scale(1.05);
+      }
+      .nav-item:hover:not(.active) {
+        color: #333;
+        transform: scale(1.1);
+      }
+      .nav-item svg {
+        width: 26px;
+        height: 26px;
+        fill: currentColor;
+        display: block;
+      }
+
+      /* --- Edit Contact Modal Styles (Copied from contact_pay.html) --- */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        padding: var(--padding-screen);
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+      .modal-content {
+        background-color: var(--app-bg-color);
+        color: var(--text-primary);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 380px;
+        position: relative;
+        animation: slideIn 0.3s ease-out;
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateY(-30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .modal-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        font-weight: 300;
+        color: var(--text-secondary);
+        cursor: pointer;
+        line-height: 1;
+      }
+      .modal-content h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: 600;
+      }
+      .modal-input-group {
+        margin-bottom: 18px;
+      }
+      .modal-input-group label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+      }
+      .modal-input-group input {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        outline: none;
+        transition: border-color 0.2s ease;
+      }
+      .modal-input-group input:focus {
+        border-color: var(--input-border-focus);
+        background-color: #fff;
+      }
+      .modal-avatar-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 18px;
+      }
+      .modal-avatar-preview {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        background-color: var(--icon-bg-default);
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+        border: 1px solid var(--border-color);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .modal-avatar-preview img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .modal-avatar-preview span {
+        font-size: 22px;
+        font-weight: 500;
+        color: white;
+      }
+      .modal-avatar-section .modal-input-group {
+        flex-grow: 1;
+        margin-bottom: 0;
+      }
+      #edit-avatar-input {
+        display: none;
+      }
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+      }
+      .modal-btn {
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+      .modal-btn.primary {
+        background-color: var(--button-primary-bg);
+        color: var(--button-primary-text);
+      }
+      .modal-btn.primary:hover {
+        background-color: #00b33f;
+      }
+      .modal-btn.secondary {
+        background-color: var(--button-secondary-bg);
+        color: var(--button-secondary-text);
+      }
+      .modal-btn.secondary:hover {
+        background-color: #d8dade;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="search-header">
+        <h1>Search</h1>
+      </header>
+
+      <main class="main-content">
+        <div class="search-bar-container">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Name, $Cashtag, Phone, Email"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+          />
+        </div>
+
+        <div class="suggestions-section">
+          <div class="suggestions-header">Suggested</div>
+          <div class="suggestions-list">
+            <ul id="suggestions-list-ul"></ul>
+          </div>
+        </div>
+      </main>
+
+      <nav class="bottom-nav">
+        <!-- Nav buttons omitted for brevity -->
+
+        <a href="home.html">
+          <button class="nav-button" aria-label="Home">
+            <span id="footer-balance-display">$0K</span>
+            <!-- ADD THIS SPAN (Placeholder text) -->
+          </button>
+        </a>
+
+        <button class="nav-button" aria-label="Cards">
+          <svg
+            id="icon-wallet"
+            width="24"
+            height="20"
+            viewBox="0 0 24 21"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              transform="translate(-126.25 -18)"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M131.25 21H145.25C146.355 21 147.25 21.8954 147.25 23V33C147.25 34.1046 146.355 35 145.25 35H131.25C130.145 35 129.25 34.1046 129.25 33V23C129.25 21.8954 130.145 21 131.25 21ZM126.25 23C126.25 20.2386 128.489 18 131.25 18H145.25C148.011 18 150.25 20.2386 150.25 23V33C150.25 35.7614 148.011 38 145.25 38H131.25C128.489 38 126.25 35.7614 126.25 33V23ZM134.25 24C133.145 24 132.25 24.8954 132.25 26C132.25 27.1046 133.145 28 134.25 28H135.25C136.355 28 137.25 27.1046 137.25 26C137.25 24.8954 136.355 24 135.25 24H134.25Z"
+              fill="#8c8c8c"
+              fill-opacity="0.7"
+            />
+          </svg>
+        </button>
+        <a href="pay.html">
+          <button class="nav-button" aria-label="Pay">
+            <svg
+              id="icon-dollar"
+              width="15"
+              height="22"
+              viewBox="0 0 15 23"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-205 -17)"
+                d="M217.675 23.8903C217.923 24.1401 218.336 24.1401 218.569 23.8903L219.811 22.5912C220.075 22.3414 220.06 21.8917 219.782 21.6218C218.805 20.7669 217.671 20.1148 216.442 19.7032L216.835 17.8045C216.919 17.3897 216.611 17 216.199 17H213.794C213.643 17.0016 213.498 17.0551 213.382 17.1515C213.267 17.2479 213.187 17.3814 213.158 17.5296L212.81 19.2185C209.61 19.3834 206.897 21.0173 206.897 24.365C206.897 27.263 209.138 28.5071 211.508 29.3616C213.749 30.221 214.937 30.5408 214.937 31.7499C214.937 32.9941 213.754 33.7236 212.005 33.7236C210.415 33.7236 208.745 33.189 207.453 31.8848C207.393 31.8244 207.322 31.7765 207.243 31.7438C207.165 31.7111 207.081 31.6942 206.996 31.6942C206.911 31.6942 206.827 31.7111 206.748 31.7438C206.67 31.7765 206.599 31.8244 206.539 31.8848L205.197 33.2339C205.071 33.3613 205 33.5338 205 33.7136C205 33.8934 205.071 34.0659 205.197 34.1933C206.241 35.2276 207.562 35.9771 209.069 36.3918L208.701 38.1756C208.617 38.5903 208.92 38.975 209.332 38.98L211.743 39C211.895 39.0007 212.042 38.9482 212.16 38.8516C212.278 38.755 212.359 38.6202 212.388 38.4704L212.736 36.7765C216.586 36.5167 218.932 34.3831 218.932 31.2703C218.932 28.4022 216.596 27.193 213.764 26.2087C212.144 25.6041 210.743 25.1894 210.743 23.9453C210.743 22.7361 212.05 22.2564 213.361 22.2564C215.031 22.2564 216.636 22.9509 217.685 23.9003L217.675 23.8903Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg>
+          </button>
+        </a>
+        <a href="search.html">
+          <button class="nav-button" id="active" aria-label="Search">
+            <svg
+              id="icon-search"
+              width="23"
+              height="23"
+              viewBox="0 0 23 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-276.25 -16.5)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M291.75 26.5C291.75 30.0899 288.84 33 285.25 33C281.66 33 278.75 30.0899 278.75 26.5C278.75 22.9101 281.66 20 285.25 20C288.84 20 291.75 22.9101 291.75 26.5ZM290.823 34.1944C289.258 35.3302 287.332 36 285.25 36C280.003 36 275.75 31.7467 275.75 26.5C275.75 21.2533 280.003 17 285.25 17C290.497 17 294.75 21.2533 294.75 26.5C294.75 28.582 294.08 30.5076 292.944 32.0731L297.882 37.0104C298.468 37.5962 298.468 38.546 297.882 39.1317C297.296 39.7175 296.346 39.7175 295.76 39.1317L290.823 34.1944Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg></button
+        ></a>
+        <a href="history.html">
+          <button class="nav-button" aria-label="Activity">
+            <svg
+              id="icon-clock"
+              width="24"
+              height="24"
+              viewBox="0 0 24 25"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-349 -16)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M370 28C370 32.9706 365.971 37 361 37C356.029 37 352 32.9706 352 28C352 23.0294 356.029 19 361 19C365.971 19 370 23.0294 370 28ZM373 28C373 34.6274 367.627 40 361 40C354.373 40 349 34.6274 349 28C349 21.3726 354.373 16 361 16C367.627 16 373 21.3726 373 28ZM362.5 24C362.5 23.1716 361.828 22.5 361 22.5C360.172 22.5 359.5 23.1716 359.5 24V27.4893C359.5 28.4591 360.061 29.3414 360.939 29.753L364.363 31.3582C365.113 31.7098 366.007 31.3868 366.358 30.6367C366.71 29.8865 366.387 28.9934 365.637 28.6418L362.5 27.1715V24Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg>
+          </button>
+        </a>
+      </nav>
+      <!-- Edit Contact Modal (Copied from contact_pay.html) -->
+      <div id="edit-contact-modal" class="modal-overlay">
+        <div class="modal-content">
+          <button class="modal-close-btn" id="modal-close-btn">×</button>
+          <h2>Edit Contact</h2>
+          <form id="edit-contact-form">
+            <input type="hidden" id="edit-contact-id" />
+            <div class="modal-avatar-section">
+              <div
+                class="modal-avatar-preview"
+                id="modal-avatar-preview"
+                title="Click to change image"
+              ></div>
+              <input type="file" id="edit-avatar-input" accept="image/*" />
+              <div class="modal-input-group">
+                <label for="edit-contact-avatar">Avatar URL (or Upload)</label>
+                <input
+                  type="url"
+                  id="edit-contact-avatar"
+                  placeholder="Enter URL or click image"
+                />
+              </div>
+            </div>
+            <div class="modal-input-group">
+              <label for="edit-contact-name">Name</label>
+              <input type="text" id="edit-contact-name" required />
+            </div>
+            <div class="modal-input-group">
+              <label for="edit-contact-cashtag">$Cashtag</label>
+              <input
+                type="text"
+                id="edit-contact-cashtag"
+                required
+                pattern="^\$.+"
+                title="Cashtag must start with $"
+              />
+            </div>
+            <div class="modal-input-group">
+              <label for="edit-contact-color">Color (Hex)</label>
+              <input
+                type="text"
+                id="edit-contact-color"
+                pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                placeholder="#FF7F50 (for initial)"
+              />
+            </div>
+            <div class="modal-actions">
+              <button
+                type="button"
+                id="cancel-edit-btn"
+                class="modal-btn secondary"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                id="save-contact-btn"
+                class="modal-btn primary"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- End app-container -->
+
+    <script>
+      // --- DOM Elements ---
+      const searchInput = document.getElementById("search-input");
+      const suggestionsListUl = document.getElementById("suggestions-list-ul");
+      const navItems = document.querySelectorAll(".app-footer .nav-item");
+      // Modal Elements
+      const editContactModal = document.getElementById("edit-contact-modal");
+      const editContactForm = document.getElementById("edit-contact-form");
+      const editContactIdInput = document.getElementById("edit-contact-id");
+      const editContactNameInput = document.getElementById("edit-contact-name");
+      const editContactCashtagInput = document.getElementById(
+        "edit-contact-cashtag"
+      );
+      const editContactAvatarInput = document.getElementById(
+        "edit-contact-avatar"
+      );
+      const editContactColorInput =
+        document.getElementById("edit-contact-color");
+      const saveContactBtn = document.getElementById("save-contact-btn");
+      const cancelEditBtn = document.getElementById("cancel-edit-btn");
+      const modalCloseBtn = document.getElementById("modal-close-btn");
+      const modalAvatarPreview = document.getElementById(
+        "modal-avatar-preview"
+      );
+      const editAvatarFileInput = document.getElementById("edit-avatar-input");
+
+      // --- State & Constants ---
+      const contactsStorageKey = "cashAppContacts"; // Key for storing contacts
+      let contacts = []; // Holds the current list of contacts
+      let tempAvatarDataUrl = null; // To hold uploaded image data before save
+
+      // --- Sample Contacts ---
+      const sampleContacts = [
+        // Expanded list
+        {
+          id: 1,
+          name: "Jay Z",
+          cashtag: "$sc",
+          avatar: "",
+        },
+        {
+          id: 2,
+          name: "Diego",
+          cashtag: "$dm",
+          avatar: null,
+          initial: "D",
+          color: "#A020F0",
+        },
+        {
+          id: 3,
+          name: "Sandy G.",
+          cashtag: "$sandy",
+          avatar: null,
+          initial: "S",
+          color: "#FF7F50",
+        },
+        {
+          id: 4,
+          name: "Alice Green",
+          cashtag: "$aliceg",
+          avatar: "",
+        },
+        {
+          id: 5,
+          name: "Bob White",
+          cashtag: "$bwhite",
+          avatar: null,
+          initial: "B",
+          color: "#8CD7FF",
+        },
+        {
+          id: 6,
+          name: "Charlie Brown",
+          cashtag: "$charlie",
+          avatar: "",
+        },
+        {
+          id: 7,
+          name: "David Lee",
+          cashtag: "$dlee",
+          avatar: null,
+          initial: "D",
+          color: "#4682B4",
+        },
+        {
+          id: 8,
+          name: "Emily Clark",
+          cashtag: "$emilyc",
+          avatar: "",
+        },
+        {
+          id: 9,
+          name: "Frank Wright",
+          cashtag: "$frankw",
+          avatar: "",
+        },
+        {
+          id: 10,
+          name: "Grace Hall",
+          cashtag: "$graceh",
+          avatar: null,
+          initial: "G",
+          color: "#FF69B4",
+        },
+        {
+          id: 11,
+          name: "Henry Adams",
+          cashtag: "$henrya",
+          avatar: "",
+        },
+        {
+          id: 12,
+          name: "Isabel King",
+          cashtag: "$isabelk",
+          avatar: null,
+          initial: "I",
+          color: "#FF1493",
+        },
+        {
+          id: 13,
+          name: "Jack Lewis",
+          cashtag: "$jackl",
+          avatar: "",
+        },
+        {
+          id: 14,
+          name: "Kate Nelson",
+          cashtag: "$katen",
+          avatar: null,
+          initial: "K",
+          color: "#FF4500",
+        },
+        {
+          id: 15,
+          name: "Liam Perez",
+          cashtag: "$liamp",
+          avatar: "",
+        },
+        {
+          id: 16,
+          name: "Mia Roberts",
+          cashtag: "$miar",
+          avatar: null,
+          initial: "M",
+          color: "#DA70D6",
+        },
+        {
+          id: 17,
+          name: "Noah Scott",
+          cashtag: "$noahs",
+          avatar: "",
+        },
+        {
+          id: 18,
+          name: "Olivia Turner",
+          cashtag: "$oliviat",
+          avatar: null,
+          initial: "O",
+          color: "#48D1CC",
+        },
+        {
+          id: 19,
+          name: "Peter Walker",
+          cashtag: "$pete",
+          avatar: "",
+        },
+        {
+          id: 20,
+          name: "Quinn Young",
+          cashtag: "$quinn",
+          avatar: null,
+          initial: "Q",
+          color: "#D2691E",
+        },
+      ];
+
+      // --- Functions ---
+
+      // Render Suggestions List (With Edit Trigger)
+      function renderSuggestions(contactsToShow = contacts) {
+        suggestionsListUl.innerHTML = "";
+        contactsToShow.forEach((contact) => {
+          const li = document.createElement("li");
+          li.className = "suggestion-item";
+          li.dataset.contactId = contact.id;
+
+          const avatarHtml = contact.avatar
+            ? `<img src="${contact.avatar}" alt="${
+                contact.name
+              }" onerror="this.style.display='none'; this.parentElement.innerHTML = '<div style=\\'background-color:${
+                contact.color || "#e0e0e0"
+              }; color:white;\\'>${
+                contact.initial || contact.name.charAt(0)
+              }</div>';">`
+            : `<div style="background-color: ${
+                contact.color || "#e0e0e0"
+              }; color: white;">${
+                contact.initial || contact.name.charAt(0)
+              }</div>`;
+
+          // Added Edit Trigger Button
+          li.innerHTML = `
+                <span class="suggestion-avatar">${avatarHtml}</span>
+                <div class="suggestion-details">
+                    <span class="suggestion-name">${contact.name}</span>
+                    <span class="suggestion-cashtag">${contact.cashtag}</span>
+                </div>
+                <button class="suggestion-action edit-contact-trigger" data-contact-id="${contact.id}" aria-label="Edit ${contact.name}">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+            `;
+          // Single click listener for SELECTION (on the item itself, excluding button)
+          li.addEventListener("click", (event) => {
+            if (!event.target.closest(".edit-contact-trigger")) {
+              handleContactSelect(contact);
+            }
+          });
+          suggestionsListUl.appendChild(li);
+        });
+      }
+
+      // Filter suggestions based on search input
+      function filterSuggestions() {
+        const query = searchInput.value.toLowerCase().trim();
+        if (!query) {
+          renderSuggestions(contacts); // Use global contacts
+        } else {
+          const filtered = contacts.filter(
+            // Use global contacts
+            (contact) =>
+              contact.name.toLowerCase().includes(query) ||
+              contact.cashtag.toLowerCase().includes(query)
+          );
+          renderSuggestions(filtered);
+        }
+      }
+
+      // Handle Contact Selection -> Navigate to Payment Page
+      function handleContactSelect(contact) {
+        console.log("Selected contact to pay:", contact.name, contact.cashtag);
+        // **IMPORTANT**: We store the selected contact temporarily for the payment page
+        // This assumes the payment page will look for 'selectedRecipientForPayment'
+        try {
+          localStorage.setItem(
+            "selectedRecipientForPayment",
+            JSON.stringify(contact)
+          );
+        } catch (e) {
+          console.error("Error saving selected recipient to localStorage:", e);
+          // Fallback or error message? For now, just log.
+        }
+        window.location.href = "pay.html"; // Use original filename
+      }
+
+      // --- Modal Functions --- (Copied from contact_pay.html)
+      function openEditModal(contact) {
+        if (
+          !contact ||
+          !editContactModal ||
+          !editContactForm ||
+          !modalAvatarPreview
+        )
+          return;
+        console.log("Opening modal for:", contact);
+        tempAvatarDataUrl = null; // Reset temp storage
+
+        editContactIdInput.value = contact.id;
+        editContactNameInput.value = contact.name || "";
+        editContactCashtagInput.value = contact.cashtag || "";
+        editContactAvatarInput.value =
+          contact.avatar && contact.avatar.startsWith("http")
+            ? contact.avatar
+            : "";
+        editContactColorInput.value = contact.color || "";
+
+        modalAvatarPreview.innerHTML = ""; // Clear preview
+        modalAvatarPreview.style.backgroundImage = "";
+        modalAvatarPreview.style.backgroundColor = "var(--icon-bg-default)";
+
+        if (contact.avatar) {
+          const img = document.createElement("img");
+          img.src = contact.avatar;
+          img.alt = contact.name;
+          img.onerror = () => {
+            // Fallback
+            modalAvatarPreview.innerHTML = "";
+            const initialSpan = document.createElement("span");
+            initialSpan.textContent =
+              contact.initial || contact.name.charAt(0).toUpperCase() || "?";
+            modalAvatarPreview.appendChild(initialSpan);
+            modalAvatarPreview.style.backgroundColor =
+              contact.color || "#e0e0e0";
+          };
+          modalAvatarPreview.appendChild(img);
+          modalAvatarPreview.style.backgroundColor = "transparent";
+        } else {
+          const initialSpan = document.createElement("span");
+          initialSpan.textContent =
+            contact.initial || contact.name.charAt(0).toUpperCase() || "?";
+          modalAvatarPreview.appendChild(initialSpan);
+          modalAvatarPreview.style.backgroundColor = contact.color || "#e0e0e0";
+        }
+        editContactModal.classList.add("show");
+        editContactNameInput.focus();
+      }
+
+      function closeEditModal() {
+        if (!editContactModal || !editContactForm) return;
+        editContactForm.reset();
+        editContactIdInput.value = "";
+        tempAvatarDataUrl = null;
+        editContactModal.classList.remove("show");
+      }
+
+      function saveContactChanges(event) {
+        event.preventDefault();
+        if (!editContactForm) return;
+
+        const contactId = parseInt(editContactIdInput.value, 10);
+        const newName = editContactNameInput.value.trim();
+        let newCashtag = editContactCashtagInput.value.trim();
+        const avatarUrlInput = editContactAvatarInput.value.trim();
+        let newColor = editContactColorInput.value.trim() || null;
+
+        let finalAvatar = null;
+        if (tempAvatarDataUrl) {
+          finalAvatar = tempAvatarDataUrl;
+        } else if (avatarUrlInput) {
+          finalAvatar = avatarUrlInput;
+        } else {
+          const originalContact = contacts.find((c) => c.id === contactId);
+          if (originalContact && originalContact.avatar) finalAvatar = null;
+          else finalAvatar = null;
+        }
+
+        if (!newName || !newCashtag) {
+          alert("Name and $Cashtag required.");
+          return;
+        }
+        if (!newCashtag.startsWith("$")) newCashtag = "$" + newCashtag;
+        if (newColor && !newColor.startsWith("#")) newColor = "#" + newColor;
+        if (newColor && !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(newColor)) {
+          alert("Invalid Color HEX.");
+          return;
+        }
+
+        const contactIndex = contacts.findIndex((c) => c.id === contactId);
+        if (contactIndex > -1) {
+          contacts[contactIndex].name = newName;
+          contacts[contactIndex].cashtag = newCashtag;
+          contacts[contactIndex].avatar = finalAvatar;
+          contacts[contactIndex].color = newColor;
+          contacts[contactIndex].initial = finalAvatar
+            ? null
+            : newName.charAt(0).toUpperCase() || "?";
+
+          try {
+            localStorage.setItem(contactsStorageKey, JSON.stringify(contacts));
+            console.log("Contact updated:", contacts[contactIndex]);
+            filterSuggestions(); // Re-render list with current filter
+            closeEditModal();
+          } catch (e) {
+            console.error("Error saving contacts:", e);
+            alert("Failed to save.");
+          }
+        } else {
+          console.error("Could not find contact ID:", contactId);
+          alert("Error updating.");
+          closeEditModal();
+        }
+      }
+
+      // Simple Navigation Placeholder (Using original filenames)
+      function navigateTo(page) {
+        const pageMap = {
+          home: "home.html",
+          card: "card.html",
+          payment: "pay.html",
+          search: "search.html",
+          activity: "history.html",
+        }; // Corrected filenames
+        const targetPage = pageMap[page];
+        if (
+          targetPage &&
+          targetPage !== window.location.pathname.split("/").pop()
+        ) {
+          window.location.href = targetPage;
+        } else if (!targetPage) {
+          console.warn(`Nav target for '${page}' not defined.`);
+        }
+      }
+
+      // --- Load Initial State ---
+      function loadInitialState() {
+        // Load Contacts from storage or use samples
+        const savedContacts = localStorage.getItem(contactsStorageKey);
+        try {
+          if (savedContacts) {
+            contacts = JSON.parse(savedContacts);
+            if (!Array.isArray(contacts)) throw new Error("Data not array");
+          } else {
+            contacts = [...sampleContacts];
+            localStorage.setItem(contactsStorageKey, JSON.stringify(contacts));
+          }
+        } catch (e) {
+          console.error("Error loading contacts:", e);
+          contacts = [...sampleContacts];
+          localStorage.setItem(contactsStorageKey, JSON.stringify(contacts));
+        }
+
+        renderSuggestions(); // Render using loaded/sample contacts
+
+        // Set Active Footer Item
+        navItems.forEach((item) => {
+          item.classList.toggle(
+            "active",
+            item.getAttribute("aria-label") === "Search"
+          );
+        });
+      }
+
+      // --- Event Listeners ---
+      searchInput.addEventListener("input", filterSuggestions);
+
+      // **NEW**: Delegated Listener for Edit Buttons
+      suggestionsListUl.addEventListener("click", (event) => {
+        const editButton = event.target.closest(".edit-contact-trigger");
+        if (editButton) {
+          event.stopPropagation(); // Prevent li click listener
+          const contactId = parseInt(editButton.dataset.contactId, 10);
+          const contactToEdit = contacts.find((c) => c.id === contactId);
+          if (contactToEdit) {
+            openEditModal(contactToEdit);
+          } else {
+            console.error("Could not find contact data for ID:", contactId);
+          }
+        }
+      });
+
+      // Modal Listeners
+      if (editContactForm)
+        editContactForm.addEventListener("submit", saveContactChanges);
+      if (cancelEditBtn)
+        cancelEditBtn.addEventListener("click", closeEditModal);
+      if (modalCloseBtn)
+        modalCloseBtn.addEventListener("click", closeEditModal);
+      if (editContactModal)
+        editContactModal.addEventListener("click", (event) => {
+          if (event.target === editContactModal) closeEditModal();
+        });
+      // Avatar Upload Listeners
+      if (modalAvatarPreview)
+        modalAvatarPreview.addEventListener("click", () => {
+          if (editAvatarFileInput) editAvatarFileInput.click();
+        });
+      if (editAvatarFileInput) {
+        editAvatarFileInput.addEventListener("change", (event) => {
+          const file = event.target.files[0];
+          if (file && file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              tempAvatarDataUrl = e.target.result; // Store temp Data URL
+              modalAvatarPreview.innerHTML = ""; // Clear preview
+              const img = document.createElement("img");
+              img.src = tempAvatarDataUrl;
+              img.alt = "Avatar Preview";
+              modalAvatarPreview.appendChild(img);
+              editContactAvatarInput.value = ""; // Clear URL input
+            };
+            reader.readAsDataURL(file);
+          } else if (file) {
+            alert("Please select image file.");
+          }
+          event.target.value = null; // Reset input
+        });
+      }
+
+      // --- Initial Load ---
+      document.addEventListener("DOMContentLoaded", loadInitialState);
+    </script>
+    <script src="nav.js"></script>
+  </body>
+</html>

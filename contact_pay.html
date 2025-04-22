@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Select Recipient - Cash App</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="nav.css" />
+    <style>
+      /* --- Global Styles & Variables --- */
+      :root {
+        --app-bg-color: #ffffff; /* White background */
+        --content-bg-color: #f7f7f7;
+        --text-primary: #000000;
+        --text-secondary: #6c757d;
+        --text-placeholder: #b0b0b0;
+        --text-link: #00d54b;
+        --accent-green: #00d54b;
+        --border-color: #e9ecef;
+        --input-border-focus: var(--accent-green);
+        --button-primary-bg: var(--accent-green);
+        --button-primary-text: #ffffff;
+        --button-secondary-bg: #e9ecef;
+        --button-secondary-text: #000000;
+        --button-radius: 50px;
+        --icon-bg-default: #e9ecef;
+        --padding-screen: 18px;
+        --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        --footer-height: 65px; /* Define footer height */
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: #c0c0c0; /* Fallback */
+        color: var(--text-primary);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .app-container {
+        max-width: 450px;
+        width: 100%;
+        height: 100vh;
+        max-height: 900px;
+        background-color: var(--app-bg-color);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* --- Header --- */
+      .pay-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px var(--padding-screen);
+        height: 60px;
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--app-bg-color);
+        flex-shrink: 0;
+        z-index: 100;
+      }
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 28px;
+        color: var(--text-primary);
+        cursor: pointer;
+        padding: 5px;
+        line-height: 1;
+      }
+      .header-center {
+        text-align: center;
+        flex-grow: 1;
+        padding: 0 10px;
+      }
+      .header-amount {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: block;
+      }
+      .funding-source {
+        font-size: 13px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+      .funding-source i {
+        font-size: 10px;
+      }
+      .pay-btn-header {
+        background-color: var(--button-primary-bg);
+        color: var(--button-primary-text);
+        border: none;
+        border-radius: var(--button-radius);
+        font-size: 15px;
+        font-weight: 600;
+        padding: 8px 25px;
+        cursor: pointer;
+        transition: background-color 0.2s, opacity 0.2s;
+        flex-shrink: 0;
+      }
+      .pay-btn-header:disabled {
+        background-color: #a3e9bf;
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      /* --- Main Content Area --- */
+      .main-content {
+        flex-grow: 1;
+        overflow-y: hidden;
+        background-color: var(--app-bg-color);
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* --- Form Fields --- */
+      .form-fields {
+        padding: 15px var(--padding-screen);
+        flex-shrink: 0;
+      }
+      .input-group {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--border-color);
+        padding: 15px 0;
+      }
+      .input-group label {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-right: 15px;
+        width: 40px;
+        flex-shrink: 0;
+      }
+      .input-group input {
+        flex-grow: 1;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        padding: 5px 0;
+        background: none;
+        color: var(--text-primary);
+      }
+      .input-group input::placeholder {
+        color: var(--text-placeholder);
+      }
+      /* Blinking cursor effect */
+      #to-input-container {
+        position: relative;
+      }
+      #to-input:focus {
+        caret-color: var(--input-border-focus);
+      }
+      #to-input-container .cursor-placeholder::after {
+        content: "";
+        position: absolute;
+        left: calc(40px + 15px);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2px;
+        height: 1.3em;
+        background-color: var(--input-border-focus);
+        margin-left: 2px;
+        opacity: 0;
+      }
+      #to-input:focus:placeholder-shown + .cursor-placeholder::after {
+        opacity: 1;
+        animation: blink 1s step-end infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 1;
+        }
+      }
+
+      /* --- Send As --- */
+      .send-as {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 20px var(--padding-screen);
+        border-bottom: 1px solid var(--border-color);
+        flex-shrink: 0;
+      }
+      .send-as span {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-right: 10px;
+        flex-shrink: 0;
+      }
+      .send-as button {
+        border: none;
+        border-radius: var(--button-radius);
+        padding: 7px 18px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-shrink: 0;
+      }
+      .send-as button.active {
+        background-color: var(--button-primary-bg);
+        color: var(--button-primary-text);
+      }
+      .send-as button:not(.active) {
+        background-color: var(--button-secondary-bg);
+        color: var(--button-secondary-text);
+      }
+      .send-as button i {
+        font-size: 11px;
+      }
+
+      /* --- Suggestions --- */
+      .suggestions-section {
+        padding-top: 13px;
+        flex-grow: 1;
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .suggestions-section::-webkit-scrollbar {
+        display: none;
+      }
+      .suggestions-header {
+        font-size: 12px;
+        font-weight: 500;
+        color: #8e8e93;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        padding: 0 var(--padding-screen) 12px var(--padding-screen);
+        position: fixed;
+        top: 0px;
+        background-color: var(--app-bg-color);
+        z-index: 10;
+
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 5px;
+      }
+      .suggestions-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .suggestion-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px var(--padding-screen);
+        cursor: pointer;
+        position: relative;
+        transition: background-color 0.15s ease;
+      }
+      .suggestion-item + .suggestion-item {
+        border-top: 1px solid var(--border-color);
+      }
+      .suggestion-item:hover {
+        background-color: #f8f9fa;
+      }
+      .suggestion-item.selected {
+        background-color: #e8f8ee;
+      }
+      .suggestion-check {
+        width: 24px;
+        height: 24px;
+        border-radius: 20%;
+        border: 2px solid #c7c7cc;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease-out, border-color 0.2s ease-out;
+        color: white;
+      }
+      .suggestion-item.selected .suggestion-check {
+        background-color: var(--accent-green);
+        border-color: var(--accent-green);
+      }
+      .suggestion-check i {
+        font-size: 12px;
+        opacity: 0;
+        transform: scale(0.5);
+        transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+      }
+      .suggestion-item.selected .suggestion-check i {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .suggestion-avatar img,
+      .suggestion-avatar div {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        background-color: var(--icon-bg-default);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        font-size: 16px;
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        flex-shrink: 0;
+      }
+      .suggestion-details {
+        flex-grow: 1;
+        overflow: hidden;
+      }
+      .suggestion-name {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 2px;
+      }
+      .suggestion-cashtag {
+        font-size: 14px;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .suggestion-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+      }
+      .suggestion-action:hover {
+        background-color: #e9ecef;
+      }
+
+      /* --- Footer Navigation --- */
+      .app-footer {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: var(--app-bg-color);
+        border-top: 1px solid var(--border-color);
+        height: var(--footer-height);
+        padding: 0 var(--padding-screen);
+        z-index: 200;
+        flex-shrink: 0;
+      }
+      .nav-item {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        color: var(--text-secondary);
+        transition: color 0.2s ease, transform 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+      }
+      .nav-item.active {
+        color: var(--text-primary);
+        transform: scale(1.05);
+      }
+      .nav-item:hover:not(.active) {
+        color: #333;
+        background-color: #2828293f;
+      }
+      .nav-item svg {
+        width: 26px;
+        height: 26px;
+        fill: currentColor;
+        display: block;
+      }
+
+      /* --- Edit Contact Modal Styles --- */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        padding: var(--padding-screen);
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+      .modal-content {
+        background-color: var(--app-bg-color);
+        color: var(--text-primary);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 380px;
+        position: relative;
+        animation: slideIn 0.3s ease-out;
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateY(-30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .modal-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        font-weight: 300;
+        color: var(--text-secondary);
+        cursor: pointer;
+        line-height: 1;
+      }
+      .modal-content h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: 600;
+      }
+      .modal-input-group {
+        margin-bottom: 18px;
+      }
+      .modal-input-group label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+      }
+      .modal-input-group input {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        outline: none;
+        transition: border-color 0.2s ease;
+      }
+      .modal-input-group input:focus {
+        border-color: var(--input-border-focus);
+        background-color: #fff;
+      }
+      /* **FIXED**: Styles for Avatar Upload Section in Modal */
+      .modal-avatar-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 18px;
+      }
+      .modal-avatar-preview {
+        width: 55px; /* Fixed width */
+        height: 55px; /* Fixed height */
+        border-radius: 50%; /* Make it a circle */
+        background-color: var(--icon-bg-default);
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+        border: 1px solid var(--border-color);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden; /* Crucial: Clip the image content */
+        flex-shrink: 0;
+      }
+      .modal-avatar-preview img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .modal-avatar-preview span {
+        font-size: 22px;
+        font-weight: 500;
+        color: white;
+      }
+      .modal-avatar-section .modal-input-group {
+        flex-grow: 1;
+        margin-bottom: 0;
+      }
+      #edit-avatar-input {
+        display: none;
+      } /* Hide file input */
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+      }
+      .modal-btn {
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+      .modal-btn.primary {
+        background-color: var(--button-primary-bg);
+        color: var(--button-primary-text);
+      }
+      .modal-btn.primary:hover {
+        background-color: #00b33f;
+      }
+      .modal-btn.secondary {
+        background-color: var(--button-secondary-bg);
+        color: var(--button-secondary-text);
+      }
+      .modal-btn.secondary:hover {
+        background-color: #d8dade;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="pay-header">
+        <button class="close-btn" id="close-btn" aria-label="Close">×</button>
+        <div class="header-center">
+          <span class="header-amount" id="payment-amount">$0.00</span>
+          <span class="funding-source" id="funding-source">
+            Cash Balance <i class="fa-solid fa-chevron-down"></i>
+          </span>
+        </div>
+        <button class="pay-btn-header" id="confirm-pay-btn" disabled>
+          Pay
+        </button>
+      </header>
+
+      <main class="main-content">
+        <div class="form-fields">
+          <div class="input-group" id="to-input-container">
+            <label for="to-input">To</label>
+            <input
+              type="text"
+              id="to-input"
+              placeholder="Name, $Cashtag, Phone, Email"
+              autocomplete="off"
+            />
+            <span class="cursor-placeholder"></span>
+          </div>
+          <div class="input-group">
+            <label for="for-input">For</label>
+            <input
+              type="text"
+              id="for-input"
+              placeholder="Add a note"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <div class="send-as">
+          <span>Send as</span>
+          <button class="active" data-type="cash">Cash</button>
+          <button data-type="giftcard">
+            Gift Card <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <button data-type="stock">
+            Stock <i class="fa-solid fa-chevron-down"></i>
+          </button>
+        </div>
+
+        <div class="suggestions-section">
+          <div class="suggestions-header">Suggested</div>
+          <div class="suggestions-list">
+            <ul id="suggestions-list-ul">
+              <!-- Suggestions loaded by JS -->
+            </ul>
+          </div>
+        </div>
+      </main>
+      <nav class="bottom-nav">
+        <!-- Nav buttons omitted for brevity -->
+
+        <a href="home.html">
+          <button class="nav-button" aria-label="Home">
+            <span id="footer-balance-display">$0K</span>
+            <!-- ADD THIS SPAN (Placeholder text) -->
+          </button>
+        </a>
+        <a href="pay.html">
+          <button class="nav-button" aria-label="Cards">
+            <svg
+              id="icon-wallet"
+              width="24"
+              height="20"
+              viewBox="0 0 24 21"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-126.25 -18)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M131.25 21H145.25C146.355 21 147.25 21.8954 147.25 23V33C147.25 34.1046 146.355 35 145.25 35H131.25C130.145 35 129.25 34.1046 129.25 33V23C129.25 21.8954 130.145 21 131.25 21ZM126.25 23C126.25 20.2386 128.489 18 131.25 18H145.25C148.011 18 150.25 20.2386 150.25 23V33C150.25 35.7614 148.011 38 145.25 38H131.25C128.489 38 126.25 35.7614 126.25 33V23ZM134.25 24C133.145 24 132.25 24.8954 132.25 26C132.25 27.1046 133.145 28 134.25 28H135.25C136.355 28 137.25 27.1046 137.25 26C137.25 24.8954 136.355 24 135.25 24H134.25Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg></button
+        ></a>
+        <a href="pay.html">
+          <button class="nav-button" id="active" aria-label="Pay">
+            <svg
+              id="icon-dollar"
+              width="15"
+              height="22"
+              viewBox="0 0 15 23"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-205 -17)"
+                d="M217.675 23.8903C217.923 24.1401 218.336 24.1401 218.569 23.8903L219.811 22.5912C220.075 22.3414 220.06 21.8917 219.782 21.6218C218.805 20.7669 217.671 20.1148 216.442 19.7032L216.835 17.8045C216.919 17.3897 216.611 17 216.199 17H213.794C213.643 17.0016 213.498 17.0551 213.382 17.1515C213.267 17.2479 213.187 17.3814 213.158 17.5296L212.81 19.2185C209.61 19.3834 206.897 21.0173 206.897 24.365C206.897 27.263 209.138 28.5071 211.508 29.3616C213.749 30.221 214.937 30.5408 214.937 31.7499C214.937 32.9941 213.754 33.7236 212.005 33.7236C210.415 33.7236 208.745 33.189 207.453 31.8848C207.393 31.8244 207.322 31.7765 207.243 31.7438C207.165 31.7111 207.081 31.6942 206.996 31.6942C206.911 31.6942 206.827 31.7111 206.748 31.7438C206.67 31.7765 206.599 31.8244 206.539 31.8848L205.197 33.2339C205.071 33.3613 205 33.5338 205 33.7136C205 33.8934 205.071 34.0659 205.197 34.1933C206.241 35.2276 207.562 35.9771 209.069 36.3918L208.701 38.1756C208.617 38.5903 208.92 38.975 209.332 38.98L211.743 39C211.895 39.0007 212.042 38.9482 212.16 38.8516C212.278 38.755 212.359 38.6202 212.388 38.4704L212.736 36.7765C216.586 36.5167 218.932 34.3831 218.932 31.2703C218.932 28.4022 216.596 27.193 213.764 26.2087C212.144 25.6041 210.743 25.1894 210.743 23.9453C210.743 22.7361 212.05 22.2564 213.361 22.2564C215.031 22.2564 216.636 22.9509 217.685 23.9003L217.675 23.8903Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg>
+          </button>
+        </a>
+        <a href="search.html">
+          <button class="nav-button" aria-label="Search">
+            <svg
+              id="icon-search"
+              width="23"
+              height="23"
+              viewBox="0 0 23 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-276.25 -16.5)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M291.75 26.5C291.75 30.0899 288.84 33 285.25 33C281.66 33 278.75 30.0899 278.75 26.5C278.75 22.9101 281.66 20 285.25 20C288.84 20 291.75 22.9101 291.75 26.5ZM290.823 34.1944C289.258 35.3302 287.332 36 285.25 36C280.003 36 275.75 31.7467 275.75 26.5C275.75 21.2533 280.003 17 285.25 17C290.497 17 294.75 21.2533 294.75 26.5C294.75 28.582 294.08 30.5076 292.944 32.0731L297.882 37.0104C298.468 37.5962 298.468 38.546 297.882 39.1317C297.296 39.7175 296.346 39.7175 295.76 39.1317L290.823 34.1944Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg></button
+        ></a>
+        <a href="history.html">
+          <button class="nav-button" aria-label="Activity">
+            <svg
+              id="icon-clock"
+              width="24"
+              height="24"
+              viewBox="0 0 24 25"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-349 -16)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M370 28C370 32.9706 365.971 37 361 37C356.029 37 352 32.9706 352 28C352 23.0294 356.029 19 361 19C365.971 19 370 23.0294 370 28ZM373 28C373 34.6274 367.627 40 361 40C354.373 40 349 34.6274 349 28C349 21.3726 354.373 16 361 16C367.627 16 373 21.3726 373 28ZM362.5 24C362.5 23.1716 361.828 22.5 361 22.5C360.172 22.5 359.5 23.1716 359.5 24V27.4893C359.5 28.4591 360.061 29.3414 360.939 29.753L364.363 31.3582C365.113 31.7098 366.007 31.3868 366.358 30.6367C366.71 29.8865 366.387 28.9934 365.637 28.6418L362.5 27.1715V24Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg>
+          </button>
+        </a>
+      </nav>
+
+      <!-- Edit Contact Modal -->
+      <div id="edit-contact-modal" class="modal-overlay">
+        <div class="modal-content">
+          <button class="modal-close-btn" id="modal-close-btn">×</button>
+          <h2>Edit Contact</h2>
+          <form id="edit-contact-form">
+            <input type="hidden" id="edit-contact-id" />
+            <div class="modal-avatar-section">
+              <div
+                class="modal-avatar-preview"
+                id="modal-avatar-preview"
+                title="Click to change image"
+              ></div>
+              <input type="file" id="edit-avatar-input" accept="image/*" />
+              <div class="modal-input-group">
+                <label for="edit-contact-avatar">Avatar URL (or Upload)</label>
+                <input
+                  type="url"
+                  id="edit-contact-avatar"
+                  placeholder="Enter URL or click image"
+                />
+              </div>
+            </div>
+            <div class="modal-input-group">
+              <label for="edit-contact-name">Name</label>
+              <input type="text" id="edit-contact-name" required />
+            </div>
+            <div class="modal-input-group">
+              <label for="edit-contact-cashtag">$Cashtag</label>
+              <input
+                type="text"
+                id="edit-contact-cashtag"
+                required
+                pattern="^\$.+"
+                title="Cashtag must start with $"
+              />
+            </div>
+            <div class="modal-input-group">
+              <label for="edit-contact-color">Color (Hex)</label>
+              <input
+                type="text"
+                id="edit-contact-color"
+                pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                placeholder="#FF7F50 (for initial)"
+              />
+            </div>
+            <div class="modal-actions">
+              <button
+                type="button"
+                id="cancel-edit-btn"
+                class="modal-btn secondary"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                id="save-contact-btn"
+                class="modal-btn primary"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- End app-container -->
+
+    <script>
+      // --- DOM Elements ---
+      const paymentAmountEl = document.getElementById("payment-amount");
+      const fundingSourceEl = document.getElementById("funding-source");
+      const confirmPayBtn = document.getElementById("confirm-pay-btn");
+      const closeBtn = document.getElementById("close-btn");
+      const toInput = document.getElementById("to-input");
+      const forInput = document.getElementById("for-input");
+      const sendAsButtons = document.querySelectorAll(".send-as button");
+      const suggestionsListUl = document.getElementById("suggestions-list-ul");
+      const navItems = document.querySelectorAll(".app-footer .nav-item");
+      // Modal Elements
+      const editContactModal = document.getElementById("edit-contact-modal");
+      const editContactForm = document.getElementById("edit-contact-form");
+      const editContactIdInput = document.getElementById("edit-contact-id");
+      const editContactNameInput = document.getElementById("edit-contact-name");
+      const editContactCashtagInput = document.getElementById(
+        "edit-contact-cashtag"
+      );
+      const editContactAvatarInput = document.getElementById(
+        "edit-contact-avatar"
+      ); // URL Input
+      const editContactColorInput =
+        document.getElementById("edit-contact-color");
+      const saveContactBtn = document.getElementById("save-contact-btn");
+      const cancelEditBtn = document.getElementById("cancel-edit-btn");
+      const modalCloseBtn = document.getElementById("modal-close-btn");
+      const modalAvatarPreview = document.getElementById(
+        "modal-avatar-preview"
+      );
+      const editAvatarFileInput = document.getElementById("edit-avatar-input");
+
+      // --- State & Constants ---
+      let paymentAmount = 0;
+      let currentBalance = 0;
+      let selectedRecipient = null;
+      let tempAvatarDataUrl = null; // To hold uploaded image data before save
+      const localStorageBalanceKey = "cashAppBalance";
+      const localStoragePaymentAmountKey = "paymentAmount";
+      const localStorageRecipientDataKey = "pendingRecipientData";
+      const localStorageBalanceBeforeKey = "pendingBalanceBefore";
+      const contactsStorageKey = "cashAppContacts";
+      let contacts = [];
+
+      // --- Sample Contacts (used if no data in localStorage) ---
+      const sampleContacts = [
+        // Keep the expanded list
+        {
+          id: 1,
+          name: "Jay Z",
+          cashtag: "$sc",
+          avatar: "",
+        },
+        {
+          id: 2,
+          name: "Diego",
+          cashtag: "$dm",
+          avatar: null,
+          initial: "D",
+          color: "#A020F0",
+        },
+        {
+          id: 3,
+          name: "Sandy G.",
+          cashtag: "$sandy",
+          avatar: null,
+          initial: "S",
+          color: "#FF7F50",
+        },
+        {
+          id: 4,
+          name: "Alice Green",
+          cashtag: "$aliceg",
+          avatar: "",
+        },
+        {
+          id: 5,
+          name: "Bob White",
+          cashtag: "$bwhite",
+          avatar: null,
+          initial: "B",
+          color: "#8CD7FF",
+        },
+        {
+          id: 6,
+          name: "Charlie Brown",
+          cashtag: "$charlie",
+          avatar: "",
+        },
+        {
+          id: 7,
+          name: "David Lee",
+          cashtag: "$dlee",
+          avatar: null,
+          initial: "D",
+          color: "#4682B4",
+        },
+        {
+          id: 8,
+          name: "Emily Clark",
+          cashtag: "$emilyc",
+          avatar: "",
+        },
+        {
+          id: 9,
+          name: "Frank Wright",
+          cashtag: "$frankw",
+          avatar: "",
+        },
+        {
+          id: 10,
+          name: "Grace Hall",
+          cashtag: "$graceh",
+          avatar: null,
+          initial: "G",
+          color: "#FF69B4",
+        },
+        {
+          id: 11,
+          name: "Henry Adams",
+          cashtag: "$henrya",
+          avatar: "",
+        },
+        {
+          id: 12,
+          name: "Isabel King",
+          cashtag: "$isabelk",
+          avatar: null,
+          initial: "I",
+          color: "#FF1493",
+        },
+        {
+          id: 13,
+          name: "Jack Lewis",
+          cashtag: "$jackl",
+          avatar: "",
+        },
+        {
+          id: 14,
+          name: "Kate Nelson",
+          cashtag: "$katen",
+          avatar: null,
+          initial: "K",
+          color: "#FF4500",
+        },
+        {
+          id: 15,
+          name: "Liam Perez",
+          cashtag: "$liamp",
+          avatar: "",
+        },
+        {
+          id: 16,
+          name: "Mia Roberts",
+          cashtag: "$miar",
+          avatar: null,
+          initial: "M",
+          color: "#DA70D6",
+        },
+        {
+          id: 17,
+          name: "Noah Scott",
+          cashtag: "$noahs",
+          avatar: "",
+        },
+        {
+          id: 18,
+          name: "Olivia Turner",
+          cashtag: "$oliviat",
+          avatar: null,
+          initial: "O",
+          color: "#48D1CC",
+        },
+        {
+          id: 19,
+          name: "Peter Walker",
+          cashtag: "$pete",
+          avatar: "",
+        },
+        {
+          id: 20,
+          name: "Quinn Young",
+          cashtag: "$quinn",
+          avatar: null,
+          initial: "Q",
+          color: "#D2691E",
+        },
+      ];
+
+      // --- Functions ---
+
+      function formatAmount(amount) {
+        /* ... same ... */
+        return `$${Number(amount).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
+      }
+
+      // **MODIFIED** Render Suggestions List - Reinstated Edit Button
+      function renderSuggestions(contactsToShow = contacts) {
+        suggestionsListUl.innerHTML = "";
+        contactsToShow.forEach((contact) => {
+          const li = document.createElement("li");
+          li.className = "suggestion-item";
+          if (selectedRecipient && selectedRecipient.id === contact.id)
+            li.classList.add("selected");
+          li.dataset.contactId = contact.id;
+
+          const avatarHtml = contact.avatar
+            ? `<img src="${contact.avatar}" alt="${
+                contact.name
+              }" onerror="this.style.display='none'; this.parentElement.innerHTML = '<div style=\\'background-color:${
+                contact.color || "#e0e0e0"
+              }; color:white;\\'>${
+                contact.initial || contact.name.charAt(0)
+              }</div>';">`
+            : `<div style="background-color: ${
+                contact.color || "#e0e0e0"
+              }; color: white;">${
+                contact.initial || contact.name.charAt(0)
+              }</div>`;
+
+          // **RESTORED** Edit button (using ellipsis icon)
+          li.innerHTML = `
+                <span class="suggestion-check"> <i class="fa-solid fa-check"></i> </span>
+                <span class="suggestion-avatar">${avatarHtml}</span>
+                <div class="suggestion-details">
+                    <span class="suggestion-name">${contact.name}</span>
+                    <span class="suggestion-cashtag">${contact.cashtag}</span>
+                </div>
+                <button class="suggestion-action edit-contact-trigger" data-contact-id="${contact.id}" aria-label="Edit ${contact.name}">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+            `;
+          // Single click listener for selection (excluding button)
+          li.addEventListener("click", (event) => {
+            if (!event.target.closest(".edit-contact-trigger")) {
+              handleContactSelect(contact);
+            }
+          });
+          // Edit listener moved to delegation
+          suggestionsListUl.appendChild(li);
+        });
+      }
+
+      // Filter suggestions (Unchanged)
+      function filterSuggestions() {
+        /* ... same ... */
+        const query = toInput.value.toLowerCase().trim();
+        const cursorPlaceholder = document.querySelector(".cursor-placeholder");
+        const textMeasureSpan = document.createElement("span");
+        textMeasureSpan.style.fontSize =
+          window.getComputedStyle(toInput).fontSize;
+        textMeasureSpan.style.fontFamily =
+          window.getComputedStyle(toInput).fontFamily;
+        textMeasureSpan.style.visibility = "hidden";
+        textMeasureSpan.style.position = "absolute";
+        textMeasureSpan.textContent = toInput.value;
+        document.body.appendChild(textMeasureSpan);
+        const textWidth = textMeasureSpan.offsetWidth;
+        document.body.removeChild(textMeasureSpan);
+        if (cursorPlaceholder)
+          cursorPlaceholder.style.left = `calc(40px + 15px + ${textWidth}px + 2px)`;
+        if (!query) {
+          renderSuggestions(contacts);
+          if (selectedRecipient) deselectRecipient();
+        } else {
+          if (selectedRecipient && toInput.value !== selectedRecipient.name)
+            deselectRecipient();
+          const filtered = contacts.filter(
+            (c) =>
+              c.name.toLowerCase().includes(query) ||
+              c.cashtag.toLowerCase().includes(query)
+          );
+          renderSuggestions(filtered);
+        }
+        validateForm();
+      }
+
+      // Deselect Recipient (Unchanged)
+      function deselectRecipient() {
+        /* ... same ... */
+        selectedRecipient = null;
+        const selectedLi = suggestionsListUl.querySelector(".selected");
+        if (selectedLi) selectedLi.classList.remove("selected");
+        validateForm();
+      }
+
+      // Handle Contact Selection (Unchanged)
+      function handleContactSelect(contact) {
+        /* ... same ... */
+        if (selectedRecipient && selectedRecipient.id === contact.id) {
+          deselectRecipient();
+          toInput.value = "";
+          filterSuggestions();
+          return;
+        }
+        const previouslySelected = suggestionsListUl.querySelector(".selected");
+        if (previouslySelected) previouslySelected.classList.remove("selected");
+        const newlySelectedLi = suggestionsListUl.querySelector(
+          `[data-contact-id="${contact.id}"]`
+        );
+        if (newlySelectedLi) newlySelectedLi.classList.add("selected");
+        selectedRecipient = contact;
+        toInput.value = contact.name;
+        validateForm();
+        if (newlySelectedLi) {
+          newlySelectedLi.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+          });
+        }
+        filterSuggestions();
+        // suggestionsListUl.innerHTML = ''; // Optional: Clear list
+        // if (newlySelectedLi) suggestionsListUl.appendChild(newlySelectedLi); // Optional: Keep selected
+      }
+
+      // Validate form (Unchanged)
+      function validateForm() {
+        /* ... same ... */
+        const recipientEntered =
+          selectedRecipient !== null ||
+          (toInput.value.trim().length > 0 && selectedRecipient === null);
+        const amountValid = paymentAmount > 0;
+        confirmPayBtn.disabled = !(recipientEntered && amountValid);
+      }
+
+      // --- Modal Functions ---
+      function openEditModal(contact) {
+        if (
+          !contact ||
+          !editContactModal ||
+          !editContactForm ||
+          !modalAvatarPreview
+        )
+          return;
+        console.log("Opening modal for:", contact);
+        tempAvatarDataUrl = null; // Reset temp storage on open
+
+        editContactIdInput.value = contact.id;
+        editContactNameInput.value = contact.name || "";
+        editContactCashtagInput.value = contact.cashtag || "";
+        editContactAvatarInput.value =
+          contact.avatar && contact.avatar.startsWith("http")
+            ? contact.avatar
+            : ""; // Only prefill URL if it's an external link
+        editContactColorInput.value = contact.color || "";
+
+        // Set Avatar Preview
+        modalAvatarPreview.innerHTML = "";
+        modalAvatarPreview.style.backgroundImage = "";
+        modalAvatarPreview.style.backgroundColor = "var(--icon-bg-default)";
+
+        if (contact.avatar) {
+          // Works for URL or Data URL
+          const img = document.createElement("img");
+          img.src = contact.avatar;
+          img.alt = contact.name;
+          img.onerror = () => {
+            // Fallback
+            modalAvatarPreview.innerHTML = "";
+            const initialSpan = document.createElement("span");
+            initialSpan.textContent =
+              contact.initial || contact.name.charAt(0).toUpperCase() || "?";
+            modalAvatarPreview.appendChild(initialSpan);
+            modalAvatarPreview.style.backgroundColor =
+              contact.color || "#e0e0e0";
+          };
+          modalAvatarPreview.appendChild(img);
+          modalAvatarPreview.style.backgroundColor = "transparent"; // Don't show default bg if image exists
+        } else {
+          // No avatar, show initial
+          const initialSpan = document.createElement("span");
+          initialSpan.textContent =
+            contact.initial || contact.name.charAt(0).toUpperCase() || "?";
+          modalAvatarPreview.appendChild(initialSpan);
+          modalAvatarPreview.style.backgroundColor = contact.color || "#e0e0e0";
+        }
+
+        editContactModal.classList.add("show");
+        editContactNameInput.focus();
+      }
+
+      function closeEditModal() {
+        if (!editContactModal || !editContactForm) return;
+        editContactForm.reset();
+        editContactIdInput.value = "";
+        tempAvatarDataUrl = null;
+        editContactModal.classList.remove("show");
+      }
+
+      // **MODIFIED** Save Contact Changes (Handles Image Upload)
+      function saveContactChanges(event) {
+        event.preventDefault();
+        if (!editContactForm) return;
+
+        const contactId = parseInt(editContactIdInput.value, 10);
+        const newName = editContactNameInput.value.trim();
+        let newCashtag = editContactCashtagInput.value.trim();
+        const avatarUrlInput = editContactAvatarInput.value.trim();
+        let newColor = editContactColorInput.value.trim() || null;
+
+        // --- Determine final avatar value ---
+        let finalAvatar = null;
+        if (tempAvatarDataUrl) {
+          finalAvatar = tempAvatarDataUrl;
+          console.log("Using uploaded avatar");
+        } // 1. Use upload if present
+        else if (avatarUrlInput) {
+          finalAvatar = avatarUrlInput;
+          console.log("Using avatar URL");
+        } // 2. Use URL if upload not present
+        else {
+          // 3. If both are empty, potentially remove avatar
+          const originalContact = contacts.find((c) => c.id === contactId);
+          if (originalContact && originalContact.avatar) {
+            // Only remove if there WAS an avatar
+            console.log("Removing existing avatar");
+            finalAvatar = null;
+          } else {
+            finalAvatar = null; // Stays null if it was already null
+          }
+        }
+
+        // Basic validation
+        if (!newName || !newCashtag) {
+          alert("Name and $Cashtag required.");
+          return;
+        }
+        if (!newCashtag.startsWith("$")) newCashtag = "$" + newCashtag;
+        if (newColor && !newColor.startsWith("#")) newColor = "#" + newColor;
+        if (newColor && !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(newColor)) {
+          alert("Invalid Color HEX format (#RRGGBB or #RGB).");
+          return;
+        }
+
+        const contactIndex = contacts.findIndex((c) => c.id === contactId);
+        if (contactIndex > -1) {
+          contacts[contactIndex].name = newName;
+          contacts[contactIndex].cashtag = newCashtag;
+          contacts[contactIndex].avatar = finalAvatar; // Assign determined avatar
+          contacts[contactIndex].color = newColor;
+          contacts[contactIndex].initial = finalAvatar
+            ? null
+            : newName.charAt(0).toUpperCase() || "?";
+
+          try {
+            localStorage.setItem(contactsStorageKey, JSON.stringify(contacts));
+            console.log("Contact updated:", contacts[contactIndex]);
+            filterSuggestions(); // Re-render list
+            if (selectedRecipient && selectedRecipient.id === contactId) {
+              selectedRecipient = contacts[contactIndex];
+            }
+            closeEditModal();
+          } catch (e) {
+            console.error("Error saving contacts:", e);
+            alert("Failed to save changes.");
+          }
+        } else {
+          console.error("Could not find contact ID:", contactId);
+          alert("Error updating contact.");
+          closeEditModal();
+        }
+      }
+
+      // Handle Final Payment -> Navigate to PIN (Using original filenames)
+      function handleConfirmPayment() {
+        if (confirmPayBtn.disabled) return;
+        if (paymentAmount > currentBalance) {
+          alert(
+            `Insufficient Funds! Your balance is ${formatAmount(
+              currentBalance
+            )}.`
+          );
+          return;
+        }
+
+        let recipientDataForPin;
+        if (selectedRecipient) {
+          recipientDataForPin = selectedRecipient;
+        } else {
+          const typedName = toInput.value.trim();
+          recipientDataForPin = {
+            id: null,
+            name: typedName,
+            cashtag:
+              "$" +
+              typedName
+                .toLowerCase()
+                .replace(/\s+/g, "")
+                .replace(/[^a-z0-9]/g, "")
+                .substring(0, 12),
+            avatar: null,
+            initial: typedName.charAt(0).toUpperCase() || "?",
+            color: "#8e8e93",
+          };
+        }
+        // Ensure all needed keys exist before stringifying
+        recipientDataForPin = {
+          id: recipientDataForPin.id || null,
+          name: recipientDataForPin.name || "Unknown",
+          cashtag: recipientDataForPin.cashtag || "$unknown",
+          avatar: recipientDataForPin.avatar || null,
+          initial: recipientDataForPin.initial || "?",
+          color: recipientDataForPin.color || "#8e8e93",
+        };
+
+        localStorage.setItem("pendingPaymentAmount", paymentAmount.toString());
+        localStorage.setItem(
+          "pendingRecipientData",
+          JSON.stringify(recipientDataForPin)
+        );
+        localStorage.setItem("pendingBalanceBefore", currentBalance.toString());
+        console.log(
+          "Proceeding to PIN with recipient data:",
+          recipientDataForPin
+        );
+        window.location.href = "pin.html"; // *** USE CORRECT PIN FILENAME ***
+      }
+
+      // Simple Navigation Placeholder (Using original filenames)
+      function navigateTo(page) {
+        const pageMap = {
+          home: "home.html",
+          card: "card.html",
+          payment: "pay.html",
+          search: "search.html",
+          activity: "history.html",
+        }; // Adjusted filenames
+        const targetPage = pageMap[page];
+        if (
+          targetPage &&
+          targetPage !== window.location.pathname.split("/").pop()
+        ) {
+          localStorage.removeItem(localStoragePaymentAmountKey); // Clear pending amount if navigating away via footer
+          localStorage.removeItem(localStorageRecipientDataKey);
+          localStorage.removeItem(localStorageBalanceBeforeKey);
+          window.location.href = targetPage;
+        } else if (!targetPage) {
+          console.warn(`Nav target for '${page}' not defined.`);
+        }
+      }
+
+      // --- Load Initial State ---
+      function loadInitialState() {
+        const savedBalance = localStorage.getItem(localStorageBalanceKey);
+        currentBalance = parseFloat(savedBalance) || 100.0;
+        const savedAmount = localStorage.getItem(localStoragePaymentAmountKey);
+        if (savedAmount !== null) {
+          const parsedAmount = parseFloat(savedAmount);
+          if (!isNaN(parsedAmount) && parsedAmount > 0) {
+            paymentAmount = parsedAmount;
+            paymentAmountEl.textContent = formatAmount(paymentAmount);
+          } else {
+            console.warn("Invalid amount. Redirecting.");
+            window.location.replace("pay.html");
+            return;
+          } // Use correct page name
+        } else {
+          console.warn("No payment amount. Redirecting.");
+          window.location.replace("pay.html");
+          return;
+        } // Use correct page name
+
+        const savedContacts = localStorage.getItem(contactsStorageKey);
+        try {
+          if (savedContacts) {
+            contacts = JSON.parse(savedContacts);
+            if (!Array.isArray(contacts)) throw new Error("Data not array");
+          } else {
+            contacts = [...sampleContacts];
+            localStorage.setItem(contactsStorageKey, JSON.stringify(contacts));
+          }
+        } catch (e) {
+          console.error("Error loading contacts:", e);
+          contacts = [...sampleContacts];
+          localStorage.setItem(contactsStorageKey, JSON.stringify(contacts));
+        }
+
+        renderSuggestions();
+        validateForm();
+        fundingSourceEl.childNodes[0].nodeValue = `Cash Balance ${formatAmount(
+          currentBalance
+        )} `;
+      }
+
+      // --- Event Listeners ---
+      closeBtn.addEventListener("click", () => {
+        localStorage.removeItem(localStoragePaymentAmountKey);
+        localStorage.removeItem(localStorageRecipientDataKey);
+        localStorage.removeItem(localStorageBalanceBeforeKey);
+        window.location.href = "pay.html"; // Use correct page name
+      });
+
+      toInput.addEventListener("input", filterSuggestions);
+      toInput.addEventListener("focus", () => {
+        document.getElementById("to-input-container").classList.add("focused");
+        filterSuggestions();
+      });
+      toInput.addEventListener("blur", () => {
+        document
+          .getElementById("to-input-container")
+          .classList.remove("focused");
+        const cursorPlaceholder = document.querySelector(".cursor-placeholder");
+        if (cursorPlaceholder && toInput.value === "") {
+          cursorPlaceholder.style.left = `calc(40px + 15px + 2px)`;
+        }
+      });
+
+      confirmPayBtn.addEventListener("click", handleConfirmPayment);
+
+      sendAsButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          sendAsButtons.forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
+        });
+      });
+
+      // **RESTORED** Delegated Listener for Edit Buttons
+      suggestionsListUl.addEventListener("click", (event) => {
+        const editButton = event.target.closest(".edit-contact-trigger");
+        if (editButton) {
+          event.stopPropagation(); // Prevent li click from firing
+          const contactId = parseInt(editButton.dataset.contactId, 10);
+          const contactToEdit = contacts.find((c) => c.id === contactId);
+          if (contactToEdit) {
+            openEditModal(contactToEdit);
+          } else {
+            console.error("Could not find contact data for ID:", contactId);
+          }
+        }
+      });
+
+      // Modal Listeners
+      if (editContactForm)
+        editContactForm.addEventListener("submit", saveContactChanges);
+      if (cancelEditBtn)
+        cancelEditBtn.addEventListener("click", closeEditModal);
+      if (modalCloseBtn)
+        modalCloseBtn.addEventListener("click", closeEditModal);
+      if (editContactModal)
+        editContactModal.addEventListener("click", (event) => {
+          if (event.target === editContactModal) closeEditModal();
+        });
+
+      // **NEW** Listener for clicking avatar preview to trigger file input
+      if (modalAvatarPreview) {
+        modalAvatarPreview.addEventListener("click", () => {
+          if (editAvatarFileInput) editAvatarFileInput.click();
+        });
+      }
+      // **NEW** Listener for file input change
+      if (editAvatarFileInput) {
+        editAvatarFileInput.addEventListener("change", (event) => {
+          const file = event.target.files[0];
+          if (file && file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              tempAvatarDataUrl = e.target.result; // Store Data URL temporarily
+              modalAvatarPreview.innerHTML = ""; // Clear initial/old image
+              const img = document.createElement("img");
+              img.src = tempAvatarDataUrl;
+              img.alt = "Avatar Preview";
+              modalAvatarPreview.appendChild(img);
+              editContactAvatarInput.value = ""; // Clear URL input
+              console.log("Avatar preview updated.");
+            };
+            reader.readAsDataURL(file);
+          } else if (file) {
+            alert("Please select a valid image file.");
+          }
+          event.target.value = null; // Reset input value
+        });
+      }
+
+      // Update Footer Active State
+      navItems.forEach((item) => {
+        item.classList.toggle(
+          "active",
+          item.getAttribute("aria-label") === "Payment"
+        );
+      });
+
+      // --- Initial Load ---
+      document.addEventListener("DOMContentLoaded", loadInitialState);
+    </script>
+    <script src="nav.js"></script>
+  </body>
+</html>

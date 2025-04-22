@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Card - Cash App</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="nav.css" />
+    <style>
+      /* --- Global Styles & Variables --- */
+      :root {
+        --primary-green: #00d54b;
+        --light-gray-border: #efefef;
+        --medium-gray-text: #8c8c8c;
+        --dark-gray-text: #4a4a4a;
+        --background-color: #ffffff;
+        --accent-green: #00d54b; /* Cash App Green */
+        --app-bg-color: #f7f7f7; /* Light background for Card page content */
+        --header-bg-color: #ffffff; /* White header */
+        --card-bg-color: #ffffff; /* Card action list background */
+        --text-primary: #000000;
+        --text-secondary: #6c757d;
+        --text-link: #00d54b; /* Use Cash App green for links/actions */
+        --border-color: #e9ecef;
+        --placeholder-profile-bg: #888b90;
+        --cash-card-bg: linear-gradient(
+          135deg,
+          #222 25%,
+          #111 25%,
+          #111 50%,
+          #222 50%,
+          #222 75%,
+          #111 75%,
+          #111 100%
+        ); /* Basic black card */
+        --cash-card-logo-color: #00d54b;
+        --border-radius-card-item: 10px;
+        --border-radius-button: 50px; /* Keep consistent */
+        --padding-screen: 18px;
+        --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        --footer-height: 65px;
+        --header-height: 70px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: #e0e0e0; /* Fallback */
+        color: var(--text-primary);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .app-container {
+        max-width: 450px;
+        width: 100%;
+        height: 100vh;
+        max-height: 900px;
+        background-color: var(--header-bg-color); /* Overall background white */
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* --- Card Header --- */
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: calc(var(--padding-screen) * 0.8) var(--padding-screen);
+        height: var(--header-height);
+        position: relative;
+        z-index: 100;
+        flex-shrink: 0;
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--header-bg-color); /* Ensure header bg */
+      }
+      .card-header h1 {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .profile-picture {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        cursor: pointer;
+        background-color: var(--placeholder-profile-bg);
+        border: 1px solid #000;
+        display: block;
+      }
+      #profile-pic-input {
+        display: none;
+      }
+
+      /* --- Profile Picture Dropdown Menu (Reuse style) --- */
+      .profile-options-menu {
+        display: none;
+        position: absolute;
+        top: calc(var(--header-height) - 10px);
+        right: var(--padding-screen);
+        background-color: #ffffff;
+        color: #000000;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        padding: 8px 0;
+        z-index: 1100;
+        min-width: 150px;
+        border: 1px solid #eee;
+      }
+      .profile-options-menu.show {
+        display: block;
+      }
+      .profile-options-menu button {
+        display: block;
+        width: 100%;
+        padding: 10px 15px;
+        background: none;
+        border: none;
+        text-align: left;
+        font-family: inherit;
+        font-size: 14px;
+        color: #000000;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+      }
+      .profile-options-menu button:hover {
+        background-color: #f5f5f5;
+      }
+
+      /* --- Main Scrollable Content Area --- */
+      .main-content {
+        flex-grow: 1; /* Takes remaining space */
+        overflow-y: auto; /* Enable scrolling if needed */
+        background-color: var(--app-bg-color); /* Light gray background */
+        padding: 20px var(--padding-screen) calc(var(--footer-height) + 20px);
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+      }
+      .main-content::-webkit-scrollbar {
+        display: none;
+      } /* Chrome/Safari */
+
+      /* --- Card Display Area --- */
+      .card-display-area {
+        margin-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .cash-card-visual {
+        width: 85%; /* Relative width */
+        max-width: 300px; /* Max size */
+        aspect-ratio: 1.586 / 1; /* Standard card ratio */
+        background: var(--cash-card-bg);
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 15px;
+        position: relative;
+        color: white;
+        overflow: hidden; /* Keep contents within bounds */
+        margin-bottom: 15px; /* Space below card */
+      }
+      /* Basic card elements */
+      .cash-card-visual .chip {
+        width: 35px;
+        height: 25px;
+        background: linear-gradient(45deg, #d4af37, #c0c0c0);
+        border-radius: 4px;
+        opacity: 0.8;
+      }
+      .cash-card-visual .logo {
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--cash-card-logo-color);
+        text-align: right;
+        align-self: flex-end;
+      }
+      .cash-card-visual .card-holder {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.8;
+      }
+      .cash-card-visual .card-status-overlay {
+        /* For Locked status */
+        display: none; /* Hidden by default */
+        position: absolute;
+        inset: 0; /* Cover entire card */
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border-radius: 12px; /* Match card radius */
+      }
+      .cash-card-visual .card-status-overlay.show {
+        display: flex;
+      }
+
+      .card-balance-info {
+        font-size: 14px;
+        color: var(--text-secondary);
+        text-align: center;
+      }
+
+      /* --- Card Actions List --- */
+      .card-actions {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        background-color: var(
+          --card-bg-color
+        ); /* White background for action items */
+        border-radius: var(--border-radius-card-item);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        overflow: hidden; /* Clip borders */
+      }
+
+      .action-item {
+        display: flex;
+        align-items: center;
+        padding: 15px var(--padding-screen);
+        border-bottom: 1px solid var(--border-color);
+        gap: 15px;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+      }
+      .action-item:last-child {
+        border-bottom: none;
+      }
+      .action-item:hover {
+        background-color: #f8f9fa; /* Subtle hover */
+      }
+
+      .action-icon {
+        width: 24px; /* Icon size */
+        text-align: center;
+        color: var(--text-secondary); /* Default icon color */
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+      .action-icon.lock {
+        color: #dc3545;
+      } /* Red for lock */
+      .action-icon.unlock {
+        color: var(--text-positive);
+      } /* Green for unlock */
+
+      .action-details {
+        flex-grow: 1;
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+
+      .action-details .detail-text {
+        /* Optional secondary text */
+        display: block;
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+      }
+
+      .action-chevron {
+        color: #cccccc; /* Light grey chevron */
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+
+      /* --- Footer Navigation --- */
+      .app-footer {
+        /* position: sticky; bottom: 0; left: 0; right: 0; No longer sticky */
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: var(
+          --header-bg-color
+        ); /* White footer to match header */
+        border-top: 1px solid var(--border-color);
+        height: var(--footer-height);
+        padding: 0 var(--padding-screen);
+        z-index: 200;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="card-header">
+        <h1>Card</h1>
+        <!-- Profile picture elements reused -->
+        <img alt="Profile" class="profile-picture" id="profile-pic-display" />
+        <input type="file" id="profile-pic-input" accept="image/*" />
+        <div id="profile-options" class="profile-options-menu">
+          <button id="change-pic-btn">Change Picture</button>
+          <button id="remove-pic-btn">Remove Picture</button>
+        </div>
+      </header>
+
+      <!-- Scrollable main content -->
+      <main class="main-content">
+        <section class="card-display-area">
+          <!-- SVG Cash Card Placeholder -->
+          <div class="cash-card-visual" id="cash-card-visual">
+            <div class="chip"></div>
+            <div class="logo">$</div>
+            <div class="card-holder">Your Name</div>
+            <!-- Locked Status Overlay -->
+            <div class="card-status-overlay" id="card-locked-overlay">
+              <i class="fa-solid fa-lock" style="margin-right: 8px"></i> Locked
+            </div>
+          </div>
+          <div class="card-balance-info" id="card-balance-info">
+            Cash Balance: $100.00
+            <!-- Example -->
+          </div>
+        </section>
+
+        <ul class="card-actions">
+          <li class="action-item" id="lock-card-action">
+            <span class="action-icon lock" id="lock-icon">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+            <span class="action-details" id="lock-text">Lock Card</span>
+            <span class="action-chevron"
+              ><i class="fa-solid fa-chevron-right"></i
+            ></span>
+          </li>
+          <li class="action-item" id="add-to-apple-pay">
+            <span class="action-icon">
+              <i class="fa-brands fa-apple-pay"></i>
+            </span>
+            <span class="action-details">Add to Apple Pay</span>
+            <span class="action-chevron"
+              ><i class="fa-solid fa-chevron-right"></i
+            ></span>
+          </li>
+          <li class="action-item" id="add-to-google-pay">
+            <span class="action-icon">
+              <i class="fa-brands fa-google-pay"></i>
+            </span>
+            <span class="action-details">Add to Google Pay</span>
+            <span class="action-chevron"
+              ><i class="fa-solid fa-chevron-right"></i
+            ></span>
+          </li>
+          <li class="action-item" id="show-card-number">
+            <span class="action-icon">
+              <i class="fa-solid fa-eye"></i>
+            </span>
+            <span class="action-details">Show Card Number</span>
+            <span class="action-chevron"
+              ><i class="fa-solid fa-chevron-right"></i
+            ></span>
+          </li>
+          <li class="action-item" id="view-statements">
+            <span class="action-icon">
+              <i class="fa-solid fa-file-lines"></i>
+            </span>
+            <span class="action-details">View Statements</span>
+            <span class="action-chevron"
+              ><i class="fa-solid fa-chevron-right"></i
+            ></span>
+          </li>
+          <li class="action-item" id="report-card">
+            <span class="action-icon">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </span>
+            <span class="action-details">Report Lost or Stolen</span>
+            <span class="action-chevron"
+              ><i class="fa-solid fa-chevron-right"></i
+            ></span>
+          </li>
+        </ul>
+      </main>
+      <!-- End main-content -->
+
+      <nav class="bottom-nav">
+        <!-- Nav buttons omitted for brevity -->
+
+        <a href="home.html">
+          <button class="nav-button" aria-label="Home">
+            <span id="footer-balance-display">$0K</span>
+            <!-- ADD THIS SPAN (Placeholder text) -->
+          </button>
+        </a>
+
+        <button class="nav-button padding" id="active" aria-label="Cards">
+          <svg
+            id="icon-wallet"
+            width="24"
+            height="20"
+            viewBox="0 0 24 21"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              transform="translate(-126.25 -18)"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M131.25 21H145.25C146.355 21 147.25 21.8954 147.25 23V33C147.25 34.1046 146.355 35 145.25 35H131.25C130.145 35 129.25 34.1046 129.25 33V23C129.25 21.8954 130.145 21 131.25 21ZM126.25 23C126.25 20.2386 128.489 18 131.25 18H145.25C148.011 18 150.25 20.2386 150.25 23V33C150.25 35.7614 148.011 38 145.25 38H131.25C128.489 38 126.25 35.7614 126.25 33V23ZM134.25 24C133.145 24 132.25 24.8954 132.25 26C132.25 27.1046 133.145 28 134.25 28H135.25C136.355 28 137.25 27.1046 137.25 26C137.25 24.8954 136.355 24 135.25 24H134.25Z"
+              fill="#000"
+              fill-opacity="0.7"
+            />
+          </svg>
+        </button>
+        <a href="pay.html">
+          <button class="nav-button" aria-label="Pay">
+            <svg
+              id="icon-dollar"
+              width="15"
+              height="22"
+              viewBox="0 0 15 23"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-205 -17)"
+                d="M217.675 23.8903C217.923 24.1401 218.336 24.1401 218.569 23.8903L219.811 22.5912C220.075 22.3414 220.06 21.8917 219.782 21.6218C218.805 20.7669 217.671 20.1148 216.442 19.7032L216.835 17.8045C216.919 17.3897 216.611 17 216.199 17H213.794C213.643 17.0016 213.498 17.0551 213.382 17.1515C213.267 17.2479 213.187 17.3814 213.158 17.5296L212.81 19.2185C209.61 19.3834 206.897 21.0173 206.897 24.365C206.897 27.263 209.138 28.5071 211.508 29.3616C213.749 30.221 214.937 30.5408 214.937 31.7499C214.937 32.9941 213.754 33.7236 212.005 33.7236C210.415 33.7236 208.745 33.189 207.453 31.8848C207.393 31.8244 207.322 31.7765 207.243 31.7438C207.165 31.7111 207.081 31.6942 206.996 31.6942C206.911 31.6942 206.827 31.7111 206.748 31.7438C206.67 31.7765 206.599 31.8244 206.539 31.8848L205.197 33.2339C205.071 33.3613 205 33.5338 205 33.7136C205 33.8934 205.071 34.0659 205.197 34.1933C206.241 35.2276 207.562 35.9771 209.069 36.3918L208.701 38.1756C208.617 38.5903 208.92 38.975 209.332 38.98L211.743 39C211.895 39.0007 212.042 38.9482 212.16 38.8516C212.278 38.755 212.359 38.6202 212.388 38.4704L212.736 36.7765C216.586 36.5167 218.932 34.3831 218.932 31.2703C218.932 28.4022 216.596 27.193 213.764 26.2087C212.144 25.6041 210.743 25.1894 210.743 23.9453C210.743 22.7361 212.05 22.2564 213.361 22.2564C215.031 22.2564 216.636 22.9509 217.685 23.9003L217.675 23.8903Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg>
+          </button>
+        </a>
+        <a href="search.html">
+          <button class="nav-button padding" aria-label="Search">
+            <svg
+              id="icon-search"
+              width="23"
+              height="23"
+              viewBox="0 0 23 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-276.25 -16.5)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M291.75 26.5C291.75 30.0899 288.84 33 285.25 33C281.66 33 278.75 30.0899 278.75 26.5C278.75 22.9101 281.66 20 285.25 20C288.84 20 291.75 22.9101 291.75 26.5ZM290.823 34.1944C289.258 35.3302 287.332 36 285.25 36C280.003 36 275.75 31.7467 275.75 26.5C275.75 21.2533 280.003 17 285.25 17C290.497 17 294.75 21.2533 294.75 26.5C294.75 28.582 294.08 30.5076 292.944 32.0731L297.882 37.0104C298.468 37.5962 298.468 38.546 297.882 39.1317C297.296 39.7175 296.346 39.7175 295.76 39.1317L290.823 34.1944Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg></button
+        ></a>
+        <a href="history.html">
+          <button class="nav-button" aria-label="Activity">
+            <svg
+              id="icon-clock"
+              width="24"
+              height="24"
+              viewBox="0 0 24 25"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-349 -16)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M370 28C370 32.9706 365.971 37 361 37C356.029 37 352 32.9706 352 28C352 23.0294 356.029 19 361 19C365.971 19 370 23.0294 370 28ZM373 28C373 34.6274 367.627 40 361 40C354.373 40 349 34.6274 349 28C349 21.3726 354.373 16 361 16C367.627 16 373 21.3726 373 28ZM362.5 24C362.5 23.1716 361.828 22.5 361 22.5C360.172 22.5 359.5 23.1716 359.5 24V27.4893C359.5 28.4591 360.061 29.3414 360.939 29.753L364.363 31.3582C365.113 31.7098 366.007 31.3868 366.358 30.6367C366.71 29.8865 366.387 28.9934 365.637 28.6418L362.5 27.1715V24Z"
+                fill="#8c8c8c"
+                fill-opacity="0.7"
+              />
+            </svg>
+          </button>
+        </a>
+      </nav>
+    </div>
+    <!-- End app-container -->
+
+    <script>
+      // --- DOM Elements ---
+      const cardBalanceInfoEl = document.getElementById("card-balance-info");
+      const lockCardAction = document.getElementById("lock-card-action");
+      const lockIcon = document.getElementById("lock-icon").querySelector("i");
+      const lockText = document.getElementById("lock-text");
+      const cardLockedOverlay = document.getElementById("card-locked-overlay");
+      // Other action items (for placeholders)
+      const addToApplePay = document.getElementById("add-to-apple-pay");
+      const addToGooglePay = document.getElementById("add-to-google-pay");
+      const showCardNumber = document.getElementById("show-card-number");
+      const viewStatements = document.getElementById("view-statements");
+      const reportCard = document.getElementById("report-card");
+      // Profile elements
+      const profilePicDisplay = document.getElementById("profile-pic-display");
+      const profilePicInput = document.getElementById("profile-pic-input");
+      const profileOptions = document.getElementById("profile-options");
+      const changePicBtn = document.getElementById("change-pic-btn");
+      const removePicBtn = document.getElementById("remove-pic-btn");
+      const navItems = document.querySelectorAll(".app-footer .nav-item");
+
+      // --- State & Constants ---
+      let isCardLocked = false; // Card lock state
+      const localStorageProfilePicKey = "cashAppProfilePic";
+      const localStorageCardLockedKey = "cashAppCardLocked"; // Local storage for lock state
+      const placeholderProfilePicSrc = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ffffff'/><circle cx='50' cy='40' r='15' fill='none' stroke='%23000' stroke-width='4'/><path d='M 25 88 C 25 78, 35 70, 50 70 S 75 78, 75 88 ' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round'/></svg>`;
+      // --- Functions ---
+
+      // Update Lock Card UI based on state
+      function updateLockUI() {
+        if (isCardLocked) {
+          lockText.textContent = "Unlock Card";
+          lockIcon.className = "fa-solid fa-unlock"; // Change icon
+          lockIcon.parentElement.classList.remove("lock");
+          lockIcon.parentElement.classList.add("unlock"); // Add class for styling
+          cardLockedOverlay.classList.add("show");
+          cardBalanceInfoEl.textContent = "Card Locked"; // Update status text
+        } else {
+          lockText.textContent = "Lock Card";
+          lockIcon.className = "fa-solid fa-lock";
+          lockIcon.parentElement.classList.remove("unlock");
+          lockIcon.parentElement.classList.add("lock");
+          cardLockedOverlay.classList.remove("show");
+          cardBalanceInfoEl.textContent = "Cash Balance: $100.00"; // Restore balance display (use dynamic later if needed)
+        }
+      }
+
+      // Toggle Card Lock State
+      function toggleCardLock() {
+        isCardLocked = !isCardLocked;
+        localStorage.setItem(localStorageCardLockedKey, isCardLocked); // Save state
+        updateLockUI();
+        console.log("Card lock toggled:", isCardLocked);
+      }
+
+      // --- Profile Picture Logic (Reused) ---
+      function setPlaceholderProfilePic() {
+        profilePicDisplay.src = placeholderProfilePicSrc;
+        profilePicDisplay.style.backgroundColor = "";
+        profilePicDisplay.onerror = null;
+      }
+
+      function loadProfilePic() {
+        const savedProfilePic = localStorage.getItem(localStorageProfilePicKey);
+        if (savedProfilePic && savedProfilePic.startsWith("data:image/")) {
+          profilePicDisplay.src = savedProfilePic;
+          profilePicDisplay.style.backgroundColor = "";
+          profilePicDisplay.onerror = () => {
+            console.warn("Saved profile image failed to load. Resetting.");
+            localStorage.removeItem(localStorageProfilePicKey);
+            setPlaceholderProfilePic();
+          };
+        } else {
+          if (savedProfilePic) {
+            localStorage.removeItem(localStorageProfilePicKey);
+          }
+          setPlaceholderProfilePic();
+        }
+      }
+
+      function handleProfilePicClick(event) {
+        event.stopPropagation();
+        profileOptions.classList.toggle("show");
+      }
+
+      function handleProfilePicChange(event) {
+        const file = event.target.files[0];
+        if (!file || !file.type.startsWith("image/")) {
+          alert("Please select image.");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          profilePicDisplay.src = e.target.result;
+          profilePicDisplay.style.backgroundColor = "";
+          profilePicDisplay.onerror = () => {
+            console.warn("Uploaded image failed to load. Resetting.");
+            localStorage.removeItem(localStorageProfilePicKey);
+            setPlaceholderProfilePic();
+          };
+          localStorage.setItem(localStorageProfilePicKey, e.target.result);
+          console.log("Profile picture updated and saved.");
+        };
+        reader.readAsDataURL(file);
+        profileOptions.classList.remove("show");
+      }
+
+      // --- Load Initial State ---
+      function loadInitialState() {
+        loadProfilePic();
+        // Load card lock state
+        const savedLockState = localStorage.getItem(localStorageCardLockedKey);
+        isCardLocked = savedLockState === "true"; // Convert string back to boolean
+        updateLockUI();
+      }
+
+      // --- Event Listeners ---
+
+      // Card Actions
+      lockCardAction.addEventListener("click", toggleCardLock);
+      addToApplePay.addEventListener("click", () =>
+        alert("Add to Apple Pay (Not Implemented)")
+      );
+      addToGooglePay.addEventListener("click", () =>
+        alert("Add to Google Pay (Not Implemented)")
+      );
+      showCardNumber.addEventListener("click", () =>
+        alert("Show Card Number (Not Implemented - Requires Security)")
+      );
+      viewStatements.addEventListener("click", () =>
+        alert("View Statements (Not Implemented)")
+      );
+      reportCard.addEventListener("click", () =>
+        alert("Report Lost or Stolen (Not Implemented)")
+      );
+
+      // Profile Pic Listeners
+      profilePicDisplay.addEventListener("click", handleProfilePicClick);
+      profilePicInput.addEventListener("change", handleProfilePicChange);
+      changePicBtn.addEventListener("click", () => {
+        profilePicInput.click();
+        profileOptions.classList.remove("show");
+      });
+      removePicBtn.addEventListener("click", () => {
+        setPlaceholderProfilePic();
+        localStorage.removeItem(localStorageProfilePicKey);
+        console.log("Profile picture removed.");
+        profileOptions.classList.remove("show");
+      });
+
+      // Footer Navigation Click Handler (Placeholder)
+      navItems.forEach((item) => {
+        item.addEventListener("click", (e) => {
+          const label = item.getAttribute("aria-label");
+          navItems.forEach((i) => i.classList.remove("active"));
+          item.classList.add("active");
+        });
+      });
+
+      // Close dropdown if clicking outside
+      document.addEventListener("click", (event) => {
+        if (
+          profileOptions.classList.contains("show") &&
+          !profileOptions.contains(event.target) &&
+          !profilePicDisplay.contains(event.target)
+        ) {
+          profileOptions.classList.remove("show");
+        }
+      });
+
+      // --- Initial Load ---
+      document.addEventListener("DOMContentLoaded", loadInitialState);
+    </script>
+    <script src="nav.js"></script>
+  </body>
+</html>

@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Pay - Cash App</title>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style>
+      /* --- Global Styles & Variables --- */
+      :root {
+        --app-bg-color: #00d54b;
+        --text-primary: #ffffff;
+        --text-secondary: #c8f7d8;
+        --button-bg-darker: #00b840;
+        --button-active-darker: #009c36;
+        --placeholder-profile-bg: #888b90;
+        --overlay-bg: rgba(0, 0, 0, 0.6);
+        --border-radius-button: 50px;
+        --padding-screen: 18px;
+        --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        --footer-height: 65px;
+        --header-height: 70px; /* Approximate */
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+      /* **NEW/MODIFIED**: Style for the balance display span in the footer */
+      #footer-balance-display {
+        font-size: 17px; /* Adjust size to match image */
+        font-weight: 550; /* Bold like the image */
+        line-height: 1;
+        white-space: nowrap; /* Prevent wrapping */
+        /* Color is inherited from .nav-item or .nav-item.active */
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: #00d54b; /* Fallback bg if container doesn't fill */
+        color: var(--text-primary);
+        display: flex;
+        justify-content: center;
+        align-items: center; /* Vertically center container */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .app-container {
+        max-width: 450px;
+        width: 100%;
+        height: 100vh; /* Use viewport height */
+        max-height: 900px; /* Optional: Limit max height on very tall screens */
+        background-color: var(--app-bg-color);
+        display: flex;
+        flex-direction: column;
+        position: relative; /* For absolute positioned children */
+        overflow: hidden; /* Prevent internal scroll */
+      }
+
+      /* --- Payment Screen Specific Header --- */
+      .payment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: calc(var(--padding-screen) * 0.8) var(--padding-screen); /* Reduced top padding */
+        height: var(--header-height);
+        position: relative; /* For dropdown */
+        z-index: 100;
+        flex-shrink: 0; /* Prevent shrinking */
+      }
+      .header-icon-btn {
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 24px;
+        cursor: pointer;
+        padding: 8px;
+        line-height: 1;
+      }
+      .profile-picture {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        cursor: pointer;
+        background-color: #ccc; /* Default BG */
+        border: 2px solid #ffffff; /* Subtle border */
+        display: block;
+      }
+      #profile-pic-input {
+        display: none;
+      }
+
+      /* --- Profile Picture Dropdown Menu (Unchanged) --- */
+      .profile-options-menu {
+        display: none;
+        position: absolute;
+        top: calc(var(--header-height) - 10px);
+        right: var(--padding-screen); /* Position below header */
+        background-color: #ffffff;
+        color: #000000;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        padding: 8px 0;
+        z-index: 1100;
+        min-width: 150px;
+        border: 1px solid #eee;
+      }
+      .profile-options-menu.show {
+        display: block;
+      }
+      .profile-options-menu button {
+        display: block;
+        width: 100%;
+        padding: 10px 15px;
+        background: none;
+        border: none;
+        text-align: left;
+        font-family: inherit;
+        font-size: 14px;
+        color: #000000;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+      }
+      .profile-options-menu button:hover {
+        background-color: #f5f5f5;
+      }
+
+      /* --- Amount Display Area --- */
+      .amount-area {
+        margin-top: -2.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px var(--padding-screen) 5px; /* Reduced padding */
+        text-align: center;
+        flex-shrink: 0; /* Prevent shrinking */
+        min-height: 100px; /* Ensure some minimum space */
+      }
+      .displayed-amount {
+        /* Responsive font size: min 48px, preferred 18vmin, max 84px */
+        font-size: clamp(48px, 18vmin, 84px);
+        font-weight: 500;
+        line-height: 1.1;
+        margin-bottom: 15px; /* Space before currency button */
+        min-height: 1.2em; /* Min height based on line height */
+        color: var(--text-primary);
+        word-break: break-all;
+      }
+      .currency-selector {
+        background-color: var(--button-bg-darker);
+        color: var(--text-primary);
+        border: none;
+        border-radius: 18px;
+        padding: 8px 18px;
+        font-size: clamp(13px, 3vmin, 15px); /* Responsive font */
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        margin-bottom: 5px; /* Small space below */
+      }
+      .currency-selector:hover {
+        background-color: var(--button-active-darker);
+      }
+      .currency-selector i {
+        margin-left: 6px;
+        font-size: 0.8em;
+      }
+
+      /* --- Controls Area (Keypad + Buttons) - Flexible Height --- */
+      .controls-area {
+        flex-grow: 1; /* Takes up remaining vertical space */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end; /* Push content towards the bottom of this area */
+        min-height: 300px; /* Minimum height to prevent excessive squishing */
+        padding: 0 var(--padding-screen); /* Horizontal padding */
+      }
+
+      /* --- Keypad --- */
+      .keypad {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px; /* Slightly more visual gap */
+        padding-bottom: 15px; /* Space between keypad and action buttons */
+        flex-shrink: 0;
+      }
+      .keypad button {
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        /* Responsive font size: min 24px, preferred 6vmin, max 32px */
+        font-size: clamp(24px, 6vmin, 32px);
+        font-weight: 400;
+        padding: 15px 0; /* Adjust vertical padding */
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 60px; /* Minimum button height */
+      }
+      .keypad button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      .keypad button:active {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+      .keypad button i {
+        font-size: clamp(20px, 5vmin, 26px);
+      }
+
+      /* --- Action Buttons (Request/Pay) --- */
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        padding-bottom: 15px; /* Space before footer */
+        flex-shrink: 0;
+      }
+      .action-buttons button {
+        flex-grow: 1;
+        background-color: var(--button-bg-darker);
+        color: var(--text-primary);
+        border: none;
+        padding: clamp(14px, 3vh, 18px) 10px; /* Responsive padding */
+        border-radius: var(--border-radius-button);
+        font-size: clamp(16px, 3.5vmin, 18px); /* Responsive font */
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease, opacity 0.2s ease;
+      }
+      .action-buttons button:hover {
+        background-color: var(--button-active-darker);
+      }
+      .action-buttons button:active {
+        background-color: #00802b;
+      }
+      .action-buttons button:disabled {
+        background-color: #008a33;
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* --- Footer Navigation --- */
+      .bottom-nav {
+        padding: 0 var(--padding-screen);
+        z-index: 200;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-top: 1px solid var(--light-gray-border);
+        background-color: var(--background-color);
+        height: 65px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        /* No longer sticky or absolute */
+        background-color: var(--app-bg-color);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      .nav-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #ffffffa2;
+        transition: color 0.2s ease, transform 0.2s ease-in-out;
+      }
+      #active svg path {
+        fill: #ffffff;
+      }
+
+      /* --- QR Scanner Overlay --- */
+      .qr-scanner-overlay {
+        display: none;
+        position: absolute; /* Cover app-container */
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--overlay-bg);
+        z-index: 2000;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-align: center;
+      }
+      .qr-scanner-overlay.show {
+        display: flex;
+      }
+      #qr-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 2001;
+      }
+      .qr-scanner-box {
+        width: 65vmin;
+        height: 65vmin; /* Responsive size based on viewport */
+        max-width: 280px;
+        max-height: 280px; /* Max size */
+        min-width: 180px;
+        min-height: 180px; /* Min size */
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 25px;
+        z-index: 2002;
+        box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.5);
+      }
+      .qr-scan-line {
+        position: absolute;
+        left: -5%;
+        right: -5%;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(0, 213, 75, 0.8),
+          transparent
+        );
+        box-shadow: 0 0 15px rgba(0, 213, 75, 0.6);
+        border-radius: 2px;
+        animation: scan 2.5s linear infinite;
+        z-index: 2003;
+      }
+      .qr-scanner-text {
+        font-size: clamp(14px, 3vmin, 18px);
+        margin-top: 10px;
+        z-index: 2002;
+        background-color: rgba(0, 0, 0, 0.4);
+        padding: 5px 10px;
+        border-radius: 5px;
+      }
+
+      @keyframes scan {
+        0% {
+          top: 0;
+        }
+        50% {
+          top: calc(100% - 3px);
+        }
+        100% {
+          top: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="payment-header">
+        <button
+          class="header-icon-btn"
+          id="qr-scanner-btn"
+          aria-label="Scan QR Code"
+        >
+          <i class="fa-solid fa-qrcode"></i>
+        </button>
+        <img alt="Profile" class="profile-picture" id="profile-pic-display" />
+        <input type="file" id="profile-pic-input" accept="image/*" />
+        <!-- Profile Options Dropdown -->
+        <div id="profile-options" class="profile-options-menu">
+          <button id="change-pic-btn">Change Picture</button>
+          <button id="remove-pic-btn">Remove Picture</button>
+        </div>
+      </header>
+
+      <div class="amount-area">
+        <div class="displayed-amount" id="displayed-amount">$0</div>
+        <button class="currency-selector" id="currency-btn">
+          USD <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
+
+      <!-- Controls Area: Keypad + Action Buttons -->
+      <div class="controls-area">
+        <section class="keypad" id="keypad">
+          <button data-value="1">1</button>
+          <button data-value="2">2</button>
+          <button data-value="3">3</button>
+          <button data-value="4">4</button>
+          <button data-value="5">5</button>
+          <button data-value="6">6</button>
+          <button data-value="7">7</button>
+          <button data-value="8">8</button>
+          <button data-value="9">9</button>
+          <button data-value=".">.</button>
+          <button data-value="0">0</button>
+          <button data-value="<">
+            <i class="fa-solid fa-delete-left"></i>
+          </button>
+        </section>
+
+        <section class="action-buttons">
+          <button id="request-btn">Request</button>
+          <button id="pay-btn" disabled>Pay</button>
+        </section>
+      </div>
+      <!-- End controls-area -->
+
+      <nav class="bottom-nav">
+        <!-- Nav buttons omitted for brevity -->
+
+        <a href="home.html">
+          <button class="nav-button" aria-label="Home">
+            <span id="footer-balance-display">$0K</span>
+            <!-- ADD THIS SPAN (Placeholder text) -->
+          </button>
+        </a>
+
+        <a href="card.html">
+          <button class="nav-button" aria-label="Cards">
+            <svg
+              id="icon-wallet"
+              width="24"
+              height="20"
+              viewBox="0 0 24 21"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-126.25 -18)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M131.25 21H145.25C146.355 21 147.25 21.8954 147.25 23V33C147.25 34.1046 146.355 35 145.25 35H131.25C130.145 35 129.25 34.1046 129.25 33V23C129.25 21.8954 130.145 21 131.25 21ZM126.25 23C126.25 20.2386 128.489 18 131.25 18H145.25C148.011 18 150.25 20.2386 150.25 23V33C150.25 35.7614 148.011 38 145.25 38H131.25C128.489 38 126.25 35.7614 126.25 33V23ZM134.25 24C133.145 24 132.25 24.8954 132.25 26C132.25 27.1046 133.145 28 134.25 28H135.25C136.355 28 137.25 27.1046 137.25 26C137.25 24.8954 136.355 24 135.25 24H134.25Z"
+                fill="#ffffffa2"
+                fill-opacity="0.7"
+              />
+            </svg></button
+        ></a>
+
+        <button class="nav-button" id="active" aria-label="Pay">
+          <svg
+            id="icon-dollar"
+            width="15"
+            height="22"
+            viewBox="0 0 15 23"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              transform="translate(-205 -17)"
+              d="M217.675 23.8903C217.923 24.1401 218.336 24.1401 218.569 23.8903L219.811 22.5912C220.075 22.3414 220.06 21.8917 219.782 21.6218C218.805 20.7669 217.671 20.1148 216.442 19.7032L216.835 17.8045C216.919 17.3897 216.611 17 216.199 17H213.794C213.643 17.0016 213.498 17.0551 213.382 17.1515C213.267 17.2479 213.187 17.3814 213.158 17.5296L212.81 19.2185C209.61 19.3834 206.897 21.0173 206.897 24.365C206.897 27.263 209.138 28.5071 211.508 29.3616C213.749 30.221 214.937 30.5408 214.937 31.7499C214.937 32.9941 213.754 33.7236 212.005 33.7236C210.415 33.7236 208.745 33.189 207.453 31.8848C207.393 31.8244 207.322 31.7765 207.243 31.7438C207.165 31.7111 207.081 31.6942 206.996 31.6942C206.911 31.6942 206.827 31.7111 206.748 31.7438C206.67 31.7765 206.599 31.8244 206.539 31.8848L205.197 33.2339C205.071 33.3613 205 33.5338 205 33.7136C205 33.8934 205.071 34.0659 205.197 34.1933C206.241 35.2276 207.562 35.9771 209.069 36.3918L208.701 38.1756C208.617 38.5903 208.92 38.975 209.332 38.98L211.743 39C211.895 39.0007 212.042 38.9482 212.16 38.8516C212.278 38.755 212.359 38.6202 212.388 38.4704L212.736 36.7765C216.586 36.5167 218.932 34.3831 218.932 31.2703C218.932 28.4022 216.596 27.193 213.764 26.2087C212.144 25.6041 210.743 25.1894 210.743 23.9453C210.743 22.7361 212.05 22.2564 213.361 22.2564C215.031 22.2564 216.636 22.9509 217.685 23.9003L217.675 23.8903Z"
+              fill="#ffffff"
+              fill-opacity="0.9"
+            />
+          </svg>
+        </button>
+
+        <a href="search.html">
+          <button class="nav-button" aria-label="Search">
+            <svg
+              id="icon-search"
+              width="23"
+              height="23"
+              viewBox="0 0 23 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-276.25 -16.5)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M291.75 26.5C291.75 30.0899 288.84 33 285.25 33C281.66 33 278.75 30.0899 278.75 26.5C278.75 22.9101 281.66 20 285.25 20C288.84 20 291.75 22.9101 291.75 26.5ZM290.823 34.1944C289.258 35.3302 287.332 36 285.25 36C280.003 36 275.75 31.7467 275.75 26.5C275.75 21.2533 280.003 17 285.25 17C290.497 17 294.75 21.2533 294.75 26.5C294.75 28.582 294.08 30.5076 292.944 32.0731L297.882 37.0104C298.468 37.5962 298.468 38.546 297.882 39.1317C297.296 39.7175 296.346 39.7175 295.76 39.1317L290.823 34.1944Z"
+                fill="#ffffffa2"
+                fill-opacity="0.7"
+              />
+            </svg></button
+        ></a>
+        <a href="history.html">
+          <button class="nav-button" aria-label="Activity">
+            <svg
+              id="icon-clock"
+              width="24"
+              height="24"
+              viewBox="0 0 24 25"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                transform="translate(-349 -16)"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M370 28C370 32.9706 365.971 37 361 37C356.029 37 352 32.9706 352 28C352 23.0294 356.029 19 361 19C365.971 19 370 23.0294 370 28ZM373 28C373 34.6274 367.627 40 361 40C354.373 40 349 34.6274 349 28C349 21.3726 354.373 16 361 16C367.627 16 373 21.3726 373 28ZM362.5 24C362.5 23.1716 361.828 22.5 361 22.5C360.172 22.5 359.5 23.1716 359.5 24V27.4893C359.5 28.4591 360.061 29.3414 360.939 29.753L364.363 31.3582C365.113 31.7098 366.007 31.3868 366.358 30.6367C366.71 29.8865 366.387 28.9934 365.637 28.6418L362.5 27.1715V24Z"
+                fill="#ffffffa2"
+                fill-opacity="0.7"
+              />
+            </svg>
+          </button>
+        </a>
+      </nav>
+      <!-- QR Scanner Overlay -->
+      <div class="qr-scanner-overlay" id="qr-scanner-overlay">
+        <video id="qr-video" autoplay playsinline muted></video>
+        <div class="qr-scanner-box">
+          <div class="qr-scan-line"></div>
+        </div>
+        <p class="qr-scanner-text">Scanning...</p>
+      </div>
+    </div>
+    <!-- End app-container -->
+
+    <script>
+      // --- DOM Elements ---
+      const displayedAmountEl = document.getElementById("displayed-amount");
+      const keypadEl = document.getElementById("keypad");
+      const requestBtn = document.getElementById("request-btn");
+      const payBtn = document.getElementById("pay-btn");
+      const currencyBtn = document.getElementById("currency-btn");
+      const qrScannerBtn = document.getElementById("qr-scanner-btn");
+      const qrScannerOverlay = document.getElementById("qr-scanner-overlay");
+      const qrVideoEl = document.getElementById("qr-video");
+      // Profile elements
+      const profilePicDisplay = document.getElementById("profile-pic-display");
+      const profilePicInput = document.getElementById("profile-pic-input");
+      const profileOptions = document.getElementById("profile-options");
+      const changePicBtn = document.getElementById("change-pic-btn");
+      const removePicBtn = document.getElementById("remove-pic-btn");
+      const navItems = document.querySelectorAll(".app-footer .nav-item");
+
+      // --- State & Constants ---
+      let currentInput = "0"; // Start with 0
+      let currentStream = null; // Camera stream
+      const maxInputLength = 10;
+      const localStorageProfilePicKey = "cashAppProfilePic";
+      const placeholderProfilePicSrc = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%2300d54b'/><circle cx='50' cy='40' r='15' fill='none' stroke='%23ffffff' stroke-width='6'/><path d='M 25 88 C 25 78, 35 70, 50 70 S 75 78, 75 88 ' fill='none' stroke='%23ffffff' stroke-width='6' stroke-linecap='round'/></svg>`;
+      // --- Functions ---
+
+      function formatCurrency(amount) {
+        // Standard currency formatting
+        const number = Number(amount);
+        if (isNaN(number)) {
+          console.error("Invalid amount:", amount);
+          return "$NaN";
+        }
+        return `$${number.toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
+      }
+
+      function formatAndDisplayAmount() {
+        // Displays raw input with $ sign
+        if (currentInput === "" || currentInput === "0") {
+          displayedAmountEl.textContent = "$0";
+        } else if (currentInput === ".") {
+          displayedAmountEl.textContent = "$0.";
+        } else {
+          // Ensure no multiple leading zeros, except for "0."
+          let displayValue = currentInput;
+          if (
+            displayValue.startsWith("0") &&
+            !displayValue.startsWith("0.") &&
+            displayValue.length > 1
+          ) {
+            displayValue = displayValue.substring(1);
+            // Update currentInput as well if we trim the zero
+            currentInput = displayValue;
+          }
+          displayedAmountEl.textContent = `$${displayValue}`;
+        }
+        updatePayButtonState();
+      }
+
+      function updatePayButtonState() {
+        // Parse ignoring potential trailing decimal for enable/disable logic
+        const numericValue = parseFloat(currentInput);
+        payBtn.disabled = isNaN(numericValue) || numericValue <= 0;
+      }
+
+      function handleKeyPress(value) {
+        if (value === "<") {
+          currentInput = currentInput.slice(0, -1);
+          if (currentInput === "") currentInput = "0"; // Default back to 0
+        } else if (value === ".") {
+          if (!currentInput.includes(".")) {
+            currentInput = (currentInput === "" ? "0" : currentInput) + ".";
+          }
+        } else {
+          // Digit
+          if (currentInput === "0") {
+            currentInput = value; // Replace initial '0'
+          } else {
+            const parts = currentInput.split(".");
+            if (parts.length === 1 && parts[0].length >= maxInputLength) return;
+            if (parts.length === 2 && parts[1].length >= 2) return;
+            currentInput += value;
+          }
+        }
+        formatAndDisplayAmount();
+      }
+
+      // ----- INSIDE payment.html SCRIPT -----
+
+      // ... (other functions remain the same) ...
+
+      function handlePay() {
+        const numericValue = parseFloat(currentInput);
+        if (!payBtn.disabled && !isNaN(numericValue) && numericValue > 0) {
+          // **NEW:** Save amount to localStorage before navigating
+          localStorage.setItem("paymentAmount", numericValue.toString());
+          console.log(`Amount ${numericValue} saved for next page.`);
+
+          // **NEW:** Navigate to the contact selection page
+          window.location.href = "contact_pay.html";
+
+          // Remove the old alert:
+          // alert(`Proceeding to pay ${formatCurrency(numericValue)}.\n(Next Step: Select Contact - Not Implemented)`);
+        } else {
+          console.log("Pay button clicked but amount is invalid or zero.");
+        }
+      }
+
+      // ... (rest of payment.html script) ...
+
+      function handleRequest() {
+        const numericValue = parseFloat(currentInput);
+        const requestAmount =
+          !isNaN(numericValue) && numericValue > 0
+            ? formatCurrency(numericValue)
+            : "an amount";
+        alert(
+          `Proceeding to request ${requestAmount}.\n(Next Step: Select Contact - Not Implemented)`
+        );
+      }
+
+      // Stop camera stream tracks
+      function stopCameraStream() {
+        if (currentStream) {
+          currentStream.getTracks().forEach((track) => track.stop());
+          console.log("Camera stream stopped.");
+          currentStream = null;
+          qrVideoEl.srcObject = null;
+        }
+      }
+
+      // Start QR Code Scanning with Camera
+      async function startQrScan() {
+        qrScannerOverlay.classList.add("show");
+        stopCameraStream(); // Stop previous stream if any
+
+        try {
+          currentStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" },
+          });
+          qrVideoEl.srcObject = currentStream;
+          console.log("Camera stream started.");
+
+          // Close after timeout
+          setTimeout(() => {
+            if (qrScannerOverlay.classList.contains("show")) {
+              // Only if still open
+              stopCameraStream();
+              qrScannerOverlay.classList.remove("show");
+              console.log("QR Scan Finished (Timeout).");
+              alert(
+                "QR Code Scanned!\n(Next Step: Show Contact/Payment Details - Not Implemented)"
+              );
+            }
+          }, 7000); // 7 seconds
+        } catch (err) {
+          console.error("Error accessing camera:", err);
+          qrScannerOverlay.classList.remove("show");
+          alert(
+            "Could not access camera. Please check permissions and ensure it's not in use."
+          );
+          stopCameraStream();
+        }
+      }
+
+      // --- Profile Picture Logic (Reused & Adapted) ---
+      function setPlaceholderProfilePic() {
+        profilePicDisplay.src = placeholderProfilePicSrc;
+        profilePicDisplay.style.backgroundColor = "";
+        profilePicDisplay.onerror = null;
+      }
+
+      function loadProfilePic() {
+        const savedProfilePic = localStorage.getItem(localStorageProfilePicKey);
+        if (savedProfilePic && savedProfilePic.startsWith("data:image/")) {
+          // Basic check for Data URL
+          profilePicDisplay.src = savedProfilePic;
+          profilePicDisplay.style.backgroundColor = "";
+          profilePicDisplay.onerror = () => {
+            console.warn("Saved profile image failed to load. Resetting.");
+            localStorage.removeItem(localStorageProfilePicKey);
+            setPlaceholderProfilePic();
+          };
+        } else {
+          if (savedProfilePic) {
+            // Clear invalid data
+            localStorage.removeItem(localStorageProfilePicKey);
+            console.warn("Removed invalid profile pic data from storage.");
+          }
+          setPlaceholderProfilePic();
+        }
+      }
+
+      function handleProfilePicClick(event) {
+        event.stopPropagation();
+        profileOptions.classList.toggle("show");
+      }
+
+      function handleProfilePicChange(event) {
+        const file = event.target.files[0];
+        if (!file || !file.type.startsWith("image/")) {
+          alert("Please select image.");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          profilePicDisplay.src = e.target.result;
+          profilePicDisplay.style.backgroundColor = "";
+          profilePicDisplay.onerror = () => {
+            console.warn("Uploaded image failed to load. Resetting.");
+            localStorage.removeItem(localStorageProfilePicKey);
+            setPlaceholderProfilePic();
+          };
+          localStorage.setItem(localStorageProfilePicKey, e.target.result);
+          console.log("Profile picture updated and saved.");
+        };
+        reader.readAsDataURL(file);
+        profileOptions.classList.remove("show");
+      }
+
+      // --- Event Listeners ---
+      keypadEl.addEventListener("click", (event) => {
+        const target = event.target.closest("button");
+        if (target && target.dataset.value) {
+          handleKeyPress(target.dataset.value);
+        }
+      });
+
+      payBtn.addEventListener("click", handlePay);
+      requestBtn.addEventListener("click", handleRequest);
+      qrScannerBtn.addEventListener("click", startQrScan);
+      currencyBtn.addEventListener("click", () =>
+        alert("Currency selection not implemented.")
+      );
+
+      // Profile Pic Listeners
+      profilePicDisplay.addEventListener("click", handleProfilePicClick);
+      profilePicInput.addEventListener("change", handleProfilePicChange);
+      changePicBtn.addEventListener("click", () => {
+        profilePicInput.click();
+        profileOptions.classList.remove("show");
+      });
+      removePicBtn.addEventListener("click", () => {
+        setPlaceholderProfilePic();
+        localStorage.removeItem(localStorageProfilePicKey); // Remove from storage
+        console.log("Profile picture removed.");
+        profileOptions.classList.remove("show");
+      });
+
+      // Footer Navigation Click Handler
+      navItems.forEach((item) => {
+        item.addEventListener("click", (e) => {
+          const label = item.getAttribute("aria-label");
+          navItems.forEach((i) => i.classList.remove("active"));
+          item.classList.add("active");
+        });
+      });
+
+      // Close dropdown / Stop scanner on outside click
+      document.addEventListener("click", (event) => {
+        // Close profile dropdown
+        if (
+          profileOptions.classList.contains("show") &&
+          !profileOptions.contains(event.target) &&
+          !profilePicDisplay.contains(event.target)
+        ) {
+          profileOptions.classList.remove("show");
+        }
+        // Close QR Scanner if clicking outside the scanner area (and not on the trigger button)
+        if (
+          qrScannerOverlay.classList.contains("show") &&
+          !qrScannerOverlay.contains(event.target) &&
+          !qrScannerBtn.contains(event.target)
+        ) {
+          stopCameraStream();
+          qrScannerOverlay.classList.remove("show");
+          console.log("QR Scan cancelled by outside click.");
+        }
+      });
+
+      // Stop camera stream if the page visibility changes
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden && currentStream) {
+          console.log("Page hidden, stopping camera stream.");
+          stopCameraStream();
+          qrScannerOverlay.classList.remove("show"); // Also hide overlay
+        }
+      });
+
+      // --- Initial Load ---
+      document.addEventListener("DOMContentLoaded", () => {
+        loadProfilePic();
+        formatAndDisplayAmount(); // Initialize display to $0
+      });
+    </script>
+    <script src="nav.js"></script>
+  </body>
+</html>

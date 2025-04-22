@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loading...</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <style>
+      /* Basic reset and high-end feel setup */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        overflow: hidden; /* Prevent scrollbars */
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative; /* Needed for absolute positioning of children */
+        background-color: #ffffff; /* Default background for the page underneath */
+      }
+
+      /* The "Next Page" content placeholder - sits underneath */
+      #next-page-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #f0f0f0; /* Light gray background for contrast */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: #555;
+        font-size: 1.2em;
+        opacity: 1; /* It's visible, just covered initially */
+        z-index: 1; /* Ensures it's below the loading screen */
+      }
+
+      #next-page-content h1 {
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      /* The Loading Screen Overlay */
+      #loading-screen {
+        position: fixed; /* Use fixed to ensure it covers viewport */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #00d54b; /* Cash App Green */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000; /* High z-index to be on top */
+        opacity: 1; /* Start fully visible */
+        /* Apply the fade-out animation to the entire screen */
+        animation: screenFadeOut 5s ease-in-out forwards;
+      }
+
+      /* Logo Container - inherits opacity fade from parent, adds scale */
+      #logo-container {
+        transform: scale(1); /* Start normal size */
+        /* Apply the shrink animation (fade is handled by parent now) */
+        animation: logoShrink 5s ease-in-out forwards;
+      }
+
+      #logo-container svg {
+        display: block;
+        width: 120px;
+        height: 120px;
+      }
+
+      /* Keyframes for the LOGO SHRINKING animation */
+      @keyframes logoShrink {
+        0% {
+          transform: scale(1);
+        }
+        70% {
+          /* Hold size for a bit */
+          transform: scale(1);
+        }
+        100% {
+          /* Smoothly shrink */
+          transform: scale(0.85);
+        }
+      }
+
+      /* Keyframes for the SCREEN FADE-OUT animation */
+      @keyframes screenFadeOut {
+        0% {
+          opacity: 1;
+        }
+        70% {
+          /* Hold opacity for a bit */
+          opacity: 1;
+        }
+        100% {
+          /* Smoothly fade out the entire screen */
+          opacity: 0;
+          /* Optional: make it non-interactive after fade */
+          /* pointer-events: none; */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Layer 1: The Loading Screen (Top Layer) -->
+    <div id="loading-screen">
+      <div id="logo-container">
+        <!-- SVG Logo (Same as before) -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 31 31">
+          <path
+            fill="#FFF"
+            d="M19.9538 0c3.0917 0 4.6127 0 6.2826.5247a6.5026 6.5026 0 013.9 3.9c.5247 1.6558.5247 3.191.5247 6.2684v9.2607c0 3.074 0 4.6091-.5247 6.2684a6.5029 6.5029 0 01-3.9 3.9c-1.6558.5247-3.1909.5247-6.2684.5247h-9.2891c-3.0739 0-4.609 0-6.2684-.5247a6.5026 6.5026 0 01-3.9-3.9C0 24.5664 0 23.0454 0 19.9538V10.679C0 7.605 0 6.07.5247 4.4105a6.5024 6.5024 0 013.9-3.9C6.0663 0 7.605 0 10.679 0z"
+            clip-rule="evenodd"
+            fill-rule="evenodd"
+          />
+          <path
+            fill="#00D54B"
+            d="M16.0964 10.0444a6.3816 6.3816 0 014.1127 1.5103.6275.6275 0 00.8615-.0177l1.1842-1.1877a.606.606 0 00-.0319-.89 9.3881 9.3881 0 00-3.1661-1.7726l.3546-1.748a.6172.6172 0 00-.6063-.741h-2.2797a.6205.6205 0 00-.6063.4858L15.6 7.247c-3.0349.149-5.6089 1.6522-5.6089 4.7332 0 2.6626 2.1273 3.8078 4.3751 4.6091 2.1272.7906 3.2547 1.085 3.2547 2.1982s-1.1239 1.8152-2.7796 1.8152a6.1192 6.1192 0 01-4.3219-1.691.6169.6169 0 00-.8651 0L8.385 20.1524a.6133.6133 0 000 .8828 8.4061 8.4061 0 003.6695 2.0103L11.7 24.6658a.631.631 0 00.6027.7588h2.2868a.6206.6206 0 00.6099-.4893l.3297-1.5352c3.6376-.2234 5.8606-2.1804 5.8606-5.0452 0-2.6378-2.2159-3.751-4.9069-4.6587-1.5387-.5779-2.8683-.9573-2.8683-2.0989s1.2409-1.5529 2.4819-1.5529z"
+          />
+        </svg>
+      </div>
+    </div>
+
+    <script>
+      // Wait for the 5-second animation to visually complete
+      setTimeout(() => {
+        // Action to perform after loading:
+
+        const loadingScreen = document.getElementById("loading-screen");
+        if (loadingScreen) {
+          loadingScreen.style.display = "none"; // Hide it completely
+          // Or: loadingScreen.remove(); // Remove it from the DOM
+        }
+
+        console.log(
+          "Loading animation finished. Underlying page is now fully visible and interactive."
+        );
+
+        // !! IMPORTANT !!
+        // If you actually need to NAVIGATE to a different HTML file,
+
+        window.location.href = "home.html";
+        // In that case, the #next-page-content div is just a visual trick
+      }, 5000); // 5000 milliseconds = 5 seconds
+    </script>
+  </body>
+</html>
