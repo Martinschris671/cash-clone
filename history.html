@@ -6,477 +6,753 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Activity</title>
+    <title>Activity - Cash App</title>
     <link rel="stylesheet" href="nav.css" />
     <style>
-      /* CSS - Largely the same, minor adjustments possible if needed */
       :root {
-        --primary-green: #00d54b;
-        --pending-orange: #ffa500;
-        --declined-red: #ff4136;
-        --refunded-blue: #0074d9;
-        --light-gray-border: #efefef;
-        --medium-gray-text: #8c8c8c;
-        --dark-gray-text: #4a4a4a;
-        --background-color: #ffffff;
-        --overlay-background: rgba(0, 0, 0, 0.3);
-        --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
-          sans-serif;
+        /* --- Color Palette (Matched closely to reference) --- */
+        --app-bg-color: #ffffff;
+        --primary-text-color: #000000;
+        --secondary-text-color: #6a6a6a;
+        --primary-accent-color: #00d632; /* Cash App Green */
+        --secondary-accent-color: #007aff; /* iOS Blue */
+        --border-color: #eaeaeb;
+        --overlay-content-bg: #ffffff;
+        --placeholder-avatar-bg: #f0f0f0;
+        --avatar-text-color: #333333;
+        --danger-color: #ff3b30; /* iOS Red */
+        --edit-field-bg: #f7f7f7;
+        --padding-screen: 18px;
+        --footer-height: 65px;
+
+        /* --- Typography --- */
+        --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+
+        /* --- Dimensions & Spacing --- */
+        --header-height: 56px;
+
+        --avatar-size: 40px;
+        --large-avatar-size: 72px;
+        --base-padding: 16px;
+        --list-item-height: 72px;
+        --top-contacts-height: 100px;
       }
 
       * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
       }
+
       html,
       body {
         height: 100%;
-        font-family: var(--font-family);
-        background-color: #f0f0f0;
         overflow: hidden;
+        font-family: var(--font-family);
+        background-color: #cccccc;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
       .mobile-container {
-        width: 100%;
         max-width: 450px;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
         margin: 0 auto;
-        background-color: var(--background-color);
+        background-color: var(--app-bg-color);
         display: flex;
         flex-direction: column;
         position: relative;
+      }
+
+      /* --- App Screen --- */
+      .app-screen {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
         overflow: hidden;
       }
 
-      /* Header */
+      /* --- Header --- */
       .app-header {
+        height: var(--header-height);
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 12px 16px;
-        border-bottom: 1px solid var(--light-gray-border);
-        background-color: var(--background-color);
-        position: sticky;
-        top: 0;
+        padding: 0 var(--base-padding);
+        background-color: var(--app-bg-color);
+        flex-shrink: 0;
+        position: relative;
         z-index: 10;
-        height: 60px;
-      }
-      .back-button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .back-button svg {
-        stroke: var(--dark-gray-text);
-      }
-      .header-title {
-        font-size: 17px;
-        font-weight: 600;
-        color: black;
-        text-align: center;
-        flex-grow: 1;
-      }
-      .header-spacer {
-        width: 30px;
-        height: 24px;
       }
 
-      /* Main Content */
-      .main-content {
-        flex-grow: 1;
-        overflow-y: auto;
-        padding-bottom: 70px;
-      }
-      .activity-list {
-        list-style: none;
-      }
-      .activity-item {
-        display: flex;
-        align-items: center;
-        padding: 16px;
-        border-bottom: 1px solid var(--light-gray-border);
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-      }
-      .activity-item:hover {
-        background-color: #f9f9f9;
-      }
-      .activity-item:last-child {
-        border-bottom: none;
-      }
-      .icon-container {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: var(--primary-green);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        font-weight: bold;
-        margin-right: 16px;
-        flex-shrink: 0;
-      }
-      .icon-container.status-Pending {
-        background-color: var(--pending-orange);
-      }
-      .icon-container.status-Declined {
-        background-color: var(--declined-red);
-      }
-      .icon-container.status-Refunded {
-        background-color: var(--refunded-blue);
-      }
-      .info-container {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        overflow: hidden;
-        margin-right: 12px;
-      }
-      .date {
-        font-size: 15px;
+      .header-title {
+        font-size: 23px;
         font-weight: 600;
-        color: black;
-        margin-bottom: 2px;
+        color: var(--primary-text-color);
+        position: absolute;
+        left: 16%;
+        transform: translateX(-50%);
       }
-      .description {
-        font-size: 14px;
-        color: var(--medium-gray-text);
+
+      .header-icons {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        margin-left: auto;
+      }
+
+      .header-icons svg {
+        width: 24px;
+        height: 24px;
+        fill: var(--primary-text-color);
+        cursor: pointer;
+        opacity: 0.9;
+      }
+      .header-left-placeholder {
+        width: 48px;
+      }
+
+      /* --- Search Bar --- */
+      .search-bar-container {
+        padding: 8px var(--base-padding) 12px;
+        background-color: var(--app-bg-color);
+        border-bottom: 0.5px solid var(--border-color);
+        flex-shrink: 0;
+        display: none;
+      }
+      .search-bar-container.visible {
+        display: block;
+      }
+      .search-input-wrapper {
+        position: relative;
+      }
+      .search-input-wrapper::before {
+        content: "";
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238e8e93'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-size: contain;
+        opacity: 0.7;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 9px 12px 9px 34px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: var(--edit-field-bg);
+        color: var(--primary-text-color);
+        -webkit-appearance: none;
+      }
+      .search-input::placeholder {
+        color: #8e8e93;
+      }
+      .search-input:focus {
+        outline: none;
+        background-color: var(--edit-field-bg);
+      }
+
+      /* --- Top Contacts Row --- */
+      .top-contacts-container {
+        height: var(--top-contacts-height);
+        padding: 10px 0 10px var(--base-padding);
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        background-color: var(--app-bg-color);
+        border-bottom: 0.5px solid var(--border-color);
+        flex-shrink: 0;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .top-contacts-container::-webkit-scrollbar {
+        display: none;
+      }
+
+      .top-contact-item {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        width: 65px;
+        margin-right: 15px;
+        vertical-align: top;
+        cursor: pointer;
+        text-align: center;
+      }
+      .top-contact-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: var(--placeholder-avatar-bg);
+        margin-bottom: 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 400;
+        font-size: 20px;
+        color: var(--avatar-text-color);
+        overflow: hidden;
+        border: 0.5px solid rgba(0, 0, 0, 0.05);
+      }
+      .top-contact-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .top-contact-name {
+        font-size: 12px;
+        color: var(--primary-text-color);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        width: 100%;
       }
-      .amount-container {
-        text-align: right;
+      .top-contact-item.add-contact .top-contact-avatar {
+        background-color: var(--primary-accent-color);
+        color: #fff;
       }
-      .amount {
-        font-size: 15px;
-        font-weight: 600;
-        color: black;
-      }
-      .amount.positive {
-        color: var(--primary-green);
-      }
-      .amount.neutral {
-        color: black;
-      }
-      .amount.status-Declined,
-      .amount.status-Pending {
-        color: var(--medium-gray-text);
-        text-decoration: line-through;
-      }
-      .amount.status-Refunded {
-        color: var(--refunded-blue);
+      .top-contact-item.add-contact .top-contact-name {
+        color: var(--primary-accent-color);
       }
 
-      /* Overlays */
+      /* --- Transaction List --- */
+      .transaction-list-container {
+        flex-grow: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        background-color: var(--app-bg-color);
+      }
+
+      .transaction-list {
+        list-style: none;
+      }
+
+      .transaction-item {
+        display: flex;
+        align-items: center;
+        padding: 0 var(--base-padding);
+        height: var(--list-item-height);
+        border-bottom: 0.5px solid var(--border-color);
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+      .transaction-item:hover {
+        background-color: #f7f7f7;
+      }
+      .transaction-item:last-child {
+        border-bottom: none;
+      }
+
+      .avatar {
+        width: var(--avatar-size);
+        height: var(--avatar-size);
+        border-radius: 50%;
+        background-color: var(--placeholder-avatar-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 500;
+        font-size: 18px;
+        color: var(--avatar-text-color);
+        margin-right: 12px;
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 0.5px solid rgba(0, 0, 0, 0.05);
+      }
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .transaction-details {
+        flex-grow: 1;
+        overflow: hidden;
+        padding-top: 1px;
+      }
+
+      .transaction-name {
+        font-weight: 500;
+        color: var(--primary-text-color);
+        font-size: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 2px;
+      }
+
+      .transaction-note {
+        font-size: 14px;
+        color: var(--secondary-text-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .transaction-note .status-icon {
+        font-size: 12px;
+        line-height: 1;
+      }
+      .transaction-note .status-icon.pending {
+        color: orange;
+        font-weight: bold;
+      }
+      /* Removed completed icon from list view per visual */
+      .transaction-note .status-icon.failed {
+        color: var(--danger-color);
+        font-weight: bold;
+      }
+
+      .transaction-amount {
+        font-weight: 400;
+        color: var(--primary-text-color);
+        font-size: 16px;
+        margin-left: var(--base-padding);
+        white-space: nowrap;
+      }
+      .transaction-amount.positive {
+        color: var(--primary-accent-color);
+      }
+      .transaction-amount.negative {
+        color: var(--primary-text-color);
+      }
+
+      /* --- Overlay --- */
       .overlay {
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: var(--background-color);
+        background-color: var(--overlay-content-bg);
         z-index: 100;
         display: flex;
         flex-direction: column;
         transform: translateY(100%);
-        transition: transform 0.3s ease-out;
-        opacity: 0;
-        visibility: hidden;
-        overflow-y: auto;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: hidden;
       }
-      .overlay.active {
+
+      .overlay.visible {
         transform: translateY(0);
-        opacity: 1;
-        visibility: visible;
       }
+
       .overlay-header {
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        padding: 12px 16px;
-        border-bottom: 1px solid var(--light-gray-border);
-        min-height: 60px;
-        position: sticky;
-        top: 0;
-        background-color: var(--background-color);
-        z-index: 5;
+        align-items: center;
+        padding: 10px var(--base-padding);
+        height: var(--header-height);
+        flex-shrink: 0;
+        position: relative;
+        border-bottom: 0.5px solid var(--border-color);
       }
-      .overlay-close-button,
-      .options-menu-button,
-      .overlay-action-button {
+
+      .overlay-close-btn,
+      .overlay-menu-btn {
         background: none;
         border: none;
         cursor: pointer;
-        padding: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        padding: 8px;
       }
-      .overlay-action-button {
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--primary-green);
-        padding: 5px 10px;
+
+      .overlay-close-btn svg {
+        width: 18px;
+        height: 18px;
+        fill: var(--secondary-accent-color);
       }
-      .overlay-title {
-        font-size: 17px;
-        font-weight: 600;
-        color: black;
+      .overlay-menu-btn svg {
+        width: 22px;
+        height: 22px;
+        fill: var(--secondary-accent-color);
+      }
+
+      .overlay-content-container {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 20px var(--base-padding) var(--base-padding);
         text-align: center;
-        flex-grow: 1;
-      }
-      .overlay-content {
-        padding: 20px 16px;
-        flex-grow: 1;
+        -webkit-overflow-scrolling: touch;
       }
 
-      /* Detail Overlay */
-      .detail-item {
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid var(--light-gray-border);
+      .overlay-avatar {
+        width: var(--large-avatar-size);
+        height: var(--large-avatar-size);
+        border-radius: 50%;
+        background-color: var(--placeholder-avatar-bg);
+        margin: 10px auto 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 30px;
+        font-weight: 400;
+        color: var(--avatar-text-color);
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.08);
       }
-      .detail-item:last-child {
-        border-bottom: none;
-        margin-bottom: 0;
+      .overlay-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
-      .detail-label {
-        display: block;
-        font-size: 13px;
-        color: var(--medium-gray-text);
+
+      .overlay-name,
+      .overlay-cashtag {
+        font-size: 20px;
+        font-weight: 500;
+        color: var(--primary-text-color);
         margin-bottom: 4px;
+        word-wrap: break-word; /* Prevent long names breaking layout */
       }
-      .detail-value {
-        display: block;
-        font-size: 16px;
-        color: black;
-        word-wrap: break-word;
-      }
-      #detail-amount {
-        font-weight: 600;
-      }
-      #detail-status {
-        font-weight: 600;
-      }
-      #detail-status.status-Success {
-        color: var(--primary-green);
-      }
-      #detail-status.status-Pending {
-        color: var(--pending-orange);
-      }
-      #detail-status.status-Declined {
-        color: var(--declined-red);
-      }
-      #detail-status.status-Refunded {
-        color: var(--refunded-blue);
-      }
-      #detail-note {
+      .overlay-cashtag {
         font-size: 15px;
-        line-height: 1.5;
-        color: var(--dark-gray-text);
-        margin-top: 5px;
-        white-space: pre-wrap;
-      }
-      .detail-message-item {
-        margin-top: 25px;
+        font-weight: 400;
+        color: var(--secondary-text-color);
+        margin-bottom: 30px;
       }
 
-      /* Options Menu */
-      .options-menu-button {
-        position: relative;
+      .overlay-amount {
+        font-size: 48px;
+        font-weight: 300;
+        color: var(--primary-text-color);
+        margin-bottom: 30px;
+        line-height: 1;
       }
-      .options-menu {
-        display: none;
+
+      .overlay-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 12px;
+        border: 1px solid transparent;
+      }
+      .overlay-status.completed {
+        background-color: #e5f9e7;
+        color: #34c759;
+        border-color: #d5f0d8;
+      }
+      .overlay-status.pending {
+        background-color: #fff8e1;
+        color: #ff9500;
+        border-color: #ffeec2;
+      }
+      .overlay-status.failed {
+        background-color: #ffeeed;
+        color: var(--danger-color);
+        border-color: #ffdedb;
+      }
+      .overlay-status svg {
+        width: 12px;
+        height: 12px;
+        fill: currentColor;
+      }
+
+      .overlay-timestamp,
+      .overlay-note {
+        font-size: 13px;
+        color: var(--secondary-text-color);
+        margin-bottom: 6px;
+        line-height: 1.4;
+      }
+      .overlay-note {
+        margin-top: 20px;
+        font-style: normal;
+        white-space: pre-wrap;
+        color: var(--primary-text-color);
+        font-size: 15px;
+        word-wrap: break-word; /* Allow long notes to wrap */
+      }
+
+      /* --- Dropdown Menu --- */
+      .dropdown-menu {
         position: absolute;
-        top: calc(100% + 5px);
-        right: 0;
-        background-color: white;
+        top: calc(var(--header-height) - 10px);
+        right: var(--base-padding);
+        background-color: var(--overlay-content-bg);
         border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         z-index: 110;
         overflow: hidden;
-        min-width: 150px;
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        pointer-events: none;
+        min-width: 180px;
       }
-      .options-menu.show {
-        display: block;
+      .dropdown-menu.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
       }
-      .options-menu button {
-        display: block;
-        width: 100%;
-        padding: 12px 16px;
-        background: none;
-        border: none;
+      .dropdown-menu ul {
+        list-style: none;
+      }
+      .dropdown-menu li {
+        padding: 12px var(--base-padding);
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        color: var(--secondary-accent-color);
+        border-top: 0.5px solid var(--border-color);
+      }
+      .dropdown-menu li:first-child {
+        border-top: none;
+      }
+      .dropdown-menu li:hover {
+        background-color: #f0f0f0;
+      }
+      .dropdown-menu li.delete-option {
+        color: var(--danger-color);
+      }
+
+      /* --- Edit Mode --- */
+      .overlay-content.edit-mode {
         text-align: left;
-        font-size: 15px;
-        color: var(--dark-gray-text);
+        padding-top: 10px;
+        padding-bottom: 60px;
+      }
+      .edit-mode .form-group {
+        margin-bottom: 20px; /* Consistent spacing */
+      }
+      /* Reduce margin specifically below avatar group */
+      .edit-mode .form-group.avatar-group {
+        margin-bottom: 15px;
+      }
+
+      .edit-mode label {
+        display: block;
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--secondary-text-color);
+        margin-bottom: 8px;
+        padding-left: 5px;
+      }
+      .edit-mode input[type="text"],
+        .edit-mode input[type="number"],
+        .edit-mode input[type="datetime-local"], /* Style datetime input */
+        .edit-mode textarea,
+        .edit-mode select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 16px;
+        font-family: var(--font-family);
+        background-color: #fff;
+        -webkit-appearance: none; /* Needed for consistency */
+        appearance: none; /* Standard property */
+        color: var(--primary-text-color);
+      }
+      /* Add specific styling for datetime-local if needed */
+      .edit-mode input[type="datetime-local"] {
+        min-height: 46px; /* Ensure height matches others */
+      }
+
+      .edit-mode input:focus,
+      .edit-mode input[type="datetime-local"]:focus,
+      .edit-mode textarea:focus,
+      .edit-mode select:focus {
+        outline: none;
+        border-color: var(--secondary-accent-color);
+        box-shadow: 0 0 0 1px var(--secondary-accent-color);
+      }
+      .edit-mode textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+      .edit-mode select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%233C3C4399'%3E%3Cpath fill-rule='evenodd' d='M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px 16px;
+        padding-right: 40px;
+      }
+
+      .edit-mode .avatar-edit-options {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+      .edit-mode .avatar-preview {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: var(--placeholder-avatar-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 400;
+        font-size: 20px;
+        color: var(--avatar-text-color);
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.08);
         cursor: pointer;
       }
-      .options-menu button:hover {
-        background-color: #f5f5f5;
-      }
-      .options-menu button:not(:last-child) {
-        border-bottom: 1px solid var(--light-gray-border);
-      }
-
-      /* Edit Overlay */
-      .edit-item {
-        margin-bottom: 20px;
-      }
-      .edit-label {
-        display: block;
-        font-size: 14px;
-        color: var(--medium-gray-text);
-        margin-bottom: 6px;
-        font-weight: 500;
-      }
-      .edit-input,
-      .edit-select,
-      .edit-textarea {
+      .edit-mode .avatar-preview img {
         width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid var(--light-gray-border);
+        height: 100%;
+        object-fit: cover;
+      }
+      .edit-mode .change-avatar-label {
+        padding: 8px 14px;
+        font-size: 14px;
+        cursor: pointer;
+        border: 1px solid var(--border-color);
         border-radius: 8px;
-        font-family: inherit;
-        background-color: #f9f9f9;
+        background-color: #fff;
+        color: var(--secondary-accent-color);
+        font-weight: 500;
+        transition: background-color 0.2s ease;
       }
-      .edit-input:focus,
-      .edit-select:focus,
-      .edit-textarea:focus {
-        outline: none;
-        border-color: var(--primary-green);
-        box-shadow: 0 0 0 2px rgba(0, 213, 75, 0.2);
-        background-color: white;
+      .edit-mode .change-avatar-label:hover {
+        background-color: #f0f0f0;
       }
-      .edit-textarea {
-        resize: vertical;
-        min-height: 80px;
-      }
-      input[type="number"]::-webkit-inner-spin-button,
-      input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-      input[type="number"] {
-        -moz-appearance: textfield;
-      }
-
-      /* Utility */
-      .hidden {
+      #edit-avatar-upload {
         display: none;
       }
-      @media (max-width: 450px) {
-        .mobile-container {
-          border-radius: 0;
-          border: none;
-        }
+
+      .edit-mode-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+      }
+      .edit-mode-actions button {
+        flex-grow: 1;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+      }
+      .edit-mode-actions button:active {
+        transform: scale(0.98);
+      }
+      .save-changes-btn {
+        background-color: var(--primary-accent-color);
+        color: #fff;
+      }
+      .cancel-edit-btn {
+        background-color: #e5e5ea;
+        color: var(--secondary-accent-color);
+      }
+
+      /* --- Confirmation Dialog (iOS Alert Style) --- */
+      .confirmation-dialog-backdrop {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 120;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+      .confirmation-dialog-backdrop.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .confirmation-dialog {
+        background-color: rgba(249, 249, 249, 0.98);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        padding-top: 20px;
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        width: 270px;
+        text-align: center;
+        overflow: hidden;
+        transform: scale(1.1);
+        transition: transform 0.25s ease;
+      }
+      .confirmation-dialog-backdrop.visible .confirmation-dialog {
+        transform: scale(1);
+      }
+
+      .confirmation-dialog h3 {
+        font-size: 17px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: var(--primary-text-color);
+      }
+      .confirmation-dialog p {
+        font-size: 13px;
+        color: var(--primary-text-color);
+        padding: 0 16px;
+        margin-bottom: 20px;
+        line-height: 1.4;
+      }
+      .confirmation-dialog-actions {
+        display: flex;
+        border-top: 0.5px solid rgba(60, 60, 67, 0.36);
+      }
+      .confirmation-dialog-actions button {
+        flex-grow: 1;
+        padding: 12px 5px;
+        font-size: 17px;
+        font-weight: 400;
+        cursor: pointer;
+        border: none;
+        background: none;
+        color: var(--secondary-accent-color);
+        border-left: 0.5px solid rgba(60, 60, 67, 0.36);
+        transition: background-color 0.1s ease;
+      }
+      .confirmation-dialog-actions button:first-child {
+        border-left: none;
+      }
+      .confirmation-dialog-actions button:active {
+        background-color: rgba(200, 200, 200, 0.3);
+      }
+      .confirm-delete-btn {
+        color: var(--danger-color);
+        font-weight: 600;
+      }
+
+      /* --- Utility Classes --- */
+      .hidden {
+        display: none !important;
       }
     </style>
   </head>
   <body>
     <div class="mobile-container">
-      <header class="app-header">
-        <button class="back-button" aria-label="Back">
-          <svg
-            width="12"
-            height="20"
-            viewBox="0 0 12 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10.5371 18.4741L2.06152 9.99855L10.5371 1.523"
-              stroke="black"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-        <h1 class="header-title">Activity</h1>
-        <div class="header-spacer"></div>
-      </header>
-
-      <main class="main-content">
-        <ul class="activity-list" id="activity-list"></ul>
-      </main>
-
-      <nav class="bottom-nav">
-        <!-- Nav buttons omitted for brevity -->
-
-        <a href="home.html">
-          <button class="nav-button" aria-label="Home">
+      <div class="app-screen activity-screen">
+        <!-- Header -->
+        <header class="app-header">
+          <div class="header-left-placeholder"></div>
+          <h1 class="header-title">Activity</h1>
+          <div class="header-icons">
             <svg
-              id="icon-upload"
-              width="26"
-              height="22"
-              viewBox="0 0 26 23"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                transform="translate(-51.5 -16.5)"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M65.3158 17.5505C64.5096 17.0513 63.4903 17.0513 62.6841 17.5505L52.7104 23.7246C52.006 24.1607 51.7885 25.0852 52.2246 25.7895C52.6606 26.4939 53.5851 26.7115 54.2895 26.2754L64 20.2642L73.7104 26.2754C74.4148 26.7115 75.3393 26.4939 75.7754 25.7895C76.2114 25.0852 75.9939 24.1607 75.2895 23.7246L65.3158 17.5505ZM58 27C57.1715 27 56.5 27.6716 56.5 28.5V36.5C56.5 37.3284 57.1715 38 58 38C58.8284 38 59.5 37.3284 59.5 36.5V28.5C59.5 27.6716 58.8284 27 58 27ZM64 27C63.1715 27 62.5 27.6716 62.5 28.5V36.5C62.5 37.3284 63.1715 38 64 38C64.8284 38 65.5 37.3284 65.5 36.5V28.5C65.5 27.6716 64.8284 27 64 27ZM68.5 28.5C68.5 27.6716 69.1715 27 70 27C70.8284 27 71.5 27.6716 71.5 28.5V36.5C71.5 37.3284 70.8284 38 70 38C69.1715 38 68.5 37.3284 68.5 36.5V28.5Z"
-                fill="#8c8c8c"
-                fill-opacity="0.7"
-              />
-            </svg>
-          </button>
-        </a>
-
-        <button class="nav-button" aria-label="Cards">
-          <svg
-            id="icon-wallet"
-            width="24"
-            height="20"
-            viewBox="0 0 24 21"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              transform="translate(-126.25 -18)"
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M131.25 21H145.25C146.355 21 147.25 21.8954 147.25 23V33C147.25 34.1046 146.355 35 145.25 35H131.25C130.145 35 129.25 34.1046 129.25 33V23C129.25 21.8954 130.145 21 131.25 21ZM126.25 23C126.25 20.2386 128.489 18 131.25 18H145.25C148.011 18 150.25 20.2386 150.25 23V33C150.25 35.7614 148.011 38 145.25 38H131.25C128.489 38 126.25 35.7614 126.25 33V23ZM134.25 24C133.145 24 132.25 24.8954 132.25 26C132.25 27.1046 133.145 28 134.25 28H135.25C136.355 28 137.25 27.1046 137.25 26C137.25 24.8954 136.355 24 135.25 24H134.25Z"
-              fill="#8c8c8c"
-              fill-opacity="0.7"
-            />
-          </svg>
-        </button>
-        <a href="pay.html">
-          <button class="nav-button" aria-label="Pay">
-            <svg
-              id="icon-dollar"
-              width="15"
-              height="22"
-              viewBox="0 0 15 23"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                transform="translate(-205 -17)"
-                d="M217.675 23.8903C217.923 24.1401 218.336 24.1401 218.569 23.8903L219.811 22.5912C220.075 22.3414 220.06 21.8917 219.782 21.6218C218.805 20.7669 217.671 20.1148 216.442 19.7032L216.835 17.8045C216.919 17.3897 216.611 17 216.199 17H213.794C213.643 17.0016 213.498 17.0551 213.382 17.1515C213.267 17.2479 213.187 17.3814 213.158 17.5296L212.81 19.2185C209.61 19.3834 206.897 21.0173 206.897 24.365C206.897 27.263 209.138 28.5071 211.508 29.3616C213.749 30.221 214.937 30.5408 214.937 31.7499C214.937 32.9941 213.754 33.7236 212.005 33.7236C210.415 33.7236 208.745 33.189 207.453 31.8848C207.393 31.8244 207.322 31.7765 207.243 31.7438C207.165 31.7111 207.081 31.6942 206.996 31.6942C206.911 31.6942 206.827 31.7111 206.748 31.7438C206.67 31.7765 206.599 31.8244 206.539 31.8848L205.197 33.2339C205.071 33.3613 205 33.5338 205 33.7136C205 33.8934 205.071 34.0659 205.197 34.1933C206.241 35.2276 207.562 35.9771 209.069 36.3918L208.701 38.1756C208.617 38.5903 208.92 38.975 209.332 38.98L211.743 39C211.895 39.0007 212.042 38.9482 212.16 38.8516C212.278 38.755 212.359 38.6202 212.388 38.4704L212.736 36.7765C216.586 36.5167 218.932 34.3831 218.932 31.2703C218.932 28.4022 216.596 27.193 213.764 26.2087C212.144 25.6041 210.743 25.1894 210.743 23.9453C210.743 22.7361 212.05 22.2564 213.361 22.2564C215.031 22.2564 216.636 22.9509 217.685 23.9003L217.675 23.8903Z"
-                fill="#8c8c8c"
-                fill-opacity="0.7"
-              />
-            </svg>
-          </button>
-        </a>
-        <a href="search.html">
-          <button class="nav-button padding" aria-label="Search">
-            <svg
-              id="icon-search"
+              id="search-icon"
               width="23"
               height="23"
               viewBox="0 0 23 24"
@@ -488,787 +764,942 @@
                 fill-rule="evenodd"
                 clip-rule="evenodd"
                 d="M291.75 26.5C291.75 30.0899 288.84 33 285.25 33C281.66 33 278.75 30.0899 278.75 26.5C278.75 22.9101 281.66 20 285.25 20C288.84 20 291.75 22.9101 291.75 26.5ZM290.823 34.1944C289.258 35.3302 287.332 36 285.25 36C280.003 36 275.75 31.7467 275.75 26.5C275.75 21.2533 280.003 17 285.25 17C290.497 17 294.75 21.2533 294.75 26.5C294.75 28.582 294.08 30.5076 292.944 32.0731L297.882 37.0104C298.468 37.5962 298.468 38.546 297.882 39.1317C297.296 39.7175 296.346 39.7175 295.76 39.1317L290.823 34.1944Z"
-                fill="#8c8c8c"
-                fill-opacity="0.7"
+                fill="#000"
+                fill-opacity="none"
               />
-            </svg></button
-        ></a>
-        <a href="history.html">
-          <button class="nav-button" id="active" aria-label="Activity">
-            <svg
-              id="icon-clock"
-              width="24"
-              height="24"
-              viewBox="0 0 24 25"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            </svg>
+          </div>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="search-bar-container" id="search-bar-container">
+          <div class="search-input-wrapper">
+            <input
+              type="search"
+              class="search-input"
+              id="search-input"
+              placeholder="Search Name, $Cashtag, Note..."
+            />
+          </div>
+        </div>
+
+        <!-- Top Contacts -->
+        <div class="top-contacts-container" id="top-contacts-container">
+          <!-- Static Content - Could be dynamic -->
+          <div class="top-contact-item add-contact">
+            <div class="top-contact-avatar">+</div>
+            <div class="top-contact-name">Get $5</div>
+          </div>
+          <div class="top-contact-item">
+            <div
+              class="top-contact-avatar"
+              style="background-color: #3f51b5; color: white"
             >
+              J
+            </div>
+            <div class="top-contact-name">James</div>
+          </div>
+          <div class="top-contact-item">
+            <div
+              class="top-contact-avatar"
+              style="background-color: #00bcd4; color: white"
+            >
+              K
+            </div>
+            <div class="top-contact-name">Kollin</div>
+          </div>
+          <div class="top-contact-item">
+            <div
+              class="top-contact-avatar"
+              style="background-color: #9e9e9e; color: white"
+            >
+              M
+            </div>
+            <div class="top-contact-name">Matthew</div>
+          </div>
+          <div class="top-contact-item">
+            <div
+              class="top-contact-avatar"
+              style="background-color: #ff9800; color: white"
+            >
+              B
+            </div>
+            <div class="top-contact-name">Bradley</div>
+          </div>
+          <div class="top-contact-item">
+            <div
+              class="top-contact-avatar"
+              style="background-color: #e91e63; color: white"
+            >
+              M
+            </div>
+            <div class="top-contact-name">Mal</div>
+          </div>
+        </div>
+
+        <!-- Transaction List -->
+        <div class="transaction-list-container">
+          <ul class="transaction-list" id="transaction-list">
+            <!-- JS Populates This -->
+          </ul>
+        </div>
+
+        <!-- Footer -->
+        <nav class="bottom-nav">
+          <!-- Nav buttons omitted for brevity -->
+
+          <a href="home.html">
+            <button class="nav-button" aria-label="Home">
+              <svg
+                id="icon-upload"
+                width="26"
+                height="22"
+                viewBox="0 0 26 23"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  transform="translate(-51.5 -16.5)"
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M65.3158 17.5505C64.5096 17.0513 63.4903 17.0513 62.6841 17.5505L52.7104 23.7246C52.006 24.1607 51.7885 25.0852 52.2246 25.7895C52.6606 26.4939 53.5851 26.7115 54.2895 26.2754L64 20.2642L73.7104 26.2754C74.4148 26.7115 75.3393 26.4939 75.7754 25.7895C76.2114 25.0852 75.9939 24.1607 75.2895 23.7246L65.3158 17.5505ZM58 27C57.1715 27 56.5 27.6716 56.5 28.5V36.5C56.5 37.3284 57.1715 38 58 38C58.8284 38 59.5 37.3284 59.5 36.5V28.5C59.5 27.6716 58.8284 27 58 27ZM64 27C63.1715 27 62.5 27.6716 62.5 28.5V36.5C62.5 37.3284 63.1715 38 64 38C64.8284 38 65.5 37.3284 65.5 36.5V28.5C65.5 27.6716 64.8284 27 64 27ZM68.5 28.5C68.5 27.6716 69.1715 27 70 27C70.8284 27 71.5 27.6716 71.5 28.5V36.5C71.5 37.3284 70.8284 38 70 38C69.1715 38 68.5 37.3284 68.5 36.5V28.5Z"
+                  fill="#8c8c8c"
+                  fill-opacity="0.7"
+                />
+              </svg>
+            </button>
+          </a>
+
+          <a href="card.html">
+            <button class="nav-button" aria-label="Cards">
+              <svg
+                id="icon-wallet"
+                width="24"
+                height="20"
+                viewBox="0 0 24 21"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  transform="translate(-126.25 -18)"
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M131.25 21H145.25C146.355 21 147.25 21.8954 147.25 23V33C147.25 34.1046 146.355 35 145.25 35H131.25C130.145 35 129.25 34.1046 129.25 33V23C129.25 21.8954 130.145 21 131.25 21ZM126.25 23C126.25 20.2386 128.489 18 131.25 18H145.25C148.011 18 150.25 20.2386 150.25 23V33C150.25 35.7614 148.011 38 145.25 38H131.25C128.489 38 126.25 35.7614 126.25 33V23ZM134.25 24C133.145 24 132.25 24.8954 132.25 26C132.25 27.1046 133.145 28 134.25 28H135.25C136.355 28 137.25 27.1046 137.25 26C137.25 24.8954 136.355 24 135.25 24H134.25Z"
+                  fill="#8c8c8c"
+                  fill-opacity="0.7"
+                />
+              </svg>
+            </button>
+          </a>
+          <a href="pay.html">
+            <button class="nav-button" aria-label="Pay">
+              <svg
+                id="icon-dollar"
+                width="15"
+                height="22"
+                viewBox="0 0 15 23"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  transform="translate(-205 -17)"
+                  d="M217.675 23.8903C217.923 24.1401 218.336 24.1401 218.569 23.8903L219.811 22.5912C220.075 22.3414 220.06 21.8917 219.782 21.6218C218.805 20.7669 217.671 20.1148 216.442 19.7032L216.835 17.8045C216.919 17.3897 216.611 17 216.199 17H213.794C213.643 17.0016 213.498 17.0551 213.382 17.1515C213.267 17.2479 213.187 17.3814 213.158 17.5296L212.81 19.2185C209.61 19.3834 206.897 21.0173 206.897 24.365C206.897 27.263 209.138 28.5071 211.508 29.3616C213.749 30.221 214.937 30.5408 214.937 31.7499C214.937 32.9941 213.754 33.7236 212.005 33.7236C210.415 33.7236 208.745 33.189 207.453 31.8848C207.393 31.8244 207.322 31.7765 207.243 31.7438C207.165 31.7111 207.081 31.6942 206.996 31.6942C206.911 31.6942 206.827 31.7111 206.748 31.7438C206.67 31.7765 206.599 31.8244 206.539 31.8848L205.197 33.2339C205.071 33.3613 205 33.5338 205 33.7136C205 33.8934 205.071 34.0659 205.197 34.1933C206.241 35.2276 207.562 35.9771 209.069 36.3918L208.701 38.1756C208.617 38.5903 208.92 38.975 209.332 38.98L211.743 39C211.895 39.0007 212.042 38.9482 212.16 38.8516C212.278 38.755 212.359 38.6202 212.388 38.4704L212.736 36.7765C216.586 36.5167 218.932 34.3831 218.932 31.2703C218.932 28.4022 216.596 27.193 213.764 26.2087C212.144 25.6041 210.743 25.1894 210.743 23.9453C210.743 22.7361 212.05 22.2564 213.361 22.2564C215.031 22.2564 216.636 22.9509 217.685 23.9003L217.675 23.8903Z"
+                  fill="#8c8c8c"
+                  fill-opacity="0.7"
+                />
+              </svg>
+            </button>
+          </a>
+          <a href="search.html">
+            <button class="nav-button padding" aria-label="Search">
+              <svg
+                id="icon-search"
+                width="23"
+                height="23"
+                viewBox="0 0 23 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  transform="translate(-276.25 -16.5)"
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M291.75 26.5C291.75 30.0899 288.84 33 285.25 33C281.66 33 278.75 30.0899 278.75 26.5C278.75 22.9101 281.66 20 285.25 20C288.84 20 291.75 22.9101 291.75 26.5ZM290.823 34.1944C289.258 35.3302 287.332 36 285.25 36C280.003 36 275.75 31.7467 275.75 26.5C275.75 21.2533 280.003 17 285.25 17C290.497 17 294.75 21.2533 294.75 26.5C294.75 28.582 294.08 30.5076 292.944 32.0731L297.882 37.0104C298.468 37.5962 298.468 38.546 297.882 39.1317C297.296 39.7175 296.346 39.7175 295.76 39.1317L290.823 34.1944Z"
+                  fill="#8c8c8c"
+                  fill-opacity="0.7"
+                />
+              </svg></button
+          ></a>
+          <a href="history.html">
+            <button class="nav-button" id="active" aria-label="Activity">
+              <svg
+                id="icon-clock"
+                width="24"
+                height="24"
+                viewBox="0 0 24 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  transform="translate(-349 -16)"
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M370 28C370 32.9706 365.971 37 361 37C356.029 37 352 32.9706 352 28C352 23.0294 356.029 19 361 19C365.971 19 370 23.0294 370 28ZM373 28C373 34.6274 367.627 40 361 40C354.373 40 349 34.6274 349 28C349 21.3726 354.373 16 361 16C367.627 16 373 21.3726 373 28ZM362.5 24C362.5 23.1716 361.828 22.5 361 22.5C360.172 22.5 359.5 23.1716 359.5 24V27.4893C359.5 28.4591 360.061 29.3414 360.939 29.753L364.363 31.3582C365.113 31.7098 366.007 31.3868 366.358 30.6367C366.71 29.8865 366.387 28.9934 365.637 28.6418L362.5 27.1715V24Z"
+                  fill="#8c8c8c"
+                  fill-opacity="0.7"
+                />
+              </svg>
+            </button>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Transaction Detail/Edit Overlay -->
+      <div class="overlay transaction-detail-overlay" id="transaction-overlay">
+        <div class="overlay-header">
+          <button class="overlay-close-btn" id="overlay-close-btn">
+            <svg viewBox="0 0 24 24">
               <path
-                transform="translate(-349 -16)"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M370 28C370 32.9706 365.971 37 361 37C356.029 37 352 32.9706 352 28C352 23.0294 356.029 19 361 19C365.971 19 370 23.0294 370 28ZM373 28C373 34.6274 367.627 40 361 40C354.373 40 349 34.6274 349 28C349 21.3726 354.373 16 361 16C367.627 16 373 21.3726 373 28ZM362.5 24C362.5 23.1716 361.828 22.5 361 22.5C360.172 22.5 359.5 23.1716 359.5 24V27.4893C359.5 28.4591 360.061 29.3414 360.939 29.753L364.363 31.3582C365.113 31.7098 366.007 31.3868 366.358 30.6367C366.71 29.8865 366.387 28.9934 365.637 28.6418L362.5 27.1715V24Z"
-                fill="#8c8c8c"
-                fill-opacity="0.7"
+                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
               />
             </svg>
           </button>
-        </a>
-      </nav>
-    </div>
+          <button class="overlay-menu-btn" id="overlay-menu-btn">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+              />
+            </svg>
+          </button>
+          <!-- Dropdown Menu -->
+          <div class="dropdown-menu" id="dropdown-menu">
+            <ul>
+              <li id="edit-transaction-btn">Edit Transaction</li>
+              <li class="delete-option" id="delete-transaction-btn">
+                Delete Transaction
+              </li>
+            </ul>
+          </div>
+        </div>
 
-    <!-- Transaction Detail Overlay -->
-    <div id="detail-overlay" class="overlay">
-      <div class="overlay-header">
-        <button class="overlay-close-button" aria-label="Close Details">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M18 6L6 18"
-              stroke="#4A4A4A"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M6 6L18 18"
-              stroke="#4A4A4A"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-        <div class="overlay-title">Transaction Details</div>
-        <button
-          id="options-menu-button"
-          class="options-menu-button"
-          aria-label="Options"
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z"
-              stroke="#4A4A4A"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z"
-              stroke="#4A4A4A"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z"
-              stroke="#4A4A4A"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-        <div class="options-menu">
-          <button id="edit-option">Edit Details</button>
-        </div>
-      </div>
-      <div class="overlay-content">
-        <div class="detail-item">
-          <!-- Moved Amount to top -->
-          <span class="detail-label">Amount</span>
-          <span class="detail-value" id="detail-amount">Loading...</span>
-        </div>
-        <div class="detail-item">
-          <!-- Added Action Phrase -->
-          <span class="detail-label">Action</span>
-          <span class="detail-value" id="detail-action-phrase">Loading...</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Status</span>
-          <span class="detail-value" id="detail-status">Loading...</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Date</span>
-          <span class="detail-value" id="detail-date">Loading...</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Timestamp</span>
-          <span class="detail-value" id="detail-timestamp">Loading...</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Cash Tag</span>
-          <span class="detail-value" id="detail-cashtag">Loading...</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Associated Name</span>
-          <span class="detail-value" id="detail-name">Loading...</span>
-        </div>
-        <div class="detail-item detail-message-item">
-          <span class="detail-label">Note</span>
-          <p id="detail-note" class="detail-value">Loading...</p>
-        </div>
-      </div>
-    </div>
+        <div class="overlay-content-container" id="overlay-content-scroll">
+          <!-- View Mode -->
+          <div class="overlay-content view-mode" id="overlay-view-mode">
+            <div class="overlay-avatar" id="overlay-avatar"></div>
+            <div class="overlay-name" id="overlay-name"></div>
+            <div class="overlay-cashtag" id="overlay-cashtag"></div>
+            <div class="overlay-amount" id="overlay-amount"></div>
+            <div class="overlay-status" id="overlay-status"></div>
+            <div class="overlay-timestamp" id="overlay-timestamp"></div>
+            <div class="overlay-note" id="overlay-note"></div>
+          </div>
 
-    <!-- Edit Details Overlay -->
-    <div id="edit-overlay" class="overlay">
-      <div class="overlay-header">
-        <button class="overlay-close-button edit-close" aria-label="Close Edit">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M18 6L6 18"
-              stroke="#4A4A4A"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M6 6L18 18"
-              stroke="#4A4A4A"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-        <div class="overlay-title">Edit Details</div>
-        <button id="save-edits-button" class="overlay-action-button">
-          Save
-        </button>
+          <!-- Edit Mode -->
+          <div class="overlay-content edit-mode hidden" id="overlay-edit-mode">
+            <form id="edit-form">
+              <input type="hidden" id="edit-id" />
+              <input type="hidden" id="edit-avatar-data" />
+              <input type="hidden" id="edit-avatar-type" />
+              <input type="hidden" id="edit-avatar-color" />
+
+              <div class="form-group avatar-group">
+                <label for="edit-avatar-upload">Avatar</label>
+                <div class="avatar-edit-options">
+                  <label for="edit-avatar-upload">
+                    <div class="avatar-preview" id="edit-avatar-preview"></div>
+                  </label>
+                  <input type="file" id="edit-avatar-upload" accept="image/*" />
+                  <label for="edit-avatar-upload" class="change-avatar-label"
+                    >Change</label
+                  >
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="edit-name">Name</label>
+                <input type="text" id="edit-name" required />
+              </div>
+              <div class="form-group">
+                <label for="edit-amount">Amount</label>
+                <input type="number" id="edit-amount" step="0.01" required />
+              </div>
+              <div class="form-group">
+                <label for="edit-timestamp">Date & Time</label>
+                <input type="datetime-local" id="edit-timestamp" required />
+              </div>
+              <div class="form-group">
+                <label for="edit-status">Status</label>
+                <select id="edit-status">
+                  <option value="completed">Completed</option>
+                  <option value="pending">Pending</option>
+                  <option value="failed">Failed</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="edit-note">Note</label>
+                <textarea id="edit-note"></textarea>
+              </div>
+              <div class="edit-mode-actions">
+                <button
+                  type="button"
+                  class="cancel-edit-btn"
+                  id="cancel-edit-btn"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="save-changes-btn"
+                  id="save-changes-btn"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-      <div class="overlay-content">
-        <div class="edit-item">
-          <label for="edit-list-action" class="edit-label">List Action</label>
-          <select id="edit-list-action" class="edit-select">
-            <option value="Payment to">Payment to</option>
-            <option value="Received from">Received from</option>
-            <option value="Added from">Added from</option>
-            <!-- For transfers in -->
-            <option value="Transfer to">Transfer to</option>
-            <!-- For transfers out -->
-            <option value="Interest Earned">Interest Earned</option>
-            <option value="Cash Out to">Cash Out to</option>
-            <option value="Fee Charged">Fee Charged</option>
-            <option value="Generic Transaction">Generic Transaction</option>
-            <!-- Fallback -->
-          </select>
-        </div>
-        <div class="edit-item">
-          <label for="edit-name" class="edit-label"
-            >Associated Name (e.g., User, Bank)</label
-          >
-          <input
-            type="text"
-            id="edit-name"
-            class="edit-input"
-            placeholder="e.g., John Doe or My Bank Account"
-          />
-        </div>
-        <div class="edit-item">
-          <label for="edit-cashtag" class="edit-label"
-            >Associated Cash Tag (Optional)</label
-          >
-          <input
-            type="text"
-            id="edit-cashtag"
-            class="edit-input"
-            placeholder="e.g., $johndoe"
-          />
-        </div>
-        <div class="edit-item">
-          <label for="edit-amount" class="edit-label">Amount ($)</label>
-          <input
-            type="number"
-            id="edit-amount"
-            class="edit-input"
-            placeholder="e.g., 25.50"
-            step="0.01"
-          />
-        </div>
-        <div class="edit-item">
-          <label for="edit-date" class="edit-label">Date (for List View)</label>
-          <input
-            type="text"
-            id="edit-date"
-            class="edit-input"
-            placeholder="e.g., Jun 7"
-          />
-        </div>
-        <div class="edit-item">
-          <label for="edit-status" class="edit-label">Status</label>
-          <select id="edit-status" class="edit-select">
-            <option value="Success">Success</option>
-            <option value="Pending">Pending</option>
-            <option value="Declined">Declined</option>
-            <option value="Refunded">Refunded</option>
-            <option value="Completed">Completed</option>
-            <!-- Alternative Success -->
-            <option value="Failed">Failed</option>
-            <!-- Alternative Decline -->
-          </select>
-        </div>
-        <div class="edit-item">
-          <label for="edit-timestamp" class="edit-label"
-            >Timestamp (Detailed View)</label
-          >
-          <input
-            type="text"
-            id="edit-timestamp"
-            class="edit-input"
-            placeholder="e.g., Jun 7, 2024 at 11:15 AM"
-          />
-        </div>
-        <div class="edit-item">
-          <label for="edit-note" class="edit-label">Note</label>
-          <textarea
-            id="edit-note"
-            class="edit-textarea"
-            rows="3"
-            placeholder="Add transaction details, reason for status, etc."
-          ></textarea>
+
+      <!-- Confirmation Dialog -->
+      <div
+        class="confirmation-dialog-backdrop"
+        id="confirmation-dialog-backdrop"
+      >
+        <div class="confirmation-dialog">
+          <h3>Delete Transaction?</h3>
+          <p>
+            This action cannot be undone. Are you sure you want to permanently
+            delete this transaction?
+          </p>
+          <div class="confirmation-dialog-actions">
+            <button class="cancel-delete-btn" id="cancel-delete-btn">
+              Cancel
+            </button>
+            <button class="confirm-delete-btn" id="confirm-delete-btn">
+              Delete
+            </button>
+          </div>
         </div>
       </div>
     </div>
+    <!-- End Mobile Container -->
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        // DOM Elements (Get references)
-        const activityList = document.getElementById("activity-list");
-        const detailOverlay = document.getElementById("detail-overlay");
-        const editOverlay = document.getElementById("edit-overlay");
-        const detailCloseButton = detailOverlay.querySelector(
-          ".overlay-close-button"
+        // --- Element References ---
+        const transactionListEl = document.getElementById("transaction-list");
+        const transactionOverlayEl = document.getElementById(
+          "transaction-overlay"
         );
-        const editCloseButton = editOverlay.querySelector(".edit-close");
-        const optionsMenuButton = detailOverlay.querySelector(
-          ".options-menu-button"
+        const overlayCloseBtnEl = document.getElementById("overlay-close-btn");
+        const overlayMenuBtnEl = document.getElementById("overlay-menu-btn");
+        const dropdownMenuEl = document.getElementById("dropdown-menu");
+        const editTransactionBtnEl = document.getElementById(
+          "edit-transaction-btn"
         );
-        const optionsMenu = detailOverlay.querySelector(".options-menu");
-        const editOptionButton = document.getElementById("edit-option");
-        const saveEditsButton = document.getElementById("save-edits-button");
+        const deleteTransactionBtnEl = document.getElementById(
+          "delete-transaction-btn"
+        );
+        const overlayViewModeEl = document.getElementById("overlay-view-mode");
+        const overlayEditModeEl = document.getElementById("overlay-edit-mode");
+        const editFormEl = document.getElementById("edit-form");
+        const cancelEditBtnEl = document.getElementById("cancel-edit-btn");
+        const searchIconEl = document.getElementById("search-icon");
+        const searchBarContainerEl = document.getElementById(
+          "search-bar-container"
+        );
+        const searchInputEl = document.getElementById("search-input");
+        const confirmationDialogBackdropEl = document.getElementById(
+          "confirmation-dialog-backdrop"
+        );
+        const confirmDeleteBtnEl =
+          document.getElementById("confirm-delete-btn");
+        const cancelDeleteBtnEl = document.getElementById("cancel-delete-btn");
+        const avatarUploadInputEl =
+          document.getElementById("edit-avatar-upload");
+        const avatarPreviewEl = document.getElementById("edit-avatar-preview");
+        const overlayAvatarContainerEl =
+          document.getElementById("overlay-avatar");
+        const overlayContentScrollEl = document.getElementById(
+          "overlay-content-scroll"
+        );
+        const editTimestampInputEl = document.getElementById("edit-timestamp"); // Timestamp input
 
-        // Detail Overlay Fields
-        const detailAmount = document.getElementById("detail-amount");
-        const detailActionPhrase = document.getElementById(
-          "detail-action-phrase"
-        ); // New
-        const detailStatus = document.getElementById("detail-status");
-        const detailDate = document.getElementById("detail-date");
-        const detailTimestamp = document.getElementById("detail-timestamp");
-        const detailCashtag = document.getElementById("detail-cashtag");
-        const detailName = document.getElementById("detail-name");
-        const detailNote = document.getElementById("detail-note");
+        // --- State ---
+        let transactions = [];
+        let currentEditingId = null;
+        let currentDeletingId = null;
+        const sampleAvatarColors = [
+          "#f44336",
+          "#e91e63",
+          "#9c27b0",
+          "#673ab7",
+          "#3f51b5",
+          "#2196f3",
+          "#03a9f4",
+          "#00bcd4",
+          "#009688",
+          "#4caf50",
+          "#8bc34a",
+          "#cddc39",
+          "#ffeb3b",
+          "#ffc107",
+          "#ff9800",
+          "#ff5722",
+          "#795548",
+          "#9e9e9e",
+          "#607d8b",
+        ];
+        const getRandomColor = () =>
+          sampleAvatarColors[
+            Math.floor(Math.random() * sampleAvatarColors.length)
+          ];
+        const getRandomInitial = (name) =>
+          name ? name.charAt(0).toUpperCase() : "?";
 
-        // Edit Overlay Fields
-        const editListAction = document.getElementById("edit-list-action"); // New dropdown
-        const editAmount = document.getElementById("edit-amount");
-        const editDate = document.getElementById("edit-date");
-        const editStatus = document.getElementById("edit-status");
-        const editTimestamp = document.getElementById("edit-timestamp");
-        const editCashtag = document.getElementById("edit-cashtag");
-        const editName = document.getElementById("edit-name");
-        const editNote = document.getElementById("edit-note");
-
-        const STORAGE_KEY = "activityTransactions_v4"; // Key incremented
-
-        // --- Helper Functions ---
-        const formatCurrency = (amount) => {
-          let absAmount = Math.abs(amount);
-          // Show cents if not a whole number
-          let formattedAmount = absAmount.toFixed(
-            !Number.isInteger(absAmount) && absAmount !== 0 ? 2 : 0
-          );
-          return `$${formattedAmount}`;
+        // --- Sample Data (Using ISO Timestamps) ---
+        // Helper to generate ISO strings for sample data relative to now
+        const getDateISOString = (
+          offsetDays = 0,
+          offsetHours = 0,
+          offsetMinutes = 0
+        ) => {
+          const d = new Date();
+          d.setDate(d.getDate() + offsetDays);
+          d.setHours(d.getHours() + offsetHours);
+          d.setMinutes(d.getMinutes() + offsetMinutes);
+          return d.toISOString();
         };
 
-        const getAmountPrefix = (tx) => {
-          if (
-            tx.status === "Declined" ||
-            tx.status === "Pending" ||
-            tx.status === "Failed"
-          )
-            return "";
-          // Infer direction from common list actions if 'positive' isn't definitive
-          const action = tx.listAction || "";
-          if (
-            action.includes("Received") ||
-            action.includes("Added") ||
-            action.includes("Interest")
-          )
-            return "+ ";
-          if (
-            action.includes("Payment to") ||
-            action.includes("Transfer to") ||
-            action.includes("Cash Out") ||
-            action.includes("Fee")
-          )
-            return "- ";
-          // Fallback to positive field if action is ambiguous
-          if (tx.positive) return "+ ";
-          return ""; // Default no prefix or maybe '-' if negative amount?
-        };
-
-        // Derives initial listAction based on original type/direction
-        const deriveInitialListAction = (tx) => {
-          switch (tx.type) {
-            case "transfer":
-              return tx.positive ? "Added from" : "Transfer to";
-            case "interest":
-              return "Interest Earned";
-            case "payment_sent":
-              return "Payment to";
-            case "payment_received":
-              return "Received from";
-            case "cash_out":
-              return "Cash Out to"; // Example new type
-            case "fee":
-              return "Fee Charged"; // Example new type
-            default:
-              return "Generic Transaction";
-          }
-        };
-
-        // --- Default Data Structure ---
-        const defaultTransactions = [
-          // Added 'listAction' derived from type/positive
+        const sampleTransactions = [
           {
-            id: "t1",
-            editableDate: "Jun 7",
-            amount: 220,
-            type: "transfer",
-            positive: true,
-            listAction: "Added from",
-            status: "Success",
-            timestamp: "Jun 7, 2024 at 11:15 AM",
-            cashTag: "$SourceCard",
-            name: "MasterCard Debit",
-            note: "Added cash to balance.",
+            id: "tx1",
+            name: "James Grant",
+            amount: -100.0,
+            note: "Replied 😎",
+            status: "completed",
+            timestamp: getDateISOString(0, -2),
+            avatarType: "initial",
+            avatarData: "J",
+            avatarColor: "#3f51b5",
           },
           {
-            id: "t2",
-            editableDate: "Jun 3",
-            amount: 10,
-            type: "transfer",
-            positive: true,
-            listAction: "Added from",
-            status: "Success",
-            timestamp: "Jun 3, 2024 at 09:01 AM",
-            cashTag: "$SourceCard",
-            name: "MasterCard Debit",
-            note: "Quick top-up.",
+            id: "tx2",
+            name: "Kollin Calerway",
+            amount: -100.0,
+            note: "For Thanks for supporting me b...",
+            status: "completed",
+            timestamp: getDateISOString(-1),
+            avatarType: "initial",
+            avatarData: "K",
+            avatarColor: "#00bcd4",
           },
           {
-            id: "t3",
-            editableDate: "Jun 3",
-            amount: 20,
-            type: "payment_sent",
-            positive: false,
-            listAction: "Payment to",
-            status: "Declined",
-            timestamp: "Jun 3, 2024 at 08:30 PM",
-            cashTag: "$SomeUser",
-            name: "Some User",
-            note: "Insufficient funds. Transaction declined.",
+            id: "tx3",
+            name: "Matthew Allen",
+            amount: -100.0,
+            note: "Replied ❤️",
+            status: "completed",
+            timestamp: getDateISOString(-1, -5),
+            avatarType: "initial",
+            avatarData: "M",
+            avatarColor: "#9e9e9e",
           },
           {
-            id: "t4",
-            editableDate: "Jun 1",
-            amount: 0.28,
-            type: "interest",
-            positive: true,
-            listAction: "Interest Earned",
-            status: "Success",
-            timestamp: "Jun 1, 2024 at 12:05 AM",
-            cashTag: "$Savings",
-            name: "Savings Account",
-            note: "Interest for May.",
+            id: "tx4",
+            name: "Bradley Fuller",
+            amount: -100.0,
+            note: "For Thanks for supporting me b...",
+            status: "pending",
+            timestamp: getDateISOString(-3),
+            avatarType: "initial",
+            avatarData: "B",
+            avatarColor: "#ff9800",
           },
           {
-            id: "t5",
-            editableDate: "May 24",
-            amount: 200,
-            type: "payment_received",
-            positive: true,
-            listAction: "Received from",
-            status: "Refunded",
-            timestamp: "May 24, 2024 at 02:45 PM",
-            cashTag: "$AnotherUser",
-            name: "Another User",
-            note: "Payment for canceled item. Sent refund.",
+            id: "tx5",
+            name: "Matthew",
+            amount: -100.0,
+            note: "For Thanks for supporting me b...",
+            status: "completed",
+            timestamp: getDateISOString(-2),
+            avatarType: "initial",
+            avatarData: "M",
+            avatarColor: "#4caf50",
           },
           {
-            id: "t7",
-            editableDate: "May 10",
-            amount: 5,
-            type: "payment_sent",
-            positive: false,
-            listAction: "Payment to",
-            status: "Pending",
-            timestamp: "May 10, 2024 at 08:12 AM",
-            cashTag: "$CoffeeShop",
-            name: "Local Coffee",
-            note: "Morning coffee. Network issue, pending confirmation.",
+            id: "tx6",
+            name: "Jonnequa Gilliam",
+            amount: 200.0,
+            note: "Payment Received",
+            status: "completed",
+            timestamp: getDateISOString(-2, -8),
+            avatarType: "initial",
+            avatarData: "J",
+            avatarColor: "#e91e63",
           },
           {
-            id: "t8",
-            editableDate: "May 10",
-            amount: 250,
-            type: "transfer",
-            positive: true,
-            listAction: "Added from",
-            status: "Completed",
-            timestamp: "May 10, 2024 at 07:00 AM",
-            cashTag: "$SourceCard",
-            name: "MasterCard Debit",
-            note: "Weekly cash add.",
+            id: "tx7",
+            name: "Hurusha Davis",
+            amount: 1000.0,
+            note: "Project Funding",
+            status: "completed",
+            timestamp: getDateISOString(-7),
+            avatarType: "initial",
+            avatarData: "H",
+            avatarColor: "#795548",
           },
           {
-            id: "t9",
-            editableDate: "May 9",
-            amount: 15,
-            type: "cash_out",
-            positive: false,
-            listAction: "Cash Out to",
-            status: "Success",
-            timestamp: "May 9, 2024 at 05:00 PM",
-            cashTag: "",
-            name: "My Bank Account",
-            note: "ATM Withdrawal.",
-          }, // Example New
+            id: "tx8",
+            name: "$scammer123",
+            amount: -10000.0,
+            note: "Large Transfer Attempt",
+            status: "failed",
+            timestamp: getDateISOString(-30),
+            avatarType: "initial",
+            avatarData: "S",
+            avatarColor: "#007aff",
+          },
+          {
+            id: "tx9",
+            name: "Coffee Shop",
+            amount: -5.5,
+            note: "Morning Latte",
+            status: "completed",
+            timestamp: getDateISOString(0, 0, -5),
+            avatarType: "initial",
+            avatarData: "C",
+            avatarColor: "#cddc39",
+          },
         ];
 
-        // --- Local Storage ---
-        const getFromStorage = (key, defaultValue) => {
-          const stored = localStorage.getItem(key);
-          try {
-            const parsed = stored ? JSON.parse(stored) : defaultValue;
-            // Check for essential fields including the new 'listAction'
-            if (
-              Array.isArray(parsed) &&
-              parsed.length > 0 &&
-              parsed[0].hasOwnProperty("editableDate") &&
-              parsed[0].hasOwnProperty("amount") &&
-              parsed[0].hasOwnProperty("listAction")
-            ) {
-              // Ensure all items have listAction, deriving if necessary (migration)
-              return parsed.map((tx) => ({
-                ...tx,
-                listAction: tx.listAction || deriveInitialListAction(tx),
-              }));
-            } else if (
-              Array.isArray(parsed) &&
-              parsed.length > 0 &&
-              parsed[0].hasOwnProperty("editableDate") &&
-              parsed[0].hasOwnProperty("amount")
-            ) {
-              // If only listAction is missing (older data), add it
-              console.warn(
-                "Older data structure detected. Adding 'listAction'."
-              );
-              return parsed.map((tx) => ({
-                ...tx,
-                listAction: deriveInitialListAction(tx),
-              }));
-            } else {
-              console.warn(
-                "Stored data structure mismatch or empty, using default."
-              );
-              return defaultValue.map((tx) => ({
-                ...tx,
-                listAction: tx.listAction || deriveInitialListAction(tx),
-              })); // Ensure defaults have it too
+        // --- Local Storage & Data Handling ---
+        function loadTransactions() {
+          const storedTransactions = localStorage.getItem(
+            "transactionsDataUltraV2"
+          ); // New key
+          if (storedTransactions) {
+            try {
+              transactions = JSON.parse(storedTransactions);
+              if (!Array.isArray(transactions)) {
+                console.warn("Invalid data in localStorage, resetting.");
+                resetToSampleData();
+              }
+              // Add migration logic here if data structure changed significantly
+            } catch (e) {
+              console.error("Error parsing transactions:", e);
+              resetToSampleData();
             }
-          } catch (e) {
-            console.error("Error parsing/migrating storage item:", key, e);
-            return defaultValue.map((tx) => ({
-              ...tx,
-              listAction: tx.listAction || deriveInitialListAction(tx),
-            }));
+          } else {
+            resetToSampleData();
           }
-        };
-
-        const saveToStorage = (key, value) => {
-          localStorage.setItem(key, JSON.stringify(value));
-        };
-
-        let transactions = getFromStorage(STORAGE_KEY, defaultTransactions);
-
-        // Save corrected/initialized data back if it came from defaults or needed migration
-        if (
-          !localStorage.getItem(STORAGE_KEY) ||
-          transactions === defaultTransactions
-        ) {
-          console.log(
-            "Initializing or saving migrated transaction data to localStorage."
-          );
-          saveToStorage(STORAGE_KEY, transactions);
+          renderTransactionList();
         }
 
-        // --- Rendering Logic ---
-        const renderTransactions = () => {
-          activityList.innerHTML = "";
-          transactions.forEach((tx) => {
-            const li = document.createElement("li");
-            li.classList.add("activity-item");
-            li.dataset.id = tx.id;
+        function resetToSampleData() {
+          console.log("Initializing with sample data.");
+          transactions = sampleTransactions.map((tx) => ({ ...tx }));
+          saveTransactions();
+        }
 
-            const iconDiv = document.createElement("div");
-            iconDiv.className = `icon-container status-${tx.status}`;
-            iconDiv.textContent = "$"; // Could customize icon based on listAction
-
-            const infoDiv = document.createElement("div");
-            infoDiv.classList.add("info-container");
-            const dateSpan = document.createElement("span");
-            dateSpan.classList.add("date");
-            dateSpan.textContent = tx.editableDate || "Date N/A";
-            const descSpan = document.createElement("span");
-            descSpan.classList.add("description");
-            descSpan.textContent = generateListDescription(tx); // Use new function
-
-            infoDiv.appendChild(dateSpan);
-            infoDiv.appendChild(descSpan);
-
-            const amountDiv = document.createElement("div");
-            amountDiv.classList.add("amount-container");
-            const amountSpan = document.createElement("span");
-            amountSpan.className = "amount"; // Reset classes
-            amountSpan.classList.add(`status-${tx.status}`);
-            if (tx.status === "Success" || tx.status === "Completed") {
-              // Determine color based on inferred direction or positive flag
-              const action = tx.listAction || "";
-              if (
-                action.includes("Received") ||
-                action.includes("Added") ||
-                action.includes("Interest") ||
-                tx.positive
-              ) {
-                amountSpan.classList.add("positive");
-              } else {
-                amountSpan.classList.add("neutral");
-              }
-            } // Other statuses handled by status- class
-
-            amountSpan.textContent =
-              getAmountPrefix(tx) + formatCurrency(tx.amount);
-
-            amountDiv.appendChild(amountSpan);
-
-            li.appendChild(iconDiv);
-            li.appendChild(infoDiv);
-            li.appendChild(amountDiv);
-
-            li.addEventListener("click", () => showDetailOverlay(tx.id));
-            activityList.appendChild(li);
-          });
-        };
-
-        const generateListDescription = (tx) => {
-          const action = tx.listAction || "Transaction"; // Use saved action or default
-          const targetName = tx.name || "";
-          const targetTag = tx.cashTag || "";
-
-          // Choose the best target description: Name > Tag > Generic based on action
-          let targetDesc = targetName;
-          if (!targetDesc && targetTag) {
-            targetDesc = targetTag;
-          } else if (!targetDesc && !targetTag) {
-            if (action.includes(" to ")) targetDesc = "Recipient";
-            else if (action.includes(" from ")) targetDesc = "Source";
-            else if (action.includes("Interest"))
-              targetDesc = ""; // No target needed
-            else targetDesc = "Details"; // Generic fallback
+        function saveTransactions() {
+          try {
+            localStorage.setItem(
+              "transactionsDataUltraV2",
+              JSON.stringify(transactions)
+            );
+          } catch (e) {
+            console.error("Error saving transactions:", e);
+            alert("Could not save changes. Local storage might be full.");
           }
+        }
 
-          // Special case for interest or actions without a target
-          if (
-            action === "Interest Earned" ||
-            action === "Fee Charged" ||
-            action === "Generic Transaction"
-          ) {
-            return action;
+        // --- Date Formatting ---
+        function formatTimestampForDisplay(isoString) {
+          if (!isoString) return "Unknown date";
+          try {
+            const date = new Date(isoString);
+            if (isNaN(date.getTime())) return "Invalid date"; // Check if date is valid
+            const optionsDate = {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            };
+            const optionsTime = {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            };
+            return `${date.toLocaleDateString(
+              "en-US",
+              optionsDate
+            )} at ${date.toLocaleTimeString("en-US", optionsTime)}`;
+          } catch (e) {
+            console.error("Error formatting date:", e);
+            return "Error displaying date";
           }
+        }
 
-          return `${action} ${targetDesc}`.trim(); // Combine action and target
-        };
-
-        // --- Overlay Logic ---
-        const updateDetailOverlayContent = (transaction) => {
-          if (!transaction) return;
-
-          const prefix = getAmountPrefix(transaction);
-          const formattedAmount = formatCurrency(transaction.amount);
-          detailAmount.textContent = prefix + formattedAmount;
-          detailAmount.className = "detail-value"; // Reset amount classes
-          detailAmount.classList.add(`status-${transaction.status}`);
-          if (
-            transaction.status === "Success" ||
-            transaction.status === "Completed"
-          ) {
-            if (prefix === "+ ") detailAmount.classList.add("positive");
-            else if (prefix === "- ") detailAmount.classList.add("neutral");
+        function formatISOStringToInput(isoString) {
+          if (!isoString) return "";
+          try {
+            const date = new Date(isoString);
+            if (isNaN(date.getTime())) return "";
+            // Format required by datetime-local: YYYY-MM-DDTHH:mm
+            // Adjust for timezone offset to display local time correctly in input
+            const timezoneOffset = date.getTimezoneOffset() * 60000; // offset in milliseconds
+            const localDate = new Date(date.getTime() - timezoneOffset);
+            return localDate.toISOString().slice(0, 16);
+          } catch (e) {
+            console.error("Error formatting ISO to input:", e);
+            return "";
           }
+        }
 
-          detailActionPhrase.textContent = transaction.listAction || "N/A"; // Show the selected action
-          detailStatus.textContent = transaction.status;
-          detailStatus.className = "detail-value";
-          detailStatus.classList.add(`status-${transaction.status}`);
+        function formatInputToISOString(inputString) {
+          if (!inputString) return new Date().toISOString(); // Default to now if empty
+          try {
+            // Input string is assumed to be in local time YYYY-MM-DDTHH:mm
+            const localDate = new Date(inputString);
+            if (isNaN(localDate.getTime())) return new Date().toISOString(); // Default if invalid
+            // Convert back to UTC ISO string for storage
+            return localDate.toISOString();
+          } catch (e) {
+            console.error("Error formatting input to ISO:", e);
+            return new Date().toISOString();
+          }
+        }
 
-          detailDate.textContent = transaction.editableDate || "N/A";
-          detailTimestamp.textContent = transaction.timestamp || "N/A";
-          detailCashtag.textContent = transaction.cashTag || "N/A";
-          detailName.textContent = transaction.name || "N/A";
-          detailNote.textContent = transaction.note || "No note added.";
+        // --- Rendering Functions ---
+        function createAvatarHtml(txData, sizeClass = "avatar") {
+          const containerClass = sizeClass;
+          if (txData.avatarType === "image" && txData.avatarData) {
+            return `<div class="${containerClass}"><img src="${txData.avatarData}" alt="${txData.name}"></div>`;
+          } else {
+            const initial = txData.avatarData || getRandomInitial(txData.name);
+            const color = txData.avatarColor || getRandomColor();
+            const textColor = isColorDark(color) ? "#ffffff" : "#000000";
+            return `<div class="${containerClass}" style="background-color: ${color}; color: ${textColor};">
+                               ${initial}
+                           </div>`;
+          }
+        }
 
-          detailOverlay.dataset.currentId = transaction.id;
-        };
+        function isColorDark(hexColor) {
+          if (!hexColor || hexColor.length < 7) return false;
+          const r = parseInt(hexColor.substr(1, 2), 16);
+          const g = parseInt(hexColor.substr(3, 2), 16);
+          const b = parseInt(hexColor.substr(5, 2), 16);
+          const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+          return luminance < 0.5;
+        }
 
-        const showDetailOverlay = (transactionId) => {
-          const transaction = transactions.find(
-            (tx) => tx.id === transactionId
+        function renderTransactionList(filter = "") {
+          transactionListEl.innerHTML = "";
+          const searchTerm = filter.toLowerCase().trim();
+
+          const filteredTransactions = transactions.filter(
+            (tx) =>
+              !searchTerm ||
+              tx.name.toLowerCase().includes(searchTerm) ||
+              (tx.cashtag && tx.cashtag.toLowerCase().includes(searchTerm)) ||
+              tx.note.toLowerCase().includes(searchTerm) ||
+              tx.amount.toString().includes(searchTerm)
           );
-          if (!transaction) return;
-          updateDetailOverlayContent(transaction);
-          optionsMenu.classList.remove("show");
-          detailOverlay.classList.add("active");
-        };
 
-        const hideDetailOverlay = () => {
-          detailOverlay.classList.remove("active");
-          optionsMenu.classList.remove("show");
-          detailOverlay.removeAttribute("data-current-id");
-        };
-
-        const showEditOverlay = () => {
-          const currentId = detailOverlay.dataset.currentId;
-          const transaction = transactions.find((tx) => tx.id === currentId);
-          if (!transaction) return;
-
-          // Populate edit fields
-          editListAction.value =
-            transaction.listAction || deriveInitialListAction(transaction); // Set dropdown
-          editAmount.value = transaction.amount.toFixed(2);
-          editDate.value = transaction.editableDate;
-          editStatus.value = transaction.status;
-          editTimestamp.value = transaction.timestamp;
-          editCashtag.value = transaction.cashTag;
-          editName.value = transaction.name;
-          editNote.value = transaction.note;
-
-          editOverlay.dataset.currentId = currentId;
-          optionsMenu.classList.remove("show");
-          editOverlay.classList.add("active");
-        };
-
-        const hideEditOverlay = () => {
-          editOverlay.classList.remove("active");
-          editOverlay.removeAttribute("data-current-id");
-        };
-
-        const saveEdits = () => {
-          const currentId = editOverlay.dataset.currentId;
-          if (!currentId) return;
-
-          const transactionIndex = transactions.findIndex(
-            (tx) => tx.id === currentId
-          );
-          if (transactionIndex === -1) return;
-
-          const updatedAmountRaw = editAmount.value;
-          const updatedAmount = parseFloat(updatedAmountRaw);
-
-          if (isNaN(updatedAmount)) {
-            alert("Invalid amount entered. Please enter a valid number.");
+          if (filteredTransactions.length === 0) {
+            transactionListEl.innerHTML =
+              '<li style="text-align: center; color: var(--secondary-text-color); padding: 40px var(--base-padding); font-size: 15px;">No transactions found.</li>';
             return;
           }
 
-          // Get updated values including the new dropdown
-          const updatedListAction = editListAction.value;
-          const updatedDate =
-            editDate.value.trim() ||
-            transactions[transactionIndex].editableDate;
-          const updatedStatus = editStatus.value;
-          const updatedTimestamp = editTimestamp.value.trim();
-          const updatedCashTag = editCashtag.value.trim();
-          const updatedName = editName.value.trim();
-          const updatedNote = editNote.value.trim();
+          // Sort by timestamp (most recent first)
+          filteredTransactions.sort(
+            (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+          );
 
-          // Update the transaction object
-          transactions[transactionIndex] = {
-            ...transactions[transactionIndex], // Keep original id, type, positive etc.
-            listAction: updatedListAction, // Save selected action
-            amount: updatedAmount,
-            editableDate: updatedDate,
-            status: updatedStatus,
-            timestamp: updatedTimestamp,
-            cashTag: updatedCashTag,
-            name: updatedName,
-            note: updatedNote,
-          };
+          filteredTransactions.forEach((tx) => {
+            const item = document.createElement("li");
+            item.classList.add("transaction-item");
+            item.dataset.id = tx.id;
 
-          saveToStorage(STORAGE_KEY, transactions);
-          hideEditOverlay();
-          updateDetailOverlayContent(transactions[transactionIndex]); // Refresh detail
-          renderTransactions(); // Re-render list
-        };
+            const amountClass = tx.amount >= 0 ? "positive" : "negative";
+            const formattedAmount = `${tx.amount < 0 ? "-" : ""}$${Math.abs(
+              tx.amount
+            ).toFixed(2)}`;
+
+            let statusIconHtml = "";
+            if (tx.status === "pending")
+              statusIconHtml = '<span class="status-icon pending">•</span> ';
+            if (tx.status === "failed")
+              statusIconHtml = '<span class="status-icon failed">!</span> ';
+
+            item.innerHTML = `
+                        ${createAvatarHtml(tx, "avatar")}
+                        <div class="transaction-details">
+                            <div class="transaction-name">${tx.name}</div>
+                            <div class="transaction-note">${statusIconHtml}${
+              tx.note
+            }</div>
+                        </div>
+                        <div class="transaction-amount ${amountClass}">${formattedAmount}</div>
+                    `;
+            item.addEventListener("click", () => showOverlay(tx.id));
+            transactionListEl.appendChild(item);
+          });
+        }
+
+        function getStatusHtml(status) {
+          let icon = "";
+          let text = "";
+          switch (status) {
+            case "completed":
+              icon =
+                '<svg viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" clip-rule="evenodd"></path></svg>';
+              text = "Completed";
+              break;
+            case "pending":
+              icon =
+                '<svg viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M1.5 8a6.5 6.5 0 1 1 13 0 6.5 6.5 0 0 1-13 0zM8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM7.25 4.75a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5a.75.75 0 0 1 .75-.75zM8 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" clip-rule="evenodd"></path></svg>';
+              text = "Pending";
+              break;
+            case "failed":
+              icon =
+                '<svg viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M8.75 1.75a.75.75 0 0 0-1.5 0v8.5a.75.75 0 0 0 1.5 0v-8.5zM8 13.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5z" clip-rule="evenodd"></path></svg>';
+              text = "Failed";
+              break;
+            default:
+              text = "Unknown";
+          }
+          return `${icon}<span>${text}</span>`;
+        }
+
+        function populateOverlay(tx) {
+          overlayAvatarContainerEl.innerHTML = createAvatarHtml(
+            tx,
+            "overlay-avatar"
+          );
+          document.getElementById("overlay-name").innerText = tx.name;
+          document.getElementById("overlay-cashtag").innerText =
+            tx.cashtag || `$${tx.name.replace(/\s+/g, "").toLowerCase()}`;
+          document.getElementById("overlay-amount").innerText = `${
+            tx.amount < 0 ? "-" : ""
+          }$${Math.abs(tx.amount).toFixed(2)}`;
+          document.getElementById(
+            "overlay-status"
+          ).className = `overlay-status ${tx.status}`;
+          document.getElementById("overlay-status").innerHTML = getStatusHtml(
+            tx.status
+          );
+          document.getElementById("overlay-timestamp").innerText =
+            formatTimestampForDisplay(tx.timestamp); // Use formatted date
+          document.getElementById("overlay-note").innerText = tx.note || "";
+
+          transactionOverlayEl.dataset.currentId = tx.id;
+          overlayContentScrollEl.scrollTop = 0;
+        }
+
+        // --- Interaction Logic ---
+        function showOverlay(transactionId) {
+          const tx = transactions.find((t) => t.id === transactionId);
+          if (!tx) return;
+          populateOverlay(tx);
+          exitEditMode(false);
+          hideDropdown();
+          transactionOverlayEl.classList.add("visible");
+        }
+
+        function hideOverlay() {
+          transactionOverlayEl.classList.remove("visible");
+          hideDropdown();
+        }
+
+        function toggleDropdown() {
+          dropdownMenuEl.classList.toggle("visible");
+        }
+        function hideDropdown() {
+          dropdownMenuEl.classList.remove("visible");
+        }
+
+        function enterEditMode() {
+          const transactionId = transactionOverlayEl.dataset.currentId;
+          const tx = transactions.find((t) => t.id === transactionId);
+          if (!tx) return;
+
+          currentEditingId = transactionId;
+
+          // Populate form fields
+          document.getElementById("edit-id").value = tx.id;
+          document.getElementById("edit-name").value = tx.name;
+          document.getElementById("edit-amount").value = tx.amount;
+          editTimestampInputEl.value = formatISOStringToInput(tx.timestamp); // Populate datetime input
+          document.getElementById("edit-status").value = tx.status;
+          document.getElementById("edit-note").value = tx.note || "";
+
+          // Store avatar info
+          document.getElementById("edit-avatar-type").value = tx.avatarType;
+          document.getElementById("edit-avatar-data").value =
+            tx.avatarData || "";
+          document.getElementById("edit-avatar-color").value =
+            tx.avatarColor || "";
+          updateAvatarPreview(tx.avatarType, tx.avatarData, tx.avatarColor);
+
+          // Switch views
+          overlayViewModeEl.classList.add("hidden");
+          overlayEditModeEl.classList.remove("hidden");
+          overlayMenuBtnEl.classList.add("hidden");
+          hideDropdown();
+          overlayContentScrollEl.scrollTop = 0;
+        }
+
+        function updateAvatarPreview(type, data, color) {
+          if (type === "image" && data) {
+            avatarPreviewEl.innerHTML = `<img src="${data}" alt="Preview">`;
+            avatarPreviewEl.style.backgroundColor = "transparent";
+          } else {
+            const initial = data || "?";
+            const bgColor = color || getRandomColor();
+            const textColor = isColorDark(bgColor) ? "#ffffff" : "#000000";
+            avatarPreviewEl.innerHTML = initial;
+            avatarPreviewEl.style.backgroundColor = bgColor;
+            avatarPreviewEl.style.color = textColor;
+          }
+        }
+
+        function exitEditMode(saveChanges = false) {
+          if (saveChanges && currentEditingId) {
+            const id = document.getElementById("edit-id").value;
+            const index = transactions.findIndex((t) => t.id === id);
+            if (index > -1) {
+              // Get the input value and convert it back to ISO string for storage
+              const newTimestampISO = formatInputToISOString(
+                editTimestampInputEl.value
+              );
+
+              transactions[index] = {
+                ...transactions[index], // Keep potentially unchanged fields like ID
+                name: document.getElementById("edit-name").value.trim(),
+                amount:
+                  parseFloat(document.getElementById("edit-amount").value) || 0,
+                status: document.getElementById("edit-status").value,
+                note: document.getElementById("edit-note").value.trim(),
+                timestamp: newTimestampISO, // Save the new timestamp
+                avatarType: document.getElementById("edit-avatar-type").value,
+                avatarData: document.getElementById("edit-avatar-data").value,
+                avatarColor: document.getElementById("edit-avatar-color").value,
+              };
+              saveTransactions();
+              renderTransactionList(searchInputEl.value); // Refresh list
+              populateOverlay(transactions[index]); // Re-populate view with new data
+            }
+          } else if (currentEditingId) {
+            // Cancel: Re-populate view mode with original data before edit
+            const tx = transactions.find((t) => t.id === currentEditingId);
+            if (tx) populateOverlay(tx);
+          }
+
+          currentEditingId = null;
+          overlayEditModeEl.classList.add("hidden");
+          overlayViewModeEl.classList.remove("hidden");
+          overlayMenuBtnEl.classList.remove("hidden");
+          avatarUploadInputEl.value = null; // Clear file input
+        }
+
+        function showDeleteConfirmation() {
+          currentDeletingId = transactionOverlayEl.dataset.currentId;
+          if (!currentDeletingId) return;
+          hideDropdown();
+          confirmationDialogBackdropEl.classList.add("visible");
+        }
+
+        function hideDeleteConfirmation() {
+          confirmationDialogBackdropEl.classList.remove("visible");
+          currentDeletingId = null;
+        }
+
+        function deleteTransaction() {
+          if (!currentDeletingId) return;
+          transactions = transactions.filter(
+            (tx) => tx.id !== currentDeletingId
+          );
+          saveTransactions();
+          renderTransactionList(searchInputEl.value);
+          hideDeleteConfirmation();
+          hideOverlay();
+        }
+
+        function handleAvatarUpload(event) {
+          const file = event.target.files[0];
+          if (file && file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const imageDataUrl = e.target.result;
+              document.getElementById("edit-avatar-type").value = "image";
+              document.getElementById("edit-avatar-data").value = imageDataUrl;
+              document.getElementById("edit-avatar-color").value = "";
+              updateAvatarPreview("image", imageDataUrl, null);
+            };
+            reader.onerror = (e) => {
+              console.error("File reading error:", e);
+              alert("Error reading image file.");
+            };
+            reader.readAsDataURL(file);
+          } else if (file) {
+            alert("Please select a valid image file.");
+            avatarUploadInputEl.value = null;
+          }
+        }
+
+        function toggleSearchBar() {
+          searchBarContainerEl.classList.toggle("visible");
+          if (searchBarContainerEl.classList.contains("visible")) {
+            searchInputEl.focus();
+          } else {
+            searchInputEl.value = "";
+            renderTransactionList();
+          }
+        }
 
         // --- Event Listeners ---
-        detailCloseButton.addEventListener("click", hideDetailOverlay);
-        editOptionButton.addEventListener("click", showEditOverlay);
-        editCloseButton.addEventListener("click", hideEditOverlay);
-        saveEditsButton.addEventListener("click", saveEdits);
+        overlayCloseBtnEl.addEventListener("click", hideOverlay);
+        overlayMenuBtnEl.addEventListener("click", toggleDropdown);
+        editTransactionBtnEl.addEventListener("click", enterEditMode);
+        deleteTransactionBtnEl.addEventListener(
+          "click",
+          showDeleteConfirmation
+        );
+        cancelEditBtnEl.addEventListener("click", () => exitEditMode(false));
+        avatarUploadInputEl.addEventListener("change", handleAvatarUpload);
 
-        optionsMenuButton.addEventListener("click", (e) => {
-          e.stopPropagation();
-          optionsMenu.classList.toggle("show");
+        editFormEl.addEventListener("submit", (e) => {
+          e.preventDefault();
+          exitEditMode(true); // Save changes on form submit
         });
 
         document.addEventListener("click", (e) => {
           if (
-            !optionsMenu.contains(e.target) &&
-            !optionsMenuButton.contains(e.target)
+            !dropdownMenuEl.contains(e.target) &&
+            !overlayMenuBtnEl.contains(e.target)
           ) {
-            optionsMenu.classList.remove("show");
+            hideDropdown();
           }
         });
 
-        // Placeholders
-        document.querySelectorAll(".nav-button").forEach((button) => {
-          button.addEventListener("click", () =>
-            console.log(
-              `Nav button "${button.getAttribute(
-                "aria-label"
-              )}" clicked (placeholder).`
-            )
-          );
-        });
-        document
-          .querySelector(".back-button")
-          .addEventListener("click", () =>
-            console.log("Back button clicked (placeholder).")
-          );
+        searchIconEl.addEventListener("click", toggleSearchBar);
+        searchInputEl.addEventListener("input", () =>
+          renderTransactionList(searchInputEl.value)
+        );
 
-        // --- Initial Render ---
-        renderTransactions();
+        confirmDeleteBtnEl.addEventListener("click", deleteTransaction);
+        cancelDeleteBtnEl.addEventListener("click", hideDeleteConfirmation);
+        confirmationDialogBackdropEl.addEventListener("click", (e) => {
+          if (e.target === confirmationDialogBackdropEl) {
+            hideDeleteConfirmation();
+          }
+        });
+
+        // --- Initial Load ---
+        loadTransactions();
       });
     </script>
-    <script src="nav.js"></script>
   </body>
 </html>
