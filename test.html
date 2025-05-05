@@ -7,7 +7,7 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Pay - Cash App</title>
-
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <!-- Font Awesome -->
     <link
       rel="stylesheet"
@@ -20,19 +20,19 @@
     <style>
       /* --- Global Styles & Variables --- */
       :root {
-        --app-bg-color: #00d54b;
+        --app-bg-color: #00d54b; /* CASH APP GREEN */
         --text-primary: #ffffff;
-        --text-secondary: #c8f7d8;
+        --text-secondary: #c8f7d8; /* Lighter green/white */
         --button-bg-darker: #00b840;
         --button-active-darker: #009c36;
         --placeholder-profile-bg: #888b90;
         --overlay-bg: rgba(0, 0, 0, 0.6);
-        --border-radius-button: 50px;
+        --border-radius-button: 50px; /* Fully rounded */
         --padding-screen: 18px;
         --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Helvetica, Arial, sans-serif;
         --footer-height: 65px;
-        --header-height: 70px; /* Approximate */
+        --header-height: 70px;
       }
 
       * {
@@ -45,27 +45,15 @@
       body {
         height: 100%;
         overflow: hidden;
-      }
-      /* **NEW/MODIFIED**: Style for the balance display span in the footer */
-      #footer-balance-display {
-        font-size: 17px; /* Adjust size to match image */
-        font-weight: 550; /* Bold like the image */
-        line-height: 1;
-        white-space: nowrap; /* Prevent wrapping */
-        /* Color is inherited from .nav-item or .nav-item.active */
-      }
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
+      } /* Prevent body scroll */
 
       body {
         font-family: var(--font-family);
-        background-color: #00d54b; /* Fallback bg if container doesn't fill */
+        background-color: #000; /* Dark fallback */
         color: var(--text-primary);
         display: flex;
         justify-content: center;
-        align-items: center; /* Vertically center container */
+        align-items: flex-start;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
@@ -73,23 +61,23 @@
       .app-container {
         max-width: 450px;
         width: 100%;
-        height: 100vh; /* Use viewport height */
-        max-height: 900px; /* Optional: Limit max height on very tall screens */
+        height: 100vh;
+        max-height: 900px;
         background-color: var(--app-bg-color);
         display: flex;
         flex-direction: column;
-        position: relative; /* For absolute positioned children */
-        overflow: hidden; /* Prevent internal scroll */
+        position: relative;
+        overflow: hidden; /* Prevent container scroll */
       }
 
-      /* --- Payment Screen Specific Header --- */
+      /* --- Payment Screen Header --- */
       .payment-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: calc(var(--padding-screen) * 0.8) var(--padding-screen); /* Reduced top padding */
+        padding: calc(var(--padding-screen) * 0.8) var(--padding-screen);
         height: var(--header-height);
-        position: relative; /* For dropdown */
+        position: relative;
         z-index: 100;
         flex-shrink: 0; /* Prevent shrinking */
       }
@@ -103,23 +91,24 @@
         line-height: 1;
       }
       .profile-picture {
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         object-fit: cover;
         cursor: pointer;
+        background-color: var(--placeholder-profile-bg);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         display: block;
       }
       #profile-pic-input {
         display: none;
       }
-
-      /* --- Profile Picture Dropdown Menu (Unchanged) --- */
+      /* Profile Dropdown */
       .profile-options-menu {
         display: none;
         position: absolute;
         top: calc(var(--header-height) - 10px);
-        right: var(--padding-screen); /* Position below header */
+        right: var(--padding-screen);
         background-color: #ffffff;
         color: #000000;
         border-radius: 8px;
@@ -148,6 +137,8 @@
       .profile-options-menu button:hover {
         background-color: #f5f5f5;
       }
+
+      /* --- **REVISED** Amount Display Area --- */
       .amount-area {
         display: flex;
         flex-direction: column;
@@ -156,18 +147,16 @@
         text-align: center;
         flex-shrink: 0; /* Don't shrink */
         flex-grow: 1; /* ** Allow this area to take significant vertical space */
-        min-height: 140px; /* Minimum space */
+        min-height: 150px; /* Minimum space */
         padding: clamp(20px, 10vh, 80px) var(--padding-screen) 15px; /* **KEY**: Responsive top padding to push down */
       }
       .displayed-amount {
-        display: flexs;
-        font-size: clamp(48px, 18vmin, 84px);
-        font-weight: 500;
+        font-size: clamp(60px, 18vmin, 90px); /* Responsive large font */
+        font-weight: 400; /* Lighter weight like screenshot */
         line-height: 1.1;
-        margin-bottom: 5px; /* Space before currency button */
-        min-height: 1.2em; /* Min height based on line height */
+        margin-bottom: 15px;
+        min-height: 1.1em; /* Min height based on font */
         color: var(--text-primary);
-        word-break: break-all;
       }
       .currency-selector {
         background-color: var(--button-bg-darker);
@@ -175,11 +164,11 @@
         border: none;
         border-radius: 18px;
         padding: 8px 18px;
-        font-size: clamp(13px, 3vmin, 15px); /* Responsive font */
+        font-size: clamp(13px, 3vmin, 15px);
         font-weight: 500;
         cursor: pointer;
         transition: background-color 0.2s ease;
-        margin-bottom: 5px; /* Small space below */
+        margin-top: 5px; /* Space above selector */
       }
       .currency-selector:hover {
         background-color: var(--button-active-darker);
@@ -189,39 +178,28 @@
         font-size: 0.8em;
       }
 
-      /* --- Controls Area (Keypad + Buttons) - Flexible Height --- */
-      .controls-area {
-        flex-grow: 1; /* Takes up remaining vertical space */
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end; /* Push content towards the bottom of this area */
-        min-height: 300px; /* Minimum height to prevent excessive squishing */
-        padding: 0 var(--padding-screen); /* Horizontal padding */
-      }
-
       /* --- Keypad --- */
       .keypad {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 5px; /* Slightly more visual gap */
-        padding-bottom: 15px; /* Space between keypad and action buttons */
-        flex-shrink: 0;
+        gap: 1px; /* Minimal gap */
+        padding: 10px var(--padding-screen) 10px; /* Reduced vertical padding */
+        flex-shrink: 0; /* Prevent shrinking */
       }
       .keypad button {
         background: none;
         border: none;
         color: var(--text-primary);
-        /* Responsive font size: min 24px, preferred 6vmin, max 32px */
-        font-size: clamp(24px, 6vmin, 32px);
+        font-size: clamp(26px, 6vmin, 32px); /* Responsive font */
         font-weight: 400;
-        padding: 15px 0; /* Adjust vertical padding */
+        padding: clamp(10px, 3vh, 18px) 0; /* Responsive padding */
         cursor: pointer;
         transition: background-color 0.15s ease;
         border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 60px; /* Minimum button height */
+        min-height: 60px; /* Min height */
       }
       .keypad button:hover {
         background-color: rgba(255, 255, 255, 0.1);
@@ -233,11 +211,11 @@
         font-size: clamp(20px, 5vmin, 26px);
       }
 
-      /* --- Action Buttons (Request/Pay) --- */
+      /* --- Action Buttons --- */
       .action-buttons {
         display: flex;
         gap: 15px;
-        padding-bottom: 15px; /* Space before footer */
+        padding: 10px var(--padding-screen) 20px; /* Padding above and below */
         flex-shrink: 0;
       }
       .action-buttons button {
@@ -245,9 +223,9 @@
         background-color: var(--button-bg-darker);
         color: var(--text-primary);
         border: none;
-        padding: clamp(14px, 3vh, 18px) 10px; /* Responsive padding */
+        padding: clamp(14px, 2.5vh, 18px) 10px; /* Responsive padding */
         border-radius: var(--border-radius-button);
-        font-size: clamp(16px, 3.5vmin, 18px); /* Responsive font */
+        font-size: clamp(16px, 3.5vmin, 18px);
         font-weight: 600;
         cursor: pointer;
         transition: background-color 0.2s ease, opacity 0.2s ease;
@@ -265,48 +243,49 @@
       }
 
       /* --- Footer Navigation --- */
-      .bottom-nav {
-        padding: 0 var(--padding-screen);
-        z-index: 200;
-        flex-shrink: 0;
+      .app-footer {
+        /* No longer sticky/absolute */
         display: flex;
         justify-content: space-around;
         align-items: center;
-        border-top: 1px solid var(--light-gray-border);
-        background-color: var(--background-color);
-        height: 65px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 10;
-        /* No longer sticky or absolute */
         background-color: var(--app-bg-color);
         border-top: 1px solid rgba(255, 255, 255, 0.15);
+        height: var(--footer-height);
+        padding: 0 var(--padding-screen);
+        z-index: 200;
+        flex-shrink: 0; /* Prevent shrinking */
       }
-      .nav-button {
+      .nav-item {
         background: none;
         border: none;
         cursor: pointer;
-        padding: 10px;
+        padding: 8px;
+        color: #a2f5bf;
+        transition: color 0.2s ease, transform 0.2s ease;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        color: #ffffffa2;
-        transition: color 0.2s ease, transform 0.2s ease-in-out;
       }
-      #active svg path {
-        fill: #ffffff;
+      .nav-item.active {
+        color: var(--text-primary);
+        transform: scale(1.05);
+      }
+      .nav-item:hover:not(.active) {
+        color: #dffcec;
+        transform: scale(1.1);
+      }
+      .nav-item svg {
+        width: 26px;
+        height: 26px;
+        fill: currentColor;
+        display: block;
       }
 
       /* --- QR Scanner Overlay --- */
       .qr-scanner-overlay {
         display: none;
-        position: absolute; /* Cover app-container */
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        position: absolute;
+        inset: 0;
         background-color: var(--overlay-bg);
         z-index: 2000;
         flex-direction: column;
@@ -329,11 +308,11 @@
       }
       .qr-scanner-box {
         width: 65vmin;
-        height: 65vmin; /* Responsive size based on viewport */
+        height: 65vmin;
         max-width: 280px;
-        max-height: 280px; /* Max size */
+        max-height: 280px;
         min-width: 180px;
-        min-height: 180px; /* Min size */
+        min-height: 180px;
         border: 3px solid rgba(255, 255, 255, 0.8);
         border-radius: 12px;
         position: relative;
@@ -366,7 +345,6 @@
         padding: 5px 10px;
         border-radius: 5px;
       }
-
       @keyframes scan {
         0% {
           top: 0;
@@ -390,160 +368,103 @@
         >
           <i class="fa-solid fa-qrcode"></i>
         </button>
-        <img alt="Profile" class="profile-picture" id="profile-pic-display" />
+        <img
+          alt="Profile"
+          class="profile-picture"
+          id="profile-pic-display"
+          src="asset/myself.svg"
+          onerror="this.style.display='none'; this.parentElement.style.backgroundColor='var(--placeholder-profile-bg, #e0e0e0)';"
+        />
         <input type="file" id="profile-pic-input" accept="image/*" />
-        <!-- Profile Options Dropdown -->
         <div id="profile-options" class="profile-options-menu">
           <button id="change-pic-btn">Change Picture</button>
           <button id="remove-pic-btn">Remove Picture</button>
         </div>
       </header>
 
-      <div class="amount-area">
+      <!-- Amount Area (takes up flexible space) -->
+      <main class="amount-area">
         <div class="displayed-amount" id="displayed-amount">$0</div>
         <button class="currency-selector" id="currency-btn">
           USD <i class="fa-solid fa-chevron-down"></i>
         </button>
-      </div>
+      </main>
 
-      <!-- Controls Area: Keypad + Action Buttons -->
-      <div class="controls-area">
-        <section class="keypad" id="keypad">
-          <button data-value="1">1</button>
-          <button data-value="2">2</button>
-          <button data-value="3">3</button>
-          <button data-value="4">4</button>
-          <button data-value="5">5</button>
-          <button data-value="6">6</button>
-          <button data-value="7">7</button>
-          <button data-value="8">8</button>
-          <button data-value="9">9</button>
-          <button data-value=".">.</button>
-          <button data-value="0">0</button>
-          <button data-value="<">
-            <i class="fa-solid fa-delete-left"></i>
-          </button>
-        </section>
+      <!-- Keypad (fixed height elements) -->
+      <section class="keypad" id="keypad">
+        <button data-value="1">1</button>
+        <button data-value="2">2</button>
+        <button data-value="3">3</button>
+        <button data-value="4">4</button>
+        <button data-value="5">5</button>
+        <button data-value="6">6</button>
+        <button data-value="7">7</button>
+        <button data-value="8">8</button>
+        <button data-value="9">9</button>
+        <button data-value=".">.</button>
+        <button data-value="0" class="key-0">0</button>
+        <button data-value="<"><i class="fa-solid fa-delete-left"></i></button>
+      </section>
 
-        <section class="action-buttons">
-          <button id="request-btn">Request</button>
-          <button id="pay-btn" disabled>Pay</button>
-        </section>
-      </div>
-      <!-- End controls-area -->
+      <!-- Action Buttons (fixed height elements) -->
+      <section class="action-buttons">
+        <button id="request-btn">Request</button>
+        <button id="pay-btn" disabled>Pay</button>
+      </section>
 
-      <nav class="bottom-nav">
-        <!-- Nav buttons omitted for brevity -->
-
-        <a href="home.html">
-          <button class="nav-button" aria-label="Home">
-            <svg
-              id="icon-upload"
-              width="26"
-              height="22"
-              viewBox="0 0 26 23"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                transform="translate(-51.5 -16.5)"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M65.3158 17.5505C64.5096 17.0513 63.4903 17.0513 62.6841 17.5505L52.7104 23.7246C52.006 24.1607 51.7885 25.0852 52.2246 25.7895C52.6606 26.4939 53.5851 26.7115 54.2895 26.2754L64 20.2642L73.7104 26.2754C74.4148 26.7115 75.3393 26.4939 75.7754 25.7895C76.2114 25.0852 75.9939 24.1607 75.2895 23.7246L65.3158 17.5505ZM58 27C57.1715 27 56.5 27.6716 56.5 28.5V36.5C56.5 37.3284 57.1715 38 58 38C58.8284 38 59.5 37.3284 59.5 36.5V28.5C59.5 27.6716 58.8284 27 58 27ZM64 27C63.1715 27 62.5 27.6716 62.5 28.5V36.5C62.5 37.3284 63.1715 38 64 38C64.8284 38 65.5 37.3284 65.5 36.5V28.5C65.5 27.6716 64.8284 27 64 27ZM68.5 28.5C68.5 27.6716 69.1715 27 70 27C70.8284 27 71.5 27.6716 71.5 28.5V36.5C71.5 37.3284 70.8284 38 70 38C69.1715 38 68.5 37.3284 68.5 36.5V28.5Z"
-                fill="#ffffffa2"
-                fill-opacity="0.7"
-              />
-            </svg>
-          </button>
-        </a>
-
-        <a href="card.html">
-          <button class="nav-button" aria-label="Cards">
-            <svg
-              id="icon-wallet"
-              width="24"
-              height="20"
-              viewBox="0 0 24 21"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                transform="translate(-126.25 -18)"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M131.25 21H145.25C146.355 21 147.25 21.8954 147.25 23V33C147.25 34.1046 146.355 35 145.25 35H131.25C130.145 35 129.25 34.1046 129.25 33V23C129.25 21.8954 130.145 21 131.25 21ZM126.25 23C126.25 20.2386 128.489 18 131.25 18H145.25C148.011 18 150.25 20.2386 150.25 23V33C150.25 35.7614 148.011 38 145.25 38H131.25C128.489 38 126.25 35.7614 126.25 33V23ZM134.25 24C133.145 24 132.25 24.8954 132.25 26C132.25 27.1046 133.145 28 134.25 28H135.25C136.355 28 137.25 27.1046 137.25 26C137.25 24.8954 136.355 24 135.25 24H134.25Z"
-                fill="#ffffffa2"
-                fill-opacity="0.7"
-              />
-            </svg></button
-        ></a>
-
-        <button class="nav-button" id="active" aria-label="Pay">
-          <svg
-            id="icon-dollar"
-            width="15"
-            height="22"
-            viewBox="0 0 15 23"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+      <!-- Footer (fixed height element) -->
+      <footer class="app-footer">
+        <button class="nav-item" aria-label="Home" onclick="navigateTo('home')">
+          <svg viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+          </svg>
+        </button>
+        <button class="nav-item" aria-label="Card" onclick="navigateTo('card')">
+          <svg viewBox="0 0 24 24">
             <path
-              transform="translate(-205 -17)"
-              d="M217.675 23.8903C217.923 24.1401 218.336 24.1401 218.569 23.8903L219.811 22.5912C220.075 22.3414 220.06 21.8917 219.782 21.6218C218.805 20.7669 217.671 20.1148 216.442 19.7032L216.835 17.8045C216.919 17.3897 216.611 17 216.199 17H213.794C213.643 17.0016 213.498 17.0551 213.382 17.1515C213.267 17.2479 213.187 17.3814 213.158 17.5296L212.81 19.2185C209.61 19.3834 206.897 21.0173 206.897 24.365C206.897 27.263 209.138 28.5071 211.508 29.3616C213.749 30.221 214.937 30.5408 214.937 31.7499C214.937 32.9941 213.754 33.7236 212.005 33.7236C210.415 33.7236 208.745 33.189 207.453 31.8848C207.393 31.8244 207.322 31.7765 207.243 31.7438C207.165 31.7111 207.081 31.6942 206.996 31.6942C206.911 31.6942 206.827 31.7111 206.748 31.7438C206.67 31.7765 206.599 31.8244 206.539 31.8848L205.197 33.2339C205.071 33.3613 205 33.5338 205 33.7136C205 33.8934 205.071 34.0659 205.197 34.1933C206.241 35.2276 207.562 35.9771 209.069 36.3918L208.701 38.1756C208.617 38.5903 208.92 38.975 209.332 38.98L211.743 39C211.895 39.0007 212.042 38.9482 212.16 38.8516C212.278 38.755 212.359 38.6202 212.388 38.4704L212.736 36.7765C216.586 36.5167 218.932 34.3831 218.932 31.2703C218.932 28.4022 216.596 27.193 213.764 26.2087C212.144 25.6041 210.743 25.1894 210.743 23.9453C210.743 22.7361 212.05 22.2564 213.361 22.2564C215.031 22.2564 216.636 22.9509 217.685 23.9003L217.675 23.8903Z"
-              fill="#ffffff"
-              fill-opacity="0.9"
+              d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zm0-12H4V6h16v2z"
             />
           </svg>
         </button>
+        <button
+          class="nav-item active"
+          aria-label="Payment"
+          onclick="navigateTo('payment')"
+        >
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.75-2.7 1.75-1.78 0-2.95-.84-3.17-2.1H6.11c.17 2.28 1.95 3.47 4.39 3.82V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"
+            />
+          </svg>
+        </button>
+        <button
+          class="nav-item"
+          aria-label="Search"
+          onclick="navigateTo('search')"
+        >
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+            />
+          </svg>
+        </button>
+        <button
+          class="nav-item"
+          aria-label="Activity"
+          onclick="navigateTo('activity')"
+        >
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"
+            />
+          </svg>
+        </button>
+      </footer>
 
-        <a href="search.html">
-          <button class="nav-button" aria-label="Search">
-            <svg
-              id="icon-search"
-              width="23"
-              height="23"
-              viewBox="0 0 23 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                transform="translate(-276.25 -16.5)"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M291.75 26.5C291.75 30.0899 288.84 33 285.25 33C281.66 33 278.75 30.0899 278.75 26.5C278.75 22.9101 281.66 20 285.25 20C288.84 20 291.75 22.9101 291.75 26.5ZM290.823 34.1944C289.258 35.3302 287.332 36 285.25 36C280.003 36 275.75 31.7467 275.75 26.5C275.75 21.2533 280.003 17 285.25 17C290.497 17 294.75 21.2533 294.75 26.5C294.75 28.582 294.08 30.5076 292.944 32.0731L297.882 37.0104C298.468 37.5962 298.468 38.546 297.882 39.1317C297.296 39.7175 296.346 39.7175 295.76 39.1317L290.823 34.1944Z"
-                fill="#ffffffa2"
-                fill-opacity="0.7"
-              />
-            </svg></button
-        ></a>
-        <a href="history.html">
-          <button class="nav-button" aria-label="Activity">
-            <svg
-              id="icon-clock"
-              width="24"
-              height="24"
-              viewBox="0 0 24 25"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                transform="translate(-349 -16)"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M370 28C370 32.9706 365.971 37 361 37C356.029 37 352 32.9706 352 28C352 23.0294 356.029 19 361 19C365.971 19 370 23.0294 370 28ZM373 28C373 34.6274 367.627 40 361 40C354.373 40 349 34.6274 349 28C349 21.3726 354.373 16 361 16C367.627 16 373 21.3726 373 28ZM362.5 24C362.5 23.1716 361.828 22.5 361 22.5C360.172 22.5 359.5 23.1716 359.5 24V27.4893C359.5 28.4591 360.061 29.3414 360.939 29.753L364.363 31.3582C365.113 31.7098 366.007 31.3868 366.358 30.6367C366.71 29.8865 366.387 28.9934 365.637 28.6418L362.5 27.1715V24Z"
-                fill="#ffffffa2"
-                fill-opacity="0.7"
-              />
-            </svg>
-          </button>
-        </a>
-      </nav>
       <!-- QR Scanner Overlay -->
       <div class="qr-scanner-overlay" id="qr-scanner-overlay">
         <video id="qr-video" autoplay playsinline muted></video>
-        <div class="qr-scanner-box">
-          <div class="qr-scan-line"></div>
-        </div>
+        <div class="qr-scanner-box"><div class="qr-scan-line"></div></div>
         <p class="qr-scanner-text">Scanning...</p>
       </div>
     </div>
@@ -572,15 +493,16 @@
       let currentStream = null; // Camera stream
       const maxInputLength = 10;
       const localStorageProfilePicKey = "cashAppProfilePic";
-      const placeholderProfilePicSrc = `assets/svgviewer-white.svg`;
+      const placeholderProfilePicSrc = "asset/myself.svg"; // Using file path constant
+      const localStoragePaymentAmountKey = "paymentAmount"; // For passing to next page
+
       // --- Functions ---
 
       function formatCurrency(amount) {
-        // Standard currency formatting
+        // Use standard currency format for alerts etc.
         const number = Number(amount);
         if (isNaN(number)) {
-          console.error("Invalid amount:", amount);
-          return "$NaN";
+          return "$?.??";
         }
         return `$${number.toLocaleString("en-US", {
           minimumFractionDigits: 2,
@@ -589,13 +511,12 @@
       }
 
       function formatAndDisplayAmount() {
-        // Displays raw input with $ sign
+        // Displays raw input with '$'
         if (currentInput === "" || currentInput === "0") {
           displayedAmountEl.textContent = "$0";
         } else if (currentInput === ".") {
           displayedAmountEl.textContent = "$0.";
         } else {
-          // Ensure no multiple leading zeros, except for "0."
           let displayValue = currentInput;
           if (
             displayValue.startsWith("0") &&
@@ -603,8 +524,7 @@
             displayValue.length > 1
           ) {
             displayValue = displayValue.substring(1);
-            // Update currentInput as well if we trim the zero
-            currentInput = displayValue;
+            currentInput = displayValue; // Update state too
           }
           displayedAmountEl.textContent = `$${displayValue}`;
         }
@@ -612,15 +532,14 @@
       }
 
       function updatePayButtonState() {
-        // Parse ignoring potential trailing decimal for enable/disable logic
-        const numericValue = parseFloat(currentInput);
+        const numericValue = parseFloat(currentInput); // Parse ignores trailing '.'
         payBtn.disabled = isNaN(numericValue) || numericValue <= 0;
       }
 
       function handleKeyPress(value) {
         if (value === "<") {
           currentInput = currentInput.slice(0, -1);
-          if (currentInput === "") currentInput = "0"; // Default back to 0
+          if (currentInput === "") currentInput = "0"; // Back to 0 if empty
         } else if (value === ".") {
           if (!currentInput.includes(".")) {
             currentInput = (currentInput === "" ? "0" : currentInput) + ".";
@@ -628,7 +547,7 @@
         } else {
           // Digit
           if (currentInput === "0") {
-            currentInput = value; // Replace initial '0'
+            currentInput = value;
           } else {
             const parts = currentInput.split(".");
             if (parts.length === 1 && parts[0].length >= maxInputLength) return;
@@ -639,30 +558,25 @@
         formatAndDisplayAmount();
       }
 
-      // ----- INSIDE payment.html SCRIPT -----
-
-      // ... (other functions remain the same) ...
-
       function handlePay() {
+        // Navigate to contact page
         const numericValue = parseFloat(currentInput);
         if (!payBtn.disabled && !isNaN(numericValue) && numericValue > 0) {
-          // **NEW:** Save amount to localStorage before navigating
-          localStorage.setItem("paymentAmount", numericValue.toString());
-          console.log(`Amount ${numericValue} saved for next page.`);
-
-          // **NEW:** Navigate to the contact selection page
-          window.location.href = "contact_pay.html";
-
-          // Remove the old alert:
-          // alert(`Proceeding to pay ${formatCurrency(numericValue)}.\n(Next Step: Select Contact - Not Implemented)`);
+          localStorage.setItem(
+            localStoragePaymentAmountKey,
+            numericValue.toString()
+          ); // Save amount for next page
+          console.log(
+            `Amount ${numericValue} saved. Navigating to contact page.`
+          );
+          window.location.href = "contact_pay.html"; // **Navigate to contact selection**
         } else {
-          console.log("Pay button clicked but amount is invalid or zero.");
+          console.log("Pay button clicked but amount invalid.");
         }
       }
 
-      // ... (rest of payment.html script) ...
-
       function handleRequest() {
+        /* ... same placeholder ... */
         const numericValue = parseFloat(currentInput);
         const requestAmount =
           !isNaN(numericValue) && numericValue > 0
@@ -673,7 +587,7 @@
         );
       }
 
-      // Stop camera stream tracks
+      // --- QR Code Functions ---
       function stopCameraStream() {
         if (currentStream) {
           currentStream.getTracks().forEach((track) => track.stop());
@@ -682,75 +596,88 @@
           qrVideoEl.srcObject = null;
         }
       }
-
-      // Start QR Code Scanning with Camera
       async function startQrScan() {
+        /* ... same camera logic ... */
         qrScannerOverlay.classList.add("show");
-        stopCameraStream(); // Stop previous stream if any
-
+        console.log("Attempting QR Scan...");
+        stopCameraStream();
         try {
           currentStream = await navigator.mediaDevices.getUserMedia({
             video: { facingMode: "environment" },
           });
           qrVideoEl.srcObject = currentStream;
-          console.log("Camera stream started.");
-
-          // Close after timeout
+          console.log("Camera started.");
           setTimeout(() => {
             if (qrScannerOverlay.classList.contains("show")) {
-              // Only if still open
               stopCameraStream();
               qrScannerOverlay.classList.remove("show");
               console.log("QR Scan Finished (Timeout).");
               alert(
-                "QR Code Scanned!\n(Next Step: Show Contact/Payment Details - Not Implemented)"
+                "QR Code Scanned!\n(Next Step: Show Details - Not Implemented)"
               );
             }
-          }, 7000); // 7 seconds
+          }, 7000);
         } catch (err) {
-          console.error("Error accessing camera:", err);
+          console.error("Camera Error:", err);
           qrScannerOverlay.classList.remove("show");
-          alert(
-            "Could not access camera. Please check permissions and ensure it's not in use."
-          );
+          alert("Could not access camera.");
           stopCameraStream();
         }
       }
 
-      // --- Profile Picture Logic (Reused & Adapted) ---
+      // --- Profile Picture Logic (Using File Path Default) ---
       function setPlaceholderProfilePic() {
-        profilePicDisplay.src = placeholderProfilePicSrc;
-        profilePicDisplay.style.backgroundColor = "";
-        profilePicDisplay.onerror = null;
-      }
-
-      function loadProfilePic() {
-        const savedProfilePic = localStorage.getItem(localStorageProfilePicKey);
-        if (savedProfilePic && savedProfilePic.startsWith("data:image/")) {
-          // Basic check for Data URL
-          profilePicDisplay.src = savedProfilePic;
+        if (profilePicDisplay) {
+          console.log("Setting placeholder:", placeholderProfilePicSrc);
+          profilePicDisplay.style.display = "block";
+          profilePicDisplay.removeAttribute("onerror");
+          profilePicDisplay.src = placeholderProfilePicSrc;
           profilePicDisplay.style.backgroundColor = "";
           profilePicDisplay.onerror = () => {
-            console.warn("Saved profile image failed to load. Resetting.");
+            console.error(
+              `Failed to load default: ${placeholderProfilePicSrc}`
+            );
+            profilePicDisplay.style.display = "none";
+            if (profilePicDisplay.parentElement) {
+              profilePicDisplay.parentElement.style.backgroundColor =
+                "var(--placeholder-profile-bg, #e0e0e0)";
+            }
+            profilePicDisplay.onerror = null;
+          };
+        } else {
+          console.warn("profilePicDisplay not found for placeholder.");
+        }
+      }
+      function loadProfilePic() {
+        if (!profilePicDisplay) return;
+        const savedProfilePic = localStorage.getItem(localStorageProfilePicKey);
+        if (savedProfilePic && savedProfilePic.startsWith("data:image/")) {
+          console.log("Loading profile pic from localStorage.");
+          profilePicDisplay.removeAttribute("onerror");
+          profilePicDisplay.src = savedProfilePic;
+          profilePicDisplay.style.display = "block";
+          profilePicDisplay.style.backgroundColor = "";
+          profilePicDisplay.onerror = () => {
+            console.warn("Saved profile image failed. Resetting.");
             localStorage.removeItem(localStorageProfilePicKey);
             setPlaceholderProfilePic();
           };
         } else {
           if (savedProfilePic) {
-            // Clear invalid data
+            console.warn("Invalid profile data found, using default.");
             localStorage.removeItem(localStorageProfilePicKey);
-            console.warn("Removed invalid profile pic data from storage.");
+          } else {
+            console.log("No saved profile pic, using default.");
           }
           setPlaceholderProfilePic();
         }
       }
-
       function handleProfilePicClick(event) {
         event.stopPropagation();
-        profileOptions.classList.toggle("show");
+        if (profileOptions) profileOptions.classList.toggle("show");
       }
-
       function handleProfilePicChange(event) {
+        if (!profilePicDisplay || !profileOptions || !profilePicInput) return;
         const file = event.target.files[0];
         if (!file || !file.type.startsWith("image/")) {
           alert("Please select image.");
@@ -761,15 +688,47 @@
           profilePicDisplay.src = e.target.result;
           profilePicDisplay.style.backgroundColor = "";
           profilePicDisplay.onerror = () => {
-            console.warn("Uploaded image failed to load. Resetting.");
+            console.warn("Uploaded image failed. Resetting.");
             localStorage.removeItem(localStorageProfilePicKey);
             setPlaceholderProfilePic();
           };
-          localStorage.setItem(localStorageProfilePicKey, e.target.result);
-          console.log("Profile picture updated and saved.");
+          saveState();
         };
         reader.readAsDataURL(file);
         profileOptions.classList.remove("show");
+        event.target.value = null;
+      }
+      // Save state function only saves Data URLs
+      function saveState() {
+        const currentSrc = profilePicDisplay
+          ? profilePicDisplay.getAttribute("src")
+          : null;
+        if (currentSrc && currentSrc.startsWith("data:image/")) {
+          localStorage.setItem(localStorageProfilePicKey, currentSrc);
+        } else {
+          localStorage.removeItem(localStorageProfilePicKey);
+        }
+        console.log("Profile pic state processed for saving.");
+      }
+
+      // Simple Navigation Placeholder (Using original specified filenames)
+      function navigateTo(page) {
+        const pageMap = {
+          home: "money.html",
+          card: "card.html",
+          payment: "pay.html",
+          search: "search_contacts.html",
+          activity: "history.html",
+        };
+        const targetPage = pageMap[page];
+        if (
+          targetPage &&
+          targetPage !== window.location.pathname.split("/").pop()
+        ) {
+          window.location.href = targetPage;
+        } else if (!targetPage) {
+          console.warn(`Nav target for '${page}' not defined.`);
+        }
       }
 
       // --- Event Listeners ---
@@ -779,65 +738,46 @@
           handleKeyPress(target.dataset.value);
         }
       });
-
       payBtn.addEventListener("click", handlePay);
       requestBtn.addEventListener("click", handleRequest);
       qrScannerBtn.addEventListener("click", startQrScan);
       currencyBtn.addEventListener("click", () =>
         alert("Currency selection not implemented.")
       );
-
-      // Profile Pic Listeners
-      profilePicDisplay.addEventListener("click", handleProfilePicClick);
-      profilePicInput.addEventListener("change", handleProfilePicChange);
-      changePicBtn.addEventListener("click", () => {
-        profilePicInput.click();
-        profileOptions.classList.remove("show");
-      });
-      removePicBtn.addEventListener("click", () => {
-        setPlaceholderProfilePic();
-        localStorage.removeItem(localStorageProfilePicKey); // Remove from storage
-        console.log("Profile picture removed.");
-        profileOptions.classList.remove("show");
-      });
-
-      // Footer Navigation Click Handler
-      navItems.forEach((item) => {
-        item.addEventListener("click", (e) => {
-          const label = item.getAttribute("aria-label");
-          navItems.forEach((i) => i.classList.remove("active"));
-          item.classList.add("active");
+      // Profile listeners
+      if (profilePicDisplay)
+        profilePicDisplay.addEventListener("click", handleProfilePicClick);
+      if (profilePicInput)
+        profilePicInput.addEventListener("change", handleProfilePicChange);
+      if (changePicBtn)
+        changePicBtn.addEventListener("click", () => {
+          if (profilePicInput) profilePicInput.click();
+          if (profileOptions) profileOptions.classList.remove("show");
         });
-      });
-
-      // Close dropdown / Stop scanner on outside click
+      if (removePicBtn)
+        removePicBtn.addEventListener("click", () => {
+          setPlaceholderProfilePic();
+          saveState();
+          console.log("Profile picture removed.");
+          if (profileOptions) profileOptions.classList.remove("show");
+        });
+      // Close dropdown listener
       document.addEventListener("click", (event) => {
-        // Close profile dropdown
         if (
+          profileOptions &&
           profileOptions.classList.contains("show") &&
           !profileOptions.contains(event.target) &&
           !profilePicDisplay.contains(event.target)
         ) {
           profileOptions.classList.remove("show");
         }
-        // Close QR Scanner if clicking outside the scanner area (and not on the trigger button)
-        if (
-          qrScannerOverlay.classList.contains("show") &&
-          !qrScannerOverlay.contains(event.target) &&
-          !qrScannerBtn.contains(event.target)
-        ) {
-          stopCameraStream();
-          qrScannerOverlay.classList.remove("show");
-          console.log("QR Scan cancelled by outside click.");
-        }
       });
-
-      // Stop camera stream if the page visibility changes
+      // Stop camera on visibility change
       document.addEventListener("visibilitychange", () => {
         if (document.hidden && currentStream) {
-          console.log("Page hidden, stopping camera stream.");
+          console.log("Page hidden, stopping camera.");
           stopCameraStream();
-          qrScannerOverlay.classList.remove("show"); // Also hide overlay
+          qrScannerOverlay.classList.remove("show");
         }
       });
 
@@ -845,8 +785,15 @@
       document.addEventListener("DOMContentLoaded", () => {
         loadProfilePic();
         formatAndDisplayAmount(); // Initialize display to $0
+        // Set Active Footer Item for Payment page
+        navItems.forEach((item) => {
+          item.classList.toggle(
+            "active",
+            item.getAttribute("aria-label") === "Payment"
+          );
+        });
+        console.log("Payment page initialized.");
       });
     </script>
-    <script src="nav.js"></script>
   </body>
 </html>
