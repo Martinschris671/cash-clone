@@ -18,6 +18,7 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="nav.css" />
+    <link rel="stylesheet" href="feedback.css" />
     <style>
       /* --- Global Styles & Variables --- */
       :root {
@@ -828,6 +829,87 @@
             </div>
           </article>
         </section>
+        <!-- 
+-----------------------------------------------------
+ 1. HTML Structure for the Overlay
+    (Paste this just before the closing </body> tag in your pages)
+    (NO CHANGES FROM PREVIOUS VERSION NEEDED HERE)
+-----------------------------------------------------
+-->
+        <div id="feedback-overlay" class="feedback-modal-overlay">
+          <div class="feedback-modal-content">
+            <button
+              class="feedback-modal-close-btn"
+              id="feedback-modal-close-btn"
+              aria-label="Close Feedback"
+            >
+              ×
+            </button>
+            <h2>Rate your experience</h2>
+            <p class="feedback-subtitle">
+              How likely are you to recommend this app?
+            </p>
+
+            <div class="feedback-star-rating" id="feedback-star-rating">
+              <span class="star" data-value="1"
+                ><i class="far fa-star"></i><i class="fas fa-star solid"></i
+              ></span>
+              <span class="star" data-value="2"
+                ><i class="far fa-star"></i><i class="fas fa-star solid"></i
+              ></span>
+              <span class="star" data-value="3"
+                ><i class="far fa-star"></i><i class="fas fa-star solid"></i
+              ></span>
+              <span class="star" data-value="4"
+                ><i class="far fa-star"></i><i class="fas fa-star solid"></i
+              ></span>
+              <span class="star" data-value="5"
+                ><i class="far fa-star"></i><i class="fas fa-star solid"></i
+              ></span>
+            </div>
+
+            <div class="feedback-comment-section">
+              <label for="feedback-comment"
+                >Additional comments (optional):</label
+              >
+              <textarea
+                id="feedback-comment"
+                rows="4"
+                placeholder="Tell us more..."
+              ></textarea>
+            </div>
+
+            <div class="feedback-modal-actions">
+              <button
+                id="feedback-cancel-btn"
+                class="feedback-modal-btn secondary"
+              >
+                Cancel
+              </button>
+              <button
+                id="feedback-submit-btn"
+                class="feedback-modal-btn primary"
+                disabled
+              >
+                Submit Feedback
+              </button>
+            </div>
+          </div>
+          <!-- Thank You Message (Initially Hidden) -->
+          <div class="feedback-thank-you" id="feedback-thank-you">
+            <div class="feedback-thank-you-content">
+              <i class="fas fa-check-circle"></i>
+              <h3>Thank You!</h3>
+              <p>Your feedback has been submitted.</p>
+              <button
+                id="feedback-thank-you-close-btn"
+                class="feedback-modal-btn primary"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
       </main>
       <!-- End main-content -->
       <nav class="bottom-nav">
@@ -1285,5 +1367,6 @@
       document.addEventListener("DOMContentLoaded", loadState);
     </script>
     <script src="nav.js"></script>
+    <script src="feedback.js"></script>
   </body>
 </html>
