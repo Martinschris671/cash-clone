@@ -1,38 +1,55 @@
+/* --- Global Styles & Variables --- */
+:root {
+  --app-bg-color: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #6c757d;
+  --pin-dot-inactive: #e9ecef;
+  --pin-dot-active: #333333;
+  --keypad-text: #000000;
+  --border-color: #e9ecef;
+  --accent-green: #00d54b;
+  --star-inactive-color: #d3d3d3; /* Light Gray */
+  --star-hover-color: #f0e1b8; /* Light Gold */
+  --star-selected-color: #ffc107; /* Gold */
+  --button-secondary-bg: #e9ecef;
+  --button-secondary-text: #000000;
+  --button-radius: 8px; /* Changed for modal buttons */
+  --padding-screen: 25px;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
 /* --- Feedback Modal Styles --- */
-/* Ensure this doesn't conflict with other modal styles if you have them */
 .feedback-modal-overlay {
-  display: none; /* Hidden by default */
-  position: fixed; /* Cover viewport */
-  inset: 0; /* top, left, right, bottom = 0 */
-  background-color: rgba(0, 0, 0, 0.65); /* Dark semi-transparent background */
-  z-index: 2000; /* High z-index to be on top */
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically */
-  padding: 20px; /* Padding around the modal */
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  /* Use animation for entry */
   animation: feedbackFadeIn 0.3s ease-out forwards;
 }
 .feedback-modal-overlay.show {
-  display: flex; /* Show the modal */
+  display: flex;
 }
-/* Exit animation class */
 .feedback-modal-overlay.hide {
   animation: feedbackFadeOut 0.3s ease-in forwards;
 }
 
 .feedback-modal-content {
-  background-color: #ffffff; /* White modal */
-  color: #000000; /* Black text */
+  background-color: #ffffff;
+  color: #000000;
   padding: 25px 30px;
-  border-radius: 16px; /* Rounded corners */
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Soft shadow */
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 380px; /* Limit modal width */
-  position: relative; /* For close button positioning */
+  max-width: 380px;
+  position: relative;
   text-align: center;
-  /* Use animation for entry */
   animation: feedbackSlideUp 0.3s ease-out forwards;
 }
 
@@ -42,83 +59,93 @@
   right: 12px;
   background: none;
   border: none;
-  font-size: 26px; /* Make X visible */
-  font-weight: 300; /* Lighter weight for X */
-  color: #999; /* Gray color */
+  font-size: 26px;
+  font-weight: 300;
+  color: #999;
   cursor: pointer;
-  line-height: 1; /* Ensure proper vertical alignment */
-  padding: 5px; /* Clickable area */
+  line-height: 1;
+  padding: 5px;
 }
 .feedback-modal-content h2 {
   margin-bottom: 8px;
   font-size: 20px;
   font-weight: 600;
-  color: #111; /* Slightly off-black */
+  color: #111;
 }
 .feedback-subtitle {
   font-size: 14px;
-  color: var(--text-secondary, #6c757d); /* Use variable or fallback */
-  margin-bottom: 25px; /* Space before stars */
+  color: var(--text-secondary, #6c757d);
+  margin-bottom: 25px;
 }
 
+/* Star Rating CSS (Refined) */
 .feedback-star-rating {
   display: flex;
   justify-content: center;
-  gap: 15px; /* Space between stars */
-  margin-bottom: 30px; /* Space below stars */
+  gap: 15px;
+  margin-bottom: 30px;
 }
 .feedback-star-rating .star {
-  font-size: 32px; /* Size of stars */
-  color: #d3d3d3; /* Inactive star outline color */
+  font-size: 32px;
+  color: var(--star-inactive-color);
   cursor: pointer;
-  position: relative; /* For layering solid star */
+  position: relative;
   transition: color 0.2s ease, transform 0.1s ease;
+  display: inline-block;
+  line-height: 1;
 }
-/* Solid star positioned exactly over the outline star */
 .feedback-star-rating .star .solid {
   position: absolute;
   left: 0;
   top: 0;
-  color: #ffc107; /* Gold selected color */
-  opacity: 0; /* Hidden by default */
-  transition: opacity 0.2s ease;
-  overflow: hidden; /* Needed for hover effect */
-  width: 0%; /* Use width to reveal on selection */
-}
-
-/* Hover effect for stars */
-.feedback-star-rating:hover .star i.far {
-  color: #f0e1b8; /* Light gold outline on hover */
-}
-/* Reset subsequent stars during hover */
-.feedback-star-rating .star:hover ~ .star i.far {
-  color: #d3d3d3;
-}
-/* Preview solid star fill on hover */
-.feedback-star-rating .star:hover i.solid {
-  width: 100%; /* Temporarily show full width */
-  opacity: 0.4; /* Make it slightly visible */
-}
-
-/* Selection effect for stars */
-.feedback-star-rating .star.selected i.far {
-  color: #ffc107; /* Keep outline gold when selected */
-}
-.feedback-star-rating .star.selected i.solid {
-  width: 100%; /* Fully reveal solid star */
-  opacity: 1;
-}
-/* Reset subsequent stars after selection */
-.feedback-star-rating .star.selected ~ .star i.far {
-  color: #d3d3d3;
-}
-.feedback-star-rating .star.selected ~ .star i.solid {
-  width: 0; /* Hide subsequent solid stars */
+  color: var(--star-selected-color);
   opacity: 0;
+  transition: opacity 0.1s ease;
+  pointer-events: none;
+}
+.feedback-star-rating:hover .star i.far {
+  color: var(--star-hover-color);
+}
+.feedback-star-rating .star:hover ~ .star i.far {
+  color: var(--star-inactive-color);
+}
+.feedback-star-rating.rating-1 .star[data-value="1"] .solid,
+.feedback-star-rating.rating-1 .star[data-value="1"] i.far,
+.feedback-star-rating.rating-2 .star[data-value="1"] .solid,
+.feedback-star-rating.rating-2 .star[data-value="1"] i.far,
+.feedback-star-rating.rating-2 .star[data-value="2"] .solid,
+.feedback-star-rating.rating-2 .star[data-value="2"] i.far,
+.feedback-star-rating.rating-3 .star[data-value="1"] .solid,
+.feedback-star-rating.rating-3 .star[data-value="1"] i.far,
+.feedback-star-rating.rating-3 .star[data-value="2"] .solid,
+.feedback-star-rating.rating-3 .star[data-value="2"] i.far,
+.feedback-star-rating.rating-3 .star[data-value="3"] .solid,
+.feedback-star-rating.rating-3 .star[data-value="3"] i.far,
+.feedback-star-rating.rating-4 .star[data-value="1"] .solid,
+.feedback-star-rating.rating-4 .star[data-value="1"] i.far,
+.feedback-star-rating.rating-4 .star[data-value="2"] .solid,
+.feedback-star-rating.rating-4 .star[data-value="2"] i.far,
+.feedback-star-rating.rating-4 .star[data-value="3"] .solid,
+.feedback-star-rating.rating-4 .star[data-value="3"] i.far,
+.feedback-star-rating.rating-4 .star[data-value="4"] .solid,
+.feedback-star-rating.rating-4 .star[data-value="4"] i.far,
+.feedback-star-rating.rating-5 .star[data-value="1"] .solid,
+.feedback-star-rating.rating-5 .star[data-value="1"] i.far,
+.feedback-star-rating.rating-5 .star[data-value="2"] .solid,
+.feedback-star-rating.rating-5 .star[data-value="2"] i.far,
+.feedback-star-rating.rating-5 .star[data-value="3"] .solid,
+.feedback-star-rating.rating-5 .star[data-value="3"] i.far,
+.feedback-star-rating.rating-5 .star[data-value="4"] .solid,
+.feedback-star-rating.rating-5 .star[data-value="4"] i.far,
+.feedback-star-rating.rating-5 .star[data-value="5"] .solid,
+.feedback-star-rating.rating-5 .star[data-value="5"] i.far {
+  opacity: 1;
+  color: var(--star-selected-color);
 }
 
+/* Comment Section */
 .feedback-comment-section {
-  margin-bottom: 25px; /* Space before buttons */
+  margin-bottom: 25px;
   text-align: left;
 }
 .feedback-comment-section label {
@@ -134,44 +161,44 @@
   font-size: 15px;
   border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 8px;
-  background-color: #f8f9fa; /* Light background for textarea */
+  background-color: #f8f9fa;
   outline: none;
-  resize: vertical; /* Allow vertical resizing */
-  min-height: 80px; /* Default height */
-  font-family: inherit; /* Use main font */
-  color: var(--text-primary, #000);
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  color: var(--text-primary);
 }
 .feedback-comment-section textarea:focus {
   border-color: var(--accent-green, #00d54b);
   background-color: #fff;
 }
 
+/* Modal Actions */
 .feedback-modal-actions {
   display: flex;
-  justify-content: space-between; /* Space out buttons */
+  justify-content: space-between;
   gap: 12px;
-  margin-top: 15px; /* Space above buttons */
+  margin-top: 15px;
 }
 .feedback-modal-btn {
   border: none;
-  border-radius: 8px; /* Slightly less rounded than main buttons */
-  padding: 12px 20px; /* Button padding */
+  border-radius: var(--button-radius);
+  padding: 12px 20px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease, opacity 0.2s ease;
-  flex-grow: 1; /* Make buttons share space */
+  flex-grow: 1;
 }
 .feedback-modal-btn.primary {
   background-color: var(--accent-green, #00d54b);
   color: white;
 }
 .feedback-modal-btn.primary:hover:not(:disabled) {
-  background-color: #00b33f; /* Darker green on hover */
+  background-color: #00b33f;
 }
 .feedback-modal-btn.primary:disabled {
-  background-color: #a3e9bf; /* Lighter green when disabled */
+  background-color: #a3e9bf;
   opacity: 0.7;
   cursor: not-allowed;
 }
@@ -180,42 +207,38 @@
   color: var(--button-secondary-text, #000);
 }
 .feedback-modal-btn.secondary:hover {
-  background-color: #d8dade; /* Darker grey on hover */
+  background-color: #d8dade;
 }
 
-/* Thank You Message Styles */
+/* Thank You Message */
 .feedback-thank-you {
-  display: none; /* Hidden initially */
-  position: absolute; /* Position within overlay content area */
+  display: none;
+  position: absolute;
   inset: 0;
-  background-color: var(--app-bg-color, #ffffff); /* Match modal background */
-  z-index: 10; /* Above form content */
+  background-color: var(--app-bg-color, #ffffff);
+  z-index: 10;
   justify-content: center;
   align-items: center;
-  border-radius: 16px; /* Match modal content radius */
-  /* Use fade in for thank you message appearance */
+  border-radius: 16px;
   animation: feedbackFadeIn 0.3s ease-out forwards;
 }
 .feedback-thank-you.show {
-  display: flex; /* Show it */
+  display: flex;
 }
 .feedback-thank-you-content {
   text-align: center;
   padding: 20px;
 }
 .feedback-thank-you i {
-  /* Checkmark icon */
   font-size: 50px;
   color: var(--accent-green, #00d54b);
   margin-bottom: 20px;
-  /* Add pop-in animation */
-  animation: feedbackPopIn 0.5s 0.1s ease-out backwards; /* Delay slightly */
+  animation: feedbackPopIn 0.5s 0.1s ease-out backwards;
 }
 .feedback-thank-you h3 {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 8px;
-  color: var(--text-primary);
 }
 .feedback-thank-you p {
   font-size: 15px;
@@ -223,19 +246,8 @@
   margin-bottom: 30px;
 }
 .feedback-thank-you button {
-  /* Reuse primary button style */
-  background-color: var(--button-secondary-bg, #e9ecef);
-  color: var(--button-secondary-text, #000);
   padding-left: 40px;
-  padding-right: 40px; /* Wider close button */
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.feedback-thank-you button:hover {
-  background-color: #d8dade;
+  padding-right: 40px;
 }
 
 /* Animations */
