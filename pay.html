@@ -73,13 +73,12 @@
       .app-container {
         max-width: 450px;
         width: 100%;
-        height: 100vh; /* Use viewport height */
-        max-height: 900px; /* Optional: Limit max height on very tall screens */
+        height: 100%;
+        margin: 0 auto;
         background-color: var(--app-bg-color);
         display: flex;
         flex-direction: column;
-        position: relative; /* For absolute positioned children */
-        overflow: hidden; /* Prevent internal scroll */
+        position: relative;
       }
 
       /* --- Payment Screen Specific Header --- */
@@ -925,6 +924,5 @@
       });
     </script>
     <script src="feedback.js"></script>
-    
   </body>
 </html>

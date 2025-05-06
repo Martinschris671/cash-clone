@@ -22,8 +22,18 @@
     <style>
       /* --- Global Styles & Variables --- */
       :root {
+        --padding-screen: 18px;
+        --footer-height: 65px;
+        --app-bg-color: #f0f1f2; /* Light gray background */
+        --text-placeholder: #b0b0b0;
+        --accent-bitcoin-icon-bg: #16c7fe; /* Bright Blue */
+        --accent-stocks-icon-bg: #6236ff; /* Purple */
+        --accent-taxes-icon-bg: #6236ff; /* Purple (same as stocks in image) */
+        --border-radius-card: 16px;
+        --border-radius-button: 24px;
+        --icon-circle-size: 44px; /* Size of the icon circles */
+        --icon-size: 20px; /* Size of FA icons inside circles */
         --nav-hover-bg: #e2e6ea;
-        --app-bg-color: #f0f1f2; /* Slightly off-white like the image */
         --card-bg-color: #ffffff;
         --text-primary: #000000;
         --text-secondary: #6c757d; /* Grayish text */
@@ -35,15 +45,10 @@
         --accent-bitcoin-light: rgba(0, 180, 255, 0.1);
         --accent-stocks: #8a2be2;
         --accent-stocks-light: rgba(138, 43, 226, 0.1);
-        --placeholder-profile-bg: #888b90; /* Default profile color */
         --icon-bg-default: #e9ecef; /* Used for progress track & default avatar bg */
-        --border-radius-card: 16px;
-        --border-radius-button: 24px;
-        --padding-screen: 16px;
         --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
         --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Helvetica, Arial, sans-serif;
-        --footer-height: 65px; /* Define footer height */
         --header-height: 70px; /* Define header height */
       }
 
@@ -150,8 +155,7 @@
       .main-content {
         flex-grow: 1;
         overflow-y: auto; /* Enable scrolling for content */
-        padding: 0 var(--padding-screen)
-          calc(var(--padding-screen) + var(--footer-height)); /* Padding + space for footer */
+        padding: 0 var(--padding-screen); /* Padding + space for footer */
         scrollbar-width: none; /* Firefox */
         -ms-overflow-style: none; /* IE/Edge */
       }
@@ -160,14 +164,15 @@
       } /* Chrome/Safari */
 
       /* --- Card Base Style --- */
+
+      /* --- Card Base Style --- */
       .card {
         background-color: var(--card-bg-color);
         border-radius: var(--border-radius-card);
         padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Softer shadow */
         margin-bottom: var(--padding-screen);
-        box-shadow: var(--shadow-card);
       }
-
       /* --- Cash Balance Card --- */
       .cash-balance-card {
         /* Uses .card base */
@@ -224,242 +229,158 @@
       .balance-actions button:active {
         background-color: #d1d5d9;
       }
-
-      /* --- Grid Container --- */
+      /* --- **NEW** Info Grid Styling (Matching image) --- */
       .info-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr); /* 2 columns */
-        gap: var(--padding-screen);
-      }
-      /* --- Enhanced Tax Card Styles --- */
-      .tax-card-enhanced .info-card-content {
-        justify-content: flex-start; /* Align content top */
-        padding-top: 10px;
+        gap: 12px; /* Gap from image */
+        margin-bottom: calc(
+          var(--padding-screen) * 1.5
+        ); /* Space before "More ways..." */
       }
 
-      .tax-file-button {
-        background-color: var(--accent-green); /* Dark green */
-        color: white;
-        border: none;
-        border-radius: 16px; /* Rounded rectangle */
-        padding: 6px 14px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        display: inline-flex; /* Use inline-flex */
-        align-items: center;
-        gap: 5px;
-        margin-bottom: 15px; /* Space below button */
-        transition: background-color 0.2s ease;
-      }
-      .tax-file-button:hover {
-        background-color: #0ec00e; /* Slightly lighter green */
-      }
-      .tax-file-button i {
-        font-size: 10px; /* Smaller plus icon */
-      }
-
-      .tax-graphic-container {
-        height: auto; /* Allow height to be determined by SVG */
-        min-height: 20px; /* Ensure some space */
-        width: 90%;
-        display: flex;
-        justify-content: center; /* Center SVG horizontally */
-        align-items: flex-end; /* Align SVG to bottom */
-        overflow: visible; /* Allow shadows */
-        flex-grow: 1; /* Let graphic container take remaining space */
-      }
-
-      .tax-graphic-svg {
-        width: 75%; /* Control width */
-        max-width: 120px; /* Limit max width */
-        height: auto; /* Maintain aspect ratio */
-        display: block; /* Remove extra space */
-      }
-      /* --- Grid Item Card --- */
       .info-card {
-        /* Uses .card base, but less bottom margin */
-        margin-bottom: 0;
-        position: relative;
-        min-height: 180px; /* Min height */
+        /* Styles for the 4 grid cards */
+        background-color: var(--card-bg-color);
+        border-radius: var(--border-radius-card);
+        padding: 18px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: space-between; /* Pushes content to top and bottom */
+        min-height: 160px; /* Ensure cards have decent height */
         cursor: pointer;
-        transition: transform 0.1s ease-out;
+        transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
       }
-      .info-card:active {
-        transform: scale(0.98);
+      .info-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       }
-      .info-card-header {
+      .info-card-header-grid {
+        /* Header specific to grid cards */
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px;
+        align-items: flex-start; /* Align title top, chevron top */
       }
-      .info-card-header h3 {
-        font-size: 16px;
+      .info-card-header-grid h3 {
+        font-size: 17px; /* Slightly larger */
         font-weight: 600;
+        color: var(--text-primary);
       }
-      .info-card-header::after {
-        content: ">";
-        display: inline-block;
-        font-weight: bold;
-        color: #bbb;
-        font-size: 18px;
-      }
-      .info-card-content {
-        margin-top: 10px;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-      }
-      .info-card-graphic {
-        height: 60px;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        overflow: hidden;
+      .info-card-header-grid .chevron-icon {
+        font-size: 12px;
+        color: #c7c7cc; /* Light gray chevron */
       }
 
-      /* --- Enhanced Savings Card Styles --- */
-      .savings-card-enhanced .info-card-content {
-        align-items: center;
-        text-align: center;
+      .info-card-content-grid {
+        /* Content specific to grid cards */
+        /* margin-top auto pushes this block down when space-between is active */
+        margin-top: auto;
+        padding-top: 15px; /* Space above icon/text */
       }
-      .savings-graphic-container {
-        position: relative;
-        width: 80px;
-        height: 80px;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .progress-ring {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        transform: rotate(-90deg);
-        transform-origin: center;
-      }
-      .progress-ring circle {
-        fill: none;
-        stroke-width: 8;
-        stroke-linecap: round;
-      }
-      .progress-ring-track {
-        stroke: var(--icon-bg-default);
-      }
-      .progress-ring-indicator {
-        stroke: var(--accent-green);
-        stroke-dasharray: 339.29;
-        stroke-dashoffset: 339.29;
-        transition: stroke-dashoffset 0.5s ease-out;
-      }
-      .savings-icon-wrapper {
-        width: 60px;
-        height: 60px;
-        background-color: var(--accent-green);
+
+      .info-card-icon-container {
+        width: var(--icon-circle-size);
+        height: var(--icon-circle-size);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        z-index: 1;
+        margin-bottom: 10px; /* Space below icon */
+        color: white; /* Default icon color */
       }
-      .savings-icon-svg {
-        width: 30px;
-        height: 30px;
+      .info-card-icon-container i {
+        font-size: var(--icon-size);
       }
-      .savings-amount {
-        font-size: 24px;
-        font-weight: 600;
-        margin-bottom: 5px;
-        cursor: pointer;
-        padding: 5px;
-        display: inline-block;
-        min-width: 80px;
+      /* Specific icon background colors */
+      .savings-icon-bg {
+        background-color: var(--accent-green);
       }
-      .savings-amount-input {
-        font-family: inherit;
-        font-size: 24px;
-        font-weight: 600;
-        line-height: 1.2;
-        border: none;
-        background-color: #f0f0f0;
-        border-radius: 4px;
-        padding: 3px 6px;
-        margin: 0;
-        width: auto;
-        max-width: 120px;
-        text-align: center;
-        outline: none;
-        color: inherit;
-        -moz-appearance: textfield;
+      .bitcoin-icon-bg {
+        background-color: var(--accent-bitcoin-icon-bg);
       }
-      .savings-amount-input::-webkit-outer-spin-button,
-      .savings-amount-input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
+      .stocks-icon-bg {
+        background-color: var(--accent-stocks-icon-bg);
       }
-      .savings-goal-text {
-        font-size: 14px;
-        color: var(--text-secondary);
-        cursor: pointer;
-        padding: 5px;
-      }
-      .savings-goal-trigger {
-        cursor: pointer;
+      .taxes-icon-bg {
+        background-color: var(--accent-taxes-icon-bg);
       }
 
-      /* Improved SVG Chart Styling */
-      .bitcoin-chart,
-      .stocks-chart {
-        width: 100%;
-        height: 60px;
-      }
-      .info-card-value {
-        font-size: 18px;
+      .info-card-main-text {
+        /* For $0.00 in Savings */
+        font-size: 24px;
         font-weight: 500;
+        color: var(--text-primary);
         margin-bottom: 4px;
       }
-      .info-card-detail {
-        font-size: 13px;
+      .info-card-sub-text {
+        font-size: 14px;
         color: var(--text-secondary);
-        display: flex;
-        align-items: center;
-      }
-      .info-card-detail .arrow {
-        margin-right: 4px;
-        font-weight: bold;
-      }
-      .info-card-detail .arrow.up {
-        color: #28a745;
-      }
-      .info-card-detail .arrow.down {
-        color: #dc3545;
+        line-height: 1.4;
       }
 
-      /* --- Footer Navigation --- */
-      .app-footer {
-        position: fixed; /* Fixed at the bottom */
-        bottom: 0;
-        left: 0;
-        right: 0; /* Span width */
-        max-width: 450px; /* Match container width */
-        margin: 0 auto; /* Center it */
+      /* --- "More ways to add money" Section --- */
+      .more-ways-section {
+        margin-bottom: var(--padding-screen);
+      }
+      .more-ways-header {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 15px;
+      }
+      .more-ways-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        background-color: var(--card-bg-color);
+        border-radius: var(--border-radius-card);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        overflow: hidden; /* Clip borders of list items */
+      }
+      .more-ways-item {
         display: flex;
-        justify-content: space-around;
         align-items: center;
+        padding: 15px var(--padding-screen);
+        border-bottom: 1px solid var(--border-color);
+        gap: 15px;
+        cursor: pointer;
+        transition: background-color 0.1s ease;
+      }
+      .more-ways-item:last-child {
+        border-bottom: none;
+      }
+      .more-ways-item:hover {
         background-color: #f8f9fa;
-        border-top: 1px solid #e0e0e0;
-        height: var(--footer-height);
-        padding: 0 var(--padding-screen);
-        z-index: 200; /* Ensure it's above scrolled content */
+      }
+      .more-ways-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px; /* Rounded square */
+        background-color: var(--accent-green); /* Default green */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: white;
+        flex-shrink: 0;
+      }
+      .more-ways-details {
+        flex-grow: 1;
+      }
+      .more-ways-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+      .more-ways-subtitle {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+      }
+      .more-ways-chevron {
+        font-size: 14px;
+        color: #c7c7cc;
       }
     </style>
   </head>
@@ -490,344 +411,106 @@
           </div>
         </section>
 
-        <!-- Info Grid -->
+        <!-- Info Grid (NEW Layout) -->
         <section class="info-grid">
-          <!-- Savings Card (Enhanced) -->
-          <article class="card info-card savings-card-enhanced">
-            <div class="info-card-header savings-goal-trigger">
+          <!-- Savings Card -->
+          <article class="card info-card" onclick="alert('Savings Clicked')">
+            <div class="info-card-header-grid">
               <h3>Savings</h3>
-              <!-- Chevron -->
+              <i class="fa-solid fa-chevron-right chevron-icon"></i>
             </div>
-            <div class="info-card-content">
-              <div class="info-card-graphic savings-graphic-container">
-                <svg class="progress-ring" viewBox="0 0 120 120">
-                  <circle class="progress-ring-track" cx="60" cy="60" r="54" />
-                  <circle
-                    class="progress-ring-indicator"
-                    id="savings-progress-indicator"
-                    cx="60"
-                    cy="60"
-                    r="54"
-                  />
-                </svg>
-                <div class="savings-icon-wrapper">
-                  <i class="fa solid fa-sack-dollar"></i>
-                </div>
+            <div class="info-card-content-grid">
+              <div class="info-card-icon-container savings-icon-bg">
+                <i class="fa-solid fa-dollar-sign"></i>
               </div>
-              <div
-                class="savings-amount editable"
-                id="savings-amount"
-                title="Click to edit savings"
-              >
+              <div class="info-card-main-text" id="savings-display-amount">
                 $0.00
               </div>
-              <div
-                class="savings-goal-text savings-goal-trigger"
-                id="savings-goal-text"
-                title="Click to set goal"
-              >
-                $1,000.00 to goal
-              </div>
+              <div class="info-card-sub-text">Save for a goal</div>
             </div>
           </article>
 
           <!-- Bitcoin Card -->
-          <article class="card info-card">
-            <div class="info-card-header">
+          <article class="card info-card" onclick="alert('Bitcoin Clicked')">
+            <div class="info-card-header-grid">
               <h3>Bitcoin</h3>
-              <!-- Chevron -->
+              <i class="fa-solid fa-chevron-right chevron-icon"></i>
             </div>
-            <div class="info-card-content">
-              <div class="info-card-graphic">
-                <svg
-                  class="bitcoin-chart"
-                  viewBox="0 0 100 60"
-                  preserveAspectRatio="none"
-                >
-                  <defs>
-                    <linearGradient
-                      id="bitcoinGradient"
-                      x1="0%"
-                      y1="0%"
-                      x2="0%"
-                      y2="100%"
-                    >
-                      <stop
-                        offset="0%"
-                        style="
-                          stop-color: var(--accent-bitcoin);
-                          stop-opacity: 0.4;
-                        "
-                      />
-                      <stop
-                        offset="100%"
-                        style="
-                          stop-color: var(--accent-bitcoin-light);
-                          stop-opacity: 0.1;
-                        "
-                      />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 0 60 L 0 35 C 10 30, 15 32, 20 29 S 30 20, 40 22 S 50 15, 60 18 S 70 10, 80 15 S 90 12, 100 5 L 100 60 Z"
-                    fill="url(#bitcoinGradient)"
-                  />
-                  <path
-                    d="M 0 35 C 10 30, 15 32, 20 29 S 30 20, 40 22 S 50 15, 60 18 S 70 10, 80 15 S 90 12, 100 5"
-                    fill="none"
-                    stroke="var(--accent-bitcoin)"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+            <div class="info-card-content-grid">
+              <div class="info-card-icon-container bitcoin-icon-bg">
+                <i class="fa-brands fa-bitcoin"></i>
               </div>
-              <div class="info-card-value">$92.05</div>
-              <div class="info-card-detail">
-                <span class="arrow up">↑</span> 0.50% today
-              </div>
+              <!-- No main text, just sub text -->
+              <div class="info-card-sub-text">Learn and invest</div>
             </div>
           </article>
 
           <!-- Stocks Card -->
-          <article class="card info-card">
-            <div class="info-card-header">
+          <article class="card info-card" onclick="alert('Stocks Clicked')">
+            <div class="info-card-header-grid">
               <h3>Stocks</h3>
-              <!-- Chevron -->
+              <i class="fa-solid fa-chevron-right chevron-icon"></i>
             </div>
-            <div class="info-card-content">
-              <div class="info-card-graphic">
-                <svg
-                  class="stocks-chart"
-                  viewBox="0 0 100 60"
-                  preserveAspectRatio="none"
-                >
-                  <defs>
-                    <linearGradient
-                      id="stocksGradient"
-                      x1="0%"
-                      y1="0%"
-                      x2="0%"
-                      y2="100%"
-                    >
-                      <stop
-                        offset="0%"
-                        style="
-                          stop-color: var(--accent-stocks);
-                          stop-opacity: 0.4;
-                        "
-                      />
-                      <stop
-                        offset="100%"
-                        style="
-                          stop-color: var(--accent-stocks-light);
-                          stop-opacity: 0.1;
-                        "
-                      />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 0 60 L 0 10 C 5 5, 10 15, 20 25 S 30 20, 40 22 S 50 30, 60 28 S 70 35, 80 32 S 90 36, 100 33 L 100 60 Z"
-                    fill="url(#stocksGradient)"
-                  />
-                  <path
-                    d="M 0 10 C 5 5, 10 15, 20 25 S 30 20, 40 22 S 50 30, 60 28 S 70 35, 80 32 S 90 36, 100 33"
-                    fill="none"
-                    stroke="var(--accent-stocks)"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+            <div class="info-card-content-grid">
+              <div class="info-card-icon-container stocks-icon-bg">
+                <i class="fa-solid fa-arrow-trend-up"></i>
               </div>
-              <div class="info-card-value">$2,995.85</div>
-              <div class="info-card-detail">
-                <span class="arrow down">↓</span> 0.80% today
-              </div>
+              <div class="info-card-sub-text">Invest with $1</div>
             </div>
           </article>
 
-          <!-- Tax Filing Card (NEW - Inspired by image) -->
-          <article class="card info-card tax-card-enhanced">
-            <div class="info-card-header">
-              <h3>Free tax filing</h3>
-              <!-- Chevron -->
+          <!-- Taxes Card -->
+          <article class="card info-card" onclick="alert('Taxes Clicked')">
+            <div class="info-card-header-grid">
+              <h3>Taxes</h3>
+              <i class="fa-solid fa-chevron-right chevron-icon"></i>
             </div>
-            <div class="info-card-content">
-              <!-- "File Now" Button -->
-              <button class="tax-file-button" id="tax-file-now-btn">
-                <i class="fa-solid fa-plus"></i> FILE NOW
-              </button>
-              <!-- Graphic Area -->
-              <div class="info-card-graphic tax-graphic-container">
-                <!-- New Clean SVG representing documents -->
-                <!-- NEW Tax Filing SVG -->
-                <svg
-                  class="tax-graphic-new"
-                  version="1.1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 314 178"
-                  preserveAspectRatio="xMidYMid meet"
-                >
-                  <path
-                    d="M0 0 C103.62 0 207.24 0 314 0 C314 58.74 314 117.48 314 178 C210.38 178 106.76 178 0 178 C0 119.26 0 60.52 0 0 Z "
-                    fill="#FDE869"
-                    transform="translate(0,0)"
-                  />
-                  <path
-                    d="M0 0 C103.62 0 207.24 0 314 0 C314 58.74 314 117.48 314 178 C210.38 178 106.76 178 0 178 C0 119.26 0 60.52 0 0 Z M86 12 C87.65 15.3 89.3 18.6 91 22 C91.68942887 23.91159824 92.37880955 25.82323205 93.05859375 27.73828125 C94.80884131 31.94323286 97.09631864 35.87822764 99.28515625 39.8671875 C104.40970874 49.22912621 104.40970874 49.22912621 106 54 C104.65143921 53.99214478 104.65143921 53.99214478 103.27563477 53.98413086 C84.48648595 53.88961683 65.77003504 54.01842376 47 55 C47.56390555 58.39784504 48.37494337 61.07085454 50.0390625 64.08203125 C50.65793335 65.22212646 50.65793335 65.22212646 51.28930664 66.38525391 C51.73008545 67.18624512 52.17086426 67.98723633 52.625 68.8125 C56.73230038 76.41828344 60.37177914 84.10604358 63.72265625 92.0703125 C64.7175448 94.83940219 64.7175448 94.83940219 66 96 C46.53 96.33 27.06 96.66 7 97 C7.78406424 100.92032122 8.36321517 103.07845397 10.1171875 106.45703125 C10.77207153 107.73682861 10.77207153 107.73682861 11.44018555 109.04248047 C11.91367432 109.95658691 12.38716309 110.87069336 12.875 111.8125 C17.00674327 119.91825008 20.93646699 128.08626726 24.6875 136.375 C28.91441987 145.70113249 33.34651965 154.87959309 38 164 C39.05297782 166.13178972 40.10557303 168.26371201 41.15258789 170.3984375 C41.89669541 171.99479767 41.89669541 171.99479767 43 173 C44.33008919 173.10163671 45.66550031 173.13472294 46.99945736 173.1398077 C47.86613031 173.14549894 48.73280327 173.15119018 49.62573904 173.15705389 C51.07024359 173.1588237 51.07024359 173.1588237 52.54393005 173.16062927 C53.55861691 173.16571709 54.57330377 173.17080491 55.61873871 173.17604691 C59.04717527 173.19184716 62.47559065 173.20031645 65.90405273 173.20874023 C68.35099931 173.21827283 70.79794452 173.22816372 73.24488831 173.23838806 C80.61128072 173.26713245 87.97767287 173.28687058 95.34409985 173.30378041 C97.42501706 173.30857399 99.50593375 173.31355753 101.5868504 173.31858563 C114.50851211 173.34956634 127.43017826 173.37625352 140.35186672 173.39300442 C143.34712672 173.39695398 146.34238665 173.40095695 149.33764648 173.4050293 C150.08211157 173.40603766 150.82657666 173.40704602 151.59360129 173.40808494 C163.64048957 173.4250741 175.68717177 173.46615981 187.73395955 173.51705229 C200.10315461 173.56887634 212.47224389 173.59795341 224.8415466 173.6052013 C231.78594054 173.60985874 238.72999764 173.6245579 245.67428398 173.6649456 C252.21192039 173.70292147 258.74908807 173.71021831 265.2868557 173.69693947 C267.68377733 173.69699341 270.08072445 173.70728578 272.47755051 173.7286911 C275.7567963 173.75640574 279.03395281 173.74684721 282.31321716 173.72825623 C283.72760697 173.75344862 283.72760697 173.75344862 285.17057031 173.77914995 C293.09893024 173.66725339 298.88172936 170.63848188 304.79101843 165.41763967 C306.22104727 164.07767234 306.22104727 164.07767234 305.86328125 162.17578125 C303.37638807 155.90791021 300.14692283 149.88213383 296.75 144.0625 C295 141 295 141 294.13671875 138.796875 C292.36827305 134.44564778 290.16167018 130.31854423 288.00976562 126.14648438 C285.66085765 121.52386887 283.74471247 116.88410105 282 112 C281.34 112 280.68 112 280 112 C279.34 109.36 278.68 106.72 278 104 C277.34 104 276.68 104 276 104 C275.87238281 102.74509766 275.87238281 102.74509766 275.7421875 101.46484375 C274.85485044 97.32238073 273.20006864 94.21804206 271.125 90.5625 C268.45937225 85.79268624 266.12289763 81.04623207 264 76 C263.01550965 74.01307286 262.01594099 72.03353135 261 70.0625 C258.66640482 65.44755431 256.69062633 60.88403162 255 56 C254.34 56 253.68 56 253 56 C252.88084229 55.27723877 252.76168457 54.55447754 252.63891602 53.80981445 C251.98956352 50.95410262 251.0517501 48.67423856 249.77734375 46.04296875 C249.32037109 45.09357422 248.86339844 44.14417969 248.39257812 43.16601562 C247.91240234 42.18310547 247.43222656 41.20019531 246.9375 40.1875 C246.48439453 39.24712891 246.03128906 38.30675781 245.56445312 37.33789062 C241.45931047 28.8493868 237.21732832 20.43465663 233 12 C184.49 12 135.98 12 86 12 Z "
-                    fill="#FCFCFC"
-                    transform="translate(0,0)"
-                  />
-                  <path
-                    d="M0 0 C3.84290985 -0.15002228 7.6850528 -0.25370858 11.53009033 -0.33056641 C13.04543916 -0.36757067 14.56051017 -0.41876479 16.07489014 -0.484375 C27.97472838 -0.98416755 27.97472838 -0.98416755 31.44311523 1.55541992 C32.86106304 3.69898552 33.68396142 5.75941265 34.55957031 8.17626953 C35.49614977 10.16026324 36.44075834 12.14047844 37.39160156 14.11767578 C38.38934211 16.32278854 39.38267979 18.52989767 40.37207031 20.73876953 C43.74072091 28.16473575 47.12527914 35.53114745 51.05957031 42.67626953 C53.53673213 47.18896801 55.62812019 51.60732192 57.41894531 56.42626953 C59.31264128 60.99189269 61.62725564 65.35555891 63.91894531 69.73266602 C66.55957031 74.85950447 66.55957031 74.85950447 66.55957031 78.17626953 C62.26957031 78.17626953 57.97957031 78.17626953 53.55957031 78.17626953 C48.67502598 67.50739638 48.67502598 67.50739638 47.58300781 64.37548828 C47.24527344 63.64974609 46.90753906 62.92400391 46.55957031 62.17626953 C42.8641663 60.94446819 39.45653654 61.05214841 35.61035156 61.07861328 C34.45142647 61.0807357 34.45142647 61.0807357 33.26908875 61.082901 C30.80337642 61.08849487 28.33775516 61.1010462 25.87207031 61.11376953 C24.19954558 61.11878533 22.52701943 61.12334809 20.85449219 61.12744141 C16.75614985 61.13846229 12.65787552 61.15572269 8.55957031 61.17626953 C8.194933 62.92411782 7.84326251 64.67467455 7.49707031 66.42626953 C7.29984375 67.40080078 7.10261719 68.37533203 6.89941406 69.37939453 C5.80393201 78.39508591 12.69456441 88.79174733 16.49707031 96.67626953 C16.91408203 97.54896484 17.33109375 98.42166016 17.76074219 99.32080078 C20.31130085 104.64267743 22.93590574 109.91889018 25.64379883 115.16259766 C26.55957031 117.17626953 26.55957031 117.17626953 26.55957031 119.17626953 C18.78850203 119.2920816 11.01763556 119.38094233 3.24592113 119.43533039 C-0.36281102 119.46143347 -3.97095317 119.49684175 -7.5793457 119.5534668 C-11.06124865 119.6077654 -14.54258393 119.63768472 -18.02487755 119.65065575 C-20.00097267 119.66440131 -21.9768391 119.70343878 -23.95259094 119.74275208 C-25.15360947 119.74312973 -26.35462799 119.74350739 -27.59204102 119.74389648 C-29.1808886 119.76055107 -29.1808886 119.76055107 -30.80183411 119.77754211 C-33.44042969 119.17626953 -33.44042969 119.17626953 -35.2409668 116.76940918 C-35.63678955 115.9136731 -36.0326123 115.05793701 -36.44042969 114.17626953 C-36.78356201 113.49717529 -37.12669434 112.81808105 -37.48022461 112.1184082 C-37.79064697 111.45043213 -38.10106934 110.78245605 -38.42089844 110.09423828 C-38.78119141 109.3253125 -39.14148438 108.55638672 -39.51269531 107.76416016 C-39.88072266 106.97203125 -40.24875 106.17990234 -40.62792969 105.36376953 C-43.72402547 98.70802203 -46.94937993 92.12649074 -50.24137878 85.56616211 C-53.83053731 78.41002576 -57.37132122 71.23089353 -60.87988281 64.03491211 C-61.59885314 62.56304215 -62.32028699 61.09237347 -63.04394531 59.62280273 C-64.10881325 57.45973062 -65.16606486 55.29308802 -66.22167969 53.12548828 C-66.54656372 52.46933029 -66.87144775 51.8131723 -67.20617676 51.13713074 C-68.58781691 48.28098989 -69.44042969 46.39353351 -69.44042969 43.17626953 C-49.97042969 42.84626953 -30.50042969 42.51626953 -10.44042969 42.17626953 C-12.09042969 38.87626953 -13.74042969 35.57626953 -15.44042969 32.17626953 C-17.323072 28.20144424 -19.19371991 24.22196604 -21.04589844 20.23291016 C-23.32140809 15.38248169 -25.77493918 10.71791532 -28.50488281 6.10620117 C-29.44042969 4.17626953 -29.44042969 4.17626953 -29.44042969 1.17626953 C-21.79745758 0.77658142 -14.15319334 0.49061937 -6.50378418 0.24639893 C-4.3354654 0.172702 -2.16782444 0.08697808 0 0 Z "
-                    fill="#F2D369"
-                    transform="translate(76.4404296875,53.82373046875)"
-                  />
-                  <path
-                    d="M0 0 C6.54673193 -0.1527463 13.09300069 -0.25746348 19.64111328 -0.32958984 C21.86622286 -0.35967201 24.09121474 -0.40054898 26.31591797 -0.45263672 C29.52340803 -0.52582777 32.72932417 -0.55954294 35.9375 -0.5859375 C36.92427734 -0.61690521 37.91105469 -0.64787292 38.92773438 -0.67977905 C44.89112608 -0.68265295 48.48085896 0.26759473 53.15063477 4.02450562 C59.04690743 10.32291185 60.73921267 14.47743956 60.61523438 23.1862793 C60.62078339 24.18549408 60.6263324 25.18470886 60.63204956 26.21420288 C60.6438153 29.50136983 60.61960573 32.78714923 60.59375 36.07421875 C60.59203841 38.36391639 60.59210507 40.653616 60.59387207 42.9433136 C60.59222071 47.73396637 60.57355169 52.52415012 60.54199219 57.31469727 C60.50224832 63.45848833 60.49795596 69.60166728 60.50545502 75.74556255 C60.50852202 80.46987019 60.49641484 85.1940399 60.47932434 89.91831398 C60.47228957 92.18415271 60.46917038 94.45000706 60.47001648 96.71585655 C60.46822151 99.87816104 60.44686688 103.03972726 60.41992188 106.2019043 C60.42285248 107.13965195 60.42578308 108.0773996 60.42880249 109.04356384 C60.34498725 115.4095063 60.34498725 115.4095063 58.47375488 118.61238098 C57.98741577 119.07029526 57.50107666 119.52820953 57 120 C54.03107015 115.80254745 51.97624508 111.7759256 50 107 C48.70611371 104.31309903 47.35149381 101.65826907 46 99 C44.99885926 97.00057078 43.99904157 95.00047893 43 93 C42.34251497 91.68486231 41.6849591 90.36976003 41.02734375 89.0546875 C36.83984375 80.6796875 36.83984375 80.6796875 35.86669922 78.71777344 C35.19276165 77.38204816 34.48067634 76.06554301 33.75390625 74.7578125 C33 73 33 73 33 69 C32.34 69 31.68 69 31 69 C29.23537317 65.91190305 29 64.76687864 29 61 C28.34 61 27.68 61 27 61 C26.78085937 60.40574219 26.56171875 59.81148437 26.3359375 59.19921875 C24.10046179 53.35608509 21.42630564 47.9708163 18.37109375 42.515625 C16.68817011 39.42786767 15.36430219 36.24021771 14 33 C12.98431936 31.01818411 11.96295308 29.03927702 10.9375 27.0625 C8.56325076 22.37880734 6.98958192 18.14582598 6 13 C5.34 13 4.68 13 4 13 C3.32694982 11.39850114 2.66177773 9.79368971 2 8.1875 C1.62875 7.29417969 1.2575 6.40085937 0.875 5.48046875 C0 3 0 3 0 0 Z "
-                    fill="#E6E5EC"
-                    transform="translate(249,43)"
-                  />
-                  <path
-                    d="M0 0 C3.52387645 4.11118919 6 7.46508112 6 13 C-13.67355936 13.66289617 -33.31248377 14.17798172 -53 14 C-48.72259653 23.19186703 -44.39658141 32.34794725 -39.79101562 41.38085938 C-37.34797176 46.20036521 -35.2039029 51.04121847 -33 56 C-52.8 56 -72.6 56 -93 56 C-94.85760645 50.42718065 -94.34651848 44.21278328 -94.4050293 38.36938477 C-94.42651203 36.76044116 -94.46049888 35.15161131 -94.50756836 33.54321289 C-94.969527 17.58837794 -94.969527 17.58837794 -90.17602539 10.14282227 C-89.45793701 9.43569092 -88.73984863 8.72855957 -88 8 C-87.47510483 7.48012512 -86.95020966 6.96025024 -86.40940857 6.42462158 C-78.90964285 0.20833914 -70.02235915 1.24152234 -60.83984375 1.4140625 C-59.08152217 1.42526931 -57.3231817 1.43380247 -55.56483459 1.43978882 C-50.9628928 1.46257068 -46.3621083 1.52139984 -41.76062012 1.5880127 C-37.05476533 1.64966678 -32.34872139 1.67685294 -27.64257812 1.70703125 C-18.42788018 1.77115528 -9.21403676 1.87340346 0 2 C0 1.34 0 0.68 0 0 Z "
-                    fill="#E8E7EB"
-                    transform="translate(100,41)"
-                  />
-                  <path
-                    d="M0 0 C13 0 26 0 39 0 C39.98350025 2.08129104 40.96164458 4.16511359 41.9375 6.25 C42.48277344 7.41015625 43.02804688 8.5703125 43.58984375 9.765625 C45 13 45 13 46 17 C50.62 17 55.24 17 60 17 C60.43570313 17.94359375 60.87140625 18.8871875 61.3203125 19.859375 C61.92153062 21.15640969 62.5231207 22.45327199 63.125 23.75 C63.44049805 24.4308667 63.75599609 25.1117334 64.08105469 25.81323242 C66.04668509 30.03086015 68.10641238 34.18151582 70.25 38.3125 C73.45400264 44.66053731 76 50.82912967 76 58 C47.785 58.495 47.785 58.495 19 59 C14.54588632 51.20530106 14.54588632 51.20530106 13.0703125 47.23046875 C10.59493945 40.83635996 7.56236558 34.73888521 4.53515625 28.59179688 C2.19435205 23.7652142 0.29640838 19.20568107 -1 14 C-1.33 13.01 -1.66 12.02 -2 11 C-1.59044429 7.24573935 -0.94670198 3.65041866 0 0 Z "
-                    fill="#F2D266"
-                    transform="translate(84,114)"
-                  />
-                  <path
-                    d="M0 0 C4.62 0 9.24 0 14 0 C15.89594191 3.72650651 17.7487235 7.39780288 19.359375 11.2578125 C21.43602601 16.1531974 24.03692059 20.76405956 26.59570312 25.41992188 C29.06053778 29.98551544 31.08358263 34.58798717 32.96166992 39.42260742 C34.75518963 43.87456783 36.85330545 48.17840824 38.9375 52.5 C39.35451172 53.37269531 39.77152344 54.24539062 40.20117188 55.14453125 C42.75173054 60.4664079 45.37633542 65.74262065 48.08422852 70.98632812 C49 73 49 73 49 75 C41.22893172 75.11581206 33.45806525 75.2046728 25.68635082 75.25906086 C22.07761867 75.28516394 18.46947652 75.32057222 14.86108398 75.37719727 C11.37918104 75.43149587 7.89784576 75.46141518 4.41555214 75.47438622 C2.43945702 75.48813178 0.46359059 75.52716925 -1.51216125 75.56648254 C-2.71317978 75.5668602 -3.9141983 75.56723785 -5.15161133 75.56762695 C-6.74045891 75.58428154 -6.74045891 75.58428154 -8.36140442 75.60127258 C-11 75 -11 75 -12.795578 72.60305786 C-13.19303726 71.74404877 -13.59049652 70.88503967 -14 70 C-14.55397461 68.9028064 -14.55397461 68.9028064 -15.11914062 67.78344727 C-15.46138672 67.05182373 -15.80363281 66.3202002 -16.15625 65.56640625 C-16.53910156 64.75236328 -16.92195313 63.93832031 -17.31640625 63.09960938 C-17.70699219 62.26236328 -18.09757812 61.42511719 -18.5 60.5625 C-19.28065062 58.89685437 -20.06188767 57.23148344 -20.84375 55.56640625 C-21.21137451 54.7784668 -21.57899902 53.99052734 -21.95776367 53.17871094 C-22.84668342 51.32049593 -23.80161389 49.49409842 -24.76953125 47.67578125 C-26.52763383 43.8526058 -26.21485769 41.1539154 -26 37 C-25.01 36.505 -25.01 36.505 -24 36 C-24 36.66 -24 37.32 -24 38 C-23.34 38 -22.68 38 -22 38 C-21.34 39.65 -20.68 41.3 -20 43 C-7.13 43 5.74 43 19 43 C17.34083391 37.95310307 17.34083391 37.95310307 15.1953125 33.265625 C14.86120361 32.61408447 14.52709473 31.96254395 14.18286133 31.29125977 C13.83376709 30.61764404 13.48467285 29.94402832 13.125 29.25 C10.44393753 23.99886109 8.02466846 18.77501822 5.94140625 13.25390625 C4.55870579 9.94345744 2.7805156 6.89484559 0.953125 3.8125 C0 2 0 2 0 0 Z "
-                    fill="#B99246"
-                    transform="translate(54,98)"
-                  />
-                  <path
-                    d="M0 0 C19.47 0 38.94 0 59 0 C59 0.33 59 0.66 59 1 C55.04 1 51.08 1 47 1 C47.92232422 2.71896484 47.92232422 2.71896484 48.86328125 4.47265625 C49.67983671 6.00252453 50.49623459 7.53247694 51.3125 9.0625 C51.71662109 9.81466797 52.12074219 10.56683594 52.53710938 11.34179688 C54.92330205 15.82318311 57.0427939 20.31648041 59 25 C59.65163002 26.32002993 60.31554683 27.63418709 61 28.9375 C63.62489424 34.11688902 65.58871691 39.35486765 67 45 C47.2 44.505 47.2 44.505 27 44 C26.34 42.35 25.68 40.7 25 39 C23.515 38.505 23.515 38.505 22 38 C21.67 39.98 21.34 41.96 21 44 C17.85633211 40.2438728 15.89347384 35.99692388 13.76953125 31.62109375 C13.1766053 30.40837547 13.1766053 30.40837547 12.57170105 29.17115784 C11.74006535 27.46679781 10.91062761 25.76136375 10.08325195 24.05493164 C8.81361946 21.43980581 7.53321971 18.83014484 6.25195312 16.22070312 C5.44465501 14.56282 4.63799235 12.90462726 3.83203125 11.24609375 C3.44771439 10.46479599 3.06339752 9.68349823 2.66743469 8.87852478 C2.31674423 8.15089432 1.96605377 7.42326385 1.60473633 6.67358398 C1.29401688 6.03500961 0.98329742 5.39643524 0.66316223 4.73851013 C0 3 0 3 0 0 Z "
-                    fill="#B89048"
-                    transform="translate(7,97)"
-                  />
-                  <path
-                    d="M0 0 C43.23 0 86.46 0 131 0 C135 9 135 9 135 11 C127.74 11 120.48 11 113 11 C113.94101563 12.87042969 114.88203125 14.74085937 115.8515625 16.66796875 C116.78549709 18.52798679 117.71870789 20.38836632 118.65185547 22.2487793 C119.2891251 23.51836237 119.92711857 24.78758243 120.56591797 26.05639648 C122.73238207 30.36032477 124.8797717 34.67309388 127 39 C127.3053064 39.62279846 127.61061279 40.24559692 127.9251709 40.88726807 C128.80119168 42.68697183 129.66261796 44.49375724 130.5234375 46.30078125 C131.02536621 47.35048096 131.52729492 48.40018066 132.04443359 49.48168945 C132.35977051 50.31273193 132.67510742 51.14377441 133 52 C132.67 52.66 132.34 53.32 132 54 C127.92796169 47.79253473 124.6891778 41.41405861 121.5625 34.6875 C120.19358341 31.75243347 118.81841316 28.82823969 117.37207031 25.93041992 C116 23 116 23 114.97949219 19.8605957 C113.68431144 16.45537261 112.70390584 14.46520054 110 12 C103.98350674 10.05240455 97.35990619 10.64655414 91.125 10.8125 C89.36980439 10.81946249 87.61458167 10.82146796 85.859375 10.81835938 C81.57047805 10.82153971 77.2874996 10.89251129 73 11 C73.4940332 11.98282959 73.98806641 12.96565918 74.49707031 13.97827148 C76.34795468 17.66179551 78.19609631 21.34669013 80.04345703 25.03198242 C80.83992214 26.6199166 81.63710811 28.20748945 82.43505859 29.79467773 C83.58886254 32.09001112 84.7399765 34.38667723 85.890625 36.68359375 C86.24183411 37.38085068 86.59304321 38.0781076 86.95489502 38.79649353 C89.46357913 43.81330452 91.71582951 48.8606164 94 54 C114.79 54.33 135.58 54.66 157 55 C157 55.66 157 56.32 157 57 C114.1 57 71.2 57 27 57 C27 56.34 27 55.68 27 55 C48.45 55 69.9 55 92 55 C88.90625 48.6475 85.8125 42.295 82.625 35.75 C81.65127441 33.7503418 80.67754883 31.75068359 79.67431641 29.69042969 C78.90008162 28.10090341 78.12583137 26.51138467 77.3515625 24.921875 C76.95155029 24.10025879 76.55153809 23.27864258 76.1394043 22.43212891 C75.56113892 21.24514404 75.56113892 21.24514404 74.97119141 20.03417969 C74.63809967 19.35023132 74.30500793 18.66628296 73.96182251 17.96160889 C72.98486896 15.9691407 71.99500803 13.98350527 71 12 C70.19233688 11.99413376 69.38467377 11.98826752 68.55253601 11.98222351 C60.94501422 11.92434532 53.33782177 11.85229728 45.73059368 11.76428509 C41.81952152 11.71953685 37.90855459 11.68029089 33.99731445 11.65356445 C30.22347912 11.62757539 26.45004781 11.5872051 22.67646217 11.53681374 C21.23600091 11.52011506 19.79546972 11.50861947 18.35492516 11.50238609 C16.33896226 11.49277852 14.32312559 11.46303898 12.30737305 11.43237305 C10.58528877 11.41571846 10.58528877 11.41571846 8.82841492 11.39872742 C6 11 6 11 4.21125793 9.66438293 C2.10929881 6.77609235 0 3.64119931 0 0 Z "
-                    fill="#F2D365"
-                    transform="translate(126,78)"
-                  />
-                  <path
-                    d="M0 0 C22.44 0 44.88 0 68 0 C72.5 7.875 72.5 7.875 72 12 C63.35092847 12.18550513 54.70254316 12.32757534 46.05191517 12.41449738 C42.03478976 12.45622064 38.01902673 12.5127878 34.00268555 12.60351562 C30.12518165 12.6905572 26.24898619 12.73829569 22.37058067 12.75901794 C20.89243654 12.7737805 19.41436275 12.80261194 17.93677711 12.84584045 C6.4129041 13.16952086 6.4129041 13.16952086 2.95394897 10.30639648 C0.52278107 6.65183052 0 4.44682862 0 0 Z "
-                    fill="#FDFCEF"
-                    transform="translate(137,30)"
-                  />
-                  <path
-                    d="M0 0 C4.29 0 8.58 0 13 0 C17.50572383 8.90359789 21.90787675 17.84264714 26.12109375 26.88867188 C28.62316243 32.24668748 31.25193473 37.52435253 33.96875 42.77734375 C35 45 35 45 35 47 C30.71 47 26.42 47 22 47 C21.113125 45.06125 20.22625 43.1225 19.3125 41.125 C15.24395761 32.31256596 10.84794778 23.6629936 6.44458008 15.01416016 C5.89954834 13.93569824 5.3545166 12.85723633 4.79296875 11.74609375 C4.3033667 10.78372803 3.81376465 9.8213623 3.30932617 8.82983398 C2 6 2 6 0 0 Z "
-                    fill="#BC924A"
-                    transform="translate(94,55)"
-                  />
-                  <path
-                    d="M0 0 C13.2 0 26.4 0 40 0 C44 8 44 8 44 11 C38.50076251 11.07411371 33.00181521 11.12858464 27.50219727 11.16479492 C25.63105201 11.17988873 23.75994217 11.20036589 21.88891602 11.22631836 C19.20059474 11.26267593 16.51274087 11.27972015 13.82421875 11.29296875 C12.56782845 11.31619453 12.56782845 11.31619453 11.28605652 11.33988953 C5.4076198 11.34159596 5.4076198 11.34159596 3.32917786 9.59980774 C0.58190507 6.29317105 0 4.37772337 0 0 Z "
-                    fill="#FEFDF5"
-                    transform="translate(77,102)"
-                  />
-                  <path
-                    d="M0 0 C0.9140625 1.70703125 0.9140625 1.70703125 1.625 3.8125 C1.86476562 4.49957031 2.10453125 5.18664062 2.3515625 5.89453125 C2.97202943 7.90917988 3.48872775 9.954911 4 12 C-15.8 11.505 -15.8 11.505 -36 11 C-40 3 -40 3 -40 0 C-34.78575406 -0.16763742 -29.57135652 -0.32819469 -24.35668945 -0.48217773 C-22.58254115 -0.53556608 -20.80845009 -0.59089298 -19.03442383 -0.64819336 C-16.48531435 -0.73019269 -13.93608072 -0.80523144 -11.38671875 -0.87890625 C-10.19594978 -0.91945885 -10.19594978 -0.91945885 -8.98112488 -0.96083069 C-5.69363284 -1.05004432 -3.14650219 -1.04883406 0 0 Z "
-                    fill="#EDCD63"
-                    transform="translate(70,130)"
-                  />
-                  <path
-                    d="M0 0 C4.29 0 8.58 0 13 0 C17 7.625 17 7.625 17 11 C12.71 11 8.42 11 4 11 C0 3.375 0 3.375 0 0 Z "
-                    fill="#0C0804"
-                    transform="translate(85,161)"
-                  />
-                  <path
-                    d="M0 0 C-0.66 0.33 -1.32 0.66 -2 1 C-2 1.66 -2 2.32 -2 3 C-22.295 2.505 -22.295 2.505 -43 2 C-43 1.01 -43 0.02 -43 -1 C-37.84089018 -1.19305647 -32.68155309 -1.37164856 -27.52148438 -1.53710938 C-25.76776861 -1.59535086 -24.01417726 -1.65747781 -22.26074219 -1.72363281 C-19.73395451 -1.8182798 -17.20704267 -1.89874232 -14.6796875 -1.9765625 C-13.90132538 -2.00875885 -13.12296326 -2.0409552 -12.3210144 -2.0741272 C-7.77918358 -2.19788129 -4.28315199 -1.74542911 0 0 Z "
-                    fill="#EECB6B"
-                    transform="translate(86,159)"
-                  />
-                  <path
-                    d="M0 0 C0.59355614 2.64860427 0.74209269 5.29197322 1 8 C-2.69907948 9.84953974 -6.97159175 9.60125496 -11 9 C-13.97968206 5.84504252 -14 4.37295237 -14 0 C-12.04235617 -0.19456705 -10.08384679 -0.38044247 -8.125 -0.5625 C-6.48917969 -0.71912109 -6.48917969 -0.71912109 -4.8203125 -0.87890625 C-2 -1 -2 -1 0 0 Z "
-                    fill="#AC883F"
-                    transform="translate(84,130)"
-                  />
-                  <path
-                    d="M0 0 C2.74797656 2.41894385 4.10751506 4.9238769 5.6640625 8.21875 C6.14617187 9.23324219 6.62828125 10.24773437 7.125 11.29296875 C7.62 12.35128906 8.115 13.40960938 8.625 14.5 C9.37910156 16.08748047 9.37910156 16.08748047 10.1484375 17.70703125 C13.83645992 25.50937975 13.83645992 25.50937975 15 29 C12 28 12 28 10.3515625 25.0078125 C9.76527484 23.71838317 9.19038536 22.42373039 8.625 21.125 C8.32263428 20.45186768 8.02026855 19.77873535 7.70874023 19.08520508 C7.09364065 17.7146858 6.4825433 16.34236317 5.87548828 14.96826172 C4.64030181 12.19133106 3.3465245 9.44211666 2.0625 6.6875 C0 2.25080386 0 2.25080386 0 0 Z "
-                    fill="#B38A3C"
-                    transform="translate(137,143)"
-                  />
-                  <path
-                    d="M0 0 C3.05913254 1.01971085 4.08239568 1.50766701 6 4 C6.51171875 6.48046875 6.51171875 6.48046875 6.6875 9.1875 C6.75324219 10.08855469 6.81898437 10.98960938 6.88671875 11.91796875 C6.92410156 12.60503906 6.96148437 13.29210937 7 14 C4.66714622 11.86099367 3.2131241 9.83344647 1.8125 7 C1.46832031 6.319375 1.12414062 5.63875 0.76953125 4.9375 C0 3 0 3 0 0 Z "
-                    fill="#F2D654"
-                    transform="translate(76,111)"
-                  />
-                  <path
-                    d="M0 0 C1.89213369 2.38573379 3.02391783 4.07175348 4 7 C6.00016466 8.20882096 6.00016466 8.20882096 8 9 C7.34 10.65 6.68 12.3 6 14 C5.67 14 5.34 14 5 14 C5 12.35 5 10.7 5 9 C4.01 8.67 3.02 8.34 2 8 C0.25 6.75 0.25 6.75 -1 5 C-0.6875 2.3125 -0.6875 2.3125 0 0 Z "
-                    fill="#F4DB6F"
-                    transform="translate(77,106)"
-                  />
-                  <path
-                    d="M0 0 C0.66 0 1.32 0 2 0 C4 3 4 3 3.625 6.1875 C3.41875 7.115625 3.2125 8.04375 3 9 C1.68 8.67 0.36 8.34 -1 8 C-1.04241723 5.66705225 -1.04092937 3.33297433 -1 1 C-0.67 0.67 -0.34 0.34 0 0 Z "
-                    fill="#E7CE50"
-                    transform="translate(73,102)"
-                  />
-                  <path
-                    d="M0 0 C1.98 0.66 3.96 1.32 6 2 C5.01 2.495 5.01 2.495 4 3 C4 3.66 4 4.32 4 5 C-2.93 4.505 -2.93 4.505 -10 4 C-10 3.67 -10 3.34 -10 3 C-8.72125 2.87625 -7.4425 2.7525 -6.125 2.625 C-2.65209064 2.30957601 -2.65209064 2.30957601 0 0 Z "
-                    fill="#E5C262"
-                    transform="translate(80,157)"
-                  />
-                  <path
-                    d="M0 0 C0.66 1.32 1.32 2.64 2 4 C0.22950311 4.05410687 -1.54146849 4.09284119 -3.3125 4.125 C-4.79169922 4.15980469 -4.79169922 4.15980469 -6.30078125 4.1953125 C-9 4 -9 4 -12 2 C-8.04 2 -4.08 2 0 2 C0 1.34 0 0.68 0 0 Z "
-                    fill="#C19946"
-                    transform="translate(95,156)"
-                  />
-                  <path
-                    d="M0 0 C4.29 0 8.58 0 13 0 C13 0.33 13 0.66 13 1 C8.545 1.495 8.545 1.495 4 2 C3.67 3.32 3.34 4.64 3 6 C2.01 4.02 1.02 2.04 0 0 Z "
-                    fill="#B58C3B"
-                    transform="translate(133,136)"
-                  />
-                  <path
-                    d="M0 0 C0.33 0 0.66 0 1 0 C1.50692692 1.5811292 2.00526443 3.16501383 2.5 4.75 C2.7784375 5.63171875 3.056875 6.5134375 3.34375 7.421875 C4 10 4 10 4 14 C3.01 13.67 2.02 13.34 1 13 C0.67 8.71 0.34 4.42 0 0 Z "
-                    fill="#BE973E"
-                    transform="translate(156,158)"
-                  />
-                  <path
-                    d="M0 0 C2 2 2 2 2 5 C-3.61 5 -9.22 5 -15 5 C-15 4.67 -15 4.34 -15 4 C-10.38 4 -5.76 4 -1 4 C-0.67 2.68 -0.34 1.36 0 0 Z "
-                    fill="#FEF9E3"
-                    transform="translate(119,108)"
-                  />
-                  <path
-                    d="M0 0 C3.63 0 7.26 0 11 0 C10 2 10 2 8.15234375 2.6328125 C7.42144531 2.79523437 6.69054687 2.95765625 5.9375 3.125 C4.83728516 3.37636719 4.83728516 3.37636719 3.71484375 3.6328125 C3.14894531 3.75398438 2.58304687 3.87515625 2 4 C1.34 2.68 0.68 1.36 0 0 Z "
-                    fill="#B48B3E"
-                    transform="translate(94,55)"
-                  />
-                  <path
-                    d="M0 0 C2.31 0 4.62 0 7 0 C6.01 0.66 5.02 1.32 4 2 C4.33 4.64 4.66 7.28 5 10 C2.35534962 6.8745041 1.15585285 3.91211733 0 0 Z "
-                    fill="#EECA67"
-                    transform="translate(117,102)"
-                  />
-                  <path
-                    d="M0 0 C3 1 3 1 4.25 2.875 C5 5 5 5 4 8 C2.68 7.34 1.36 6.68 0 6 C0 4.02 0 2.04 0 0 Z "
-                    fill="#F1D073"
-                    transform="translate(69,134)"
-                  />
-                  <path
-                    d="M0 0 C0.66 0 1.32 0 2 0 C3.06775224 1.96466413 4.06553465 3.96855359 5 6 C4.67 6.66 4.34 7.32 4 8 C3.34 8 2.68 8 2 8 C0.74335022 5.09399739 0 3.20395416 0 0 Z "
-                    fill="#A28244"
-                    transform="translate(76,147)"
-                  />
-                  <path
-                    d="M0 0 C0.66 0 1.32 0 2 0 C3.06775224 1.96466413 4.06553465 3.96855359 5 6 C4.67 6.66 4.34 7.32 4 8 C1.10067643 5.60490662 0.49831724 3.68754757 0 0 Z "
-                    fill="#9B793D"
-                    transform="translate(58,109)"
-                  />
-                  <path
-                    d="M0 0 C0.66 0 1.32 0 2 0 C3.06775224 1.96466413 4.06553465 3.96855359 5 6 C4.67 6.66 4.34 7.32 4 8 C1 6 1 6 0.3125 2.875 C0.209375 1.92625 0.10625 0.9775 0 0 Z "
-                    fill="#9F7D3B"
-                    transform="translate(84,164)"
-                  />
-                </svg>
+            <div class="info-card-content-grid">
+              <div class="info-card-icon-container taxes-icon-bg">
+                <i class="fa-solid fa-landmark"></i>
+                <!-- Using landmark for a government/official feel -->
               </div>
+              <div class="info-card-sub-text">File for free</div>
             </div>
           </article>
+        </section>
+
+        <!-- "More ways to add money" Section -->
+        <section class="more-ways-section">
+          <h2 class="more-ways-header">More ways to add money</h2>
+          <div class="more-ways-list">
+            <ul>
+              <li
+                class="more-ways-item"
+                onclick="alert('Direct Deposit Clicked')"
+              >
+                <div class="more-ways-icon">
+                  <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <div class="more-ways-details">
+                  <span class="more-ways-title">Direct Deposit</span>
+                  <span class="more-ways-subtitle"
+                    >Get paid up to 2 days early</span
+                  >
+                </div>
+                <i class="fa-solid fa-chevron-right more-ways-chevron"></i>
+              </li>
+              <li class="more-ways-item" onclick="alert('Paper Money Clicked')">
+                <div class="more-ways-icon" style="background-color: #9580ff">
+                  <!-- Custom color example -->
+                  <i class="fa-solid fa-money-bill-wave"></i>
+                </div>
+                <div class="more-ways-details">
+                  <span class="more-ways-title">Paper Money</span>
+                  <span class="more-ways-subtitle"
+                    >Deposit cash at a store near you</span
+                  >
+                </div>
+                <i class="fa-solid fa-chevron-right more-ways-chevron"></i>
+              </li>
+              <!-- Add more items here if needed -->
+            </ul>
+          </div>
         </section>
         <!-- HTML Structure for the Overlay-->
         <div id="feedback-overlay" class="feedback-modal-overlay">
@@ -1042,8 +725,6 @@
       let savingsGoal = 1000;
       const localStorageBalanceKey = "cashAppBalance";
       const localStorageProfilePicKey = "cashAppProfilePic";
-      const localStorageSavingsKey = "cashAppSavings";
-      const localStorageSavingsGoalKey = "cashAppSavingsGoal";
       let isEditingSavings = false;
       const placeholderProfilePicSrc = `assets/svgviewer-black.svg`;
 
@@ -1064,120 +745,6 @@
       function updateBalanceDisplay() {
         if (balanceAmountEl)
           balanceAmountEl.textContent = formatCurrency(currentBalance);
-      }
-
-      // --- Savings Functions ---
-      function calculateSavingsProgress() {
-        if (savingsGoal <= 0) return 0;
-        const progress = (currentSavings / savingsGoal) * 100;
-        return Math.max(0, Math.min(progress, 100));
-      }
-
-      function updateProgressRing() {
-        if (!savingsProgressIndicator) return; // Element might not exist if HTML structure changed
-        const radius = savingsProgressIndicator.r.baseVal.value;
-        const circumference = 2 * Math.PI * radius;
-        const progress = calculateSavingsProgress();
-        const offset = circumference - (progress / 100) * circumference;
-        savingsProgressIndicator.style.strokeDasharray = `${circumference} ${circumference}`;
-        savingsProgressIndicator.style.strokeDashoffset = offset;
-      }
-
-      function updateSavingsDisplay() {
-        if (savingsAmountEl)
-          savingsAmountEl.textContent = formatCurrency(currentSavings);
-        const remaining = Math.max(0, savingsGoal - currentSavings);
-        if (savingsGoalTextEl) {
-          if (currentSavings >= savingsGoal && savingsGoal > 0) {
-            savingsGoalTextEl.textContent = "Goal Reached!";
-          } else if (savingsGoal > 0) {
-            savingsGoalTextEl.textContent = `${formatCurrency(
-              remaining
-            )} to goal`;
-          } else {
-            savingsGoalTextEl.textContent = "Set a goal";
-          }
-        }
-        updateProgressRing();
-      }
-
-      function enableSavingsEditing() {
-        if (isEditingSavings || !savingsAmountEl) return;
-        isEditingSavings = true;
-        const currentNumericValue = currentSavings;
-        savingsAmountEl.innerHTML = "";
-
-        const input = document.createElement("input");
-        input.type = "number";
-        input.className = "savings-amount-input";
-        input.value = currentNumericValue.toFixed(2);
-        input.step = "0.01";
-        input.min = "0";
-        input.style.width = `${Math.max(80, (input.value.length + 1) * 12)}px`;
-        input.addEventListener("input", () => {
-          input.style.width = `${Math.max(
-            80,
-            (input.value.length + 1) * 12
-          )}px`;
-        });
-
-        const saveEdit = () => {
-          if (!document.body.contains(input)) return;
-          const newValue = parseFloat(input.value);
-          if (!isNaN(newValue) && newValue >= 0) {
-            currentSavings = newValue;
-          } else {
-            alert("Invalid savings amount. Reverting.");
-          }
-          updateSavingsDisplay();
-          saveState();
-          savingsAmountEl.style.cursor = "pointer";
-          isEditingSavings = false;
-          input.removeEventListener("blur", saveEdit);
-          input.removeEventListener("keydown", handleEnterKey);
-        };
-        const handleEnterKey = (event) => {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            input.blur();
-          } else if (event.key === "Escape") {
-            savingsAmountEl.textContent = formatCurrency(currentNumericValue);
-            savingsAmountEl.style.cursor = "pointer";
-            isEditingSavings = false;
-            input.removeEventListener("blur", saveEdit);
-            input.removeEventListener("keydown", handleEnterKey);
-          }
-        };
-        input.addEventListener("blur", saveEdit);
-        input.addEventListener("keydown", handleEnterKey);
-        savingsAmountEl.appendChild(input);
-        input.focus();
-        input.select();
-        savingsAmountEl.style.cursor = "text";
-      }
-
-      function handleSetGoal() {
-        if (isEditingSavings) return;
-        const currentGoalFormatted =
-          savingsGoal > 0 ? savingsGoal.toString() : "";
-        const goalStr = prompt(
-          `Enter savings goal (current: ${formatCurrency(savingsGoal)}):`,
-          currentGoalFormatted
-        );
-        if (goalStr === null) return;
-        const newGoal = parseFloat(goalStr);
-        if (!isNaN(newGoal) && newGoal > 0) {
-          savingsGoal = newGoal;
-          updateSavingsDisplay();
-          saveState();
-          alert(`Savings goal set to ${formatCurrency(savingsGoal)}`);
-        } else {
-          alert("Invalid goal. Please enter a positive number.");
-          // Keep old goal or reset to default if needed
-          savingsGoal = savingsGoal > 0 ? savingsGoal : 1000;
-          updateSavingsDisplay();
-          saveState();
-        }
       }
 
       // --- Profile Picture Logic ---
@@ -1248,21 +815,11 @@
         const savedBalance = localStorage.getItem(localStorageBalanceKey);
         currentBalance = parseFloat(savedBalance) || 100.0; // Default if not found/invalid
 
-        // Load Savings
-        const savedSavings = localStorage.getItem(localStorageSavingsKey);
-        currentSavings = parseFloat(savedSavings) || 0;
-
-        // Load Savings Goal
-        const savedGoal = localStorage.getItem(localStorageSavingsGoalKey);
-        savingsGoal = parseFloat(savedGoal) || 1000;
-        if (savingsGoal <= 0) savingsGoal = 1000; // Ensure positive goal
-
         // Load Profile Pic
         loadProfilePic();
 
         // Update Displays
         updateBalanceDisplay();
-        updateSavingsDisplay();
         console.log("State loaded.");
       }
 
@@ -1337,25 +894,7 @@
         ) {
           profileOptions.classList.remove("show");
         }
-        if (
-          isEditingSavings &&
-          savingsAmountEl &&
-          !savingsAmountEl.contains(event.target)
-        ) {
-          const inputField = savingsAmountEl.querySelector(
-            ".savings-amount-input"
-          );
-          if (inputField) inputField.blur();
-        }
       });
-
-      // Savings Listeners
-      if (savingsAmountEl)
-        savingsAmountEl.addEventListener("click", enableSavingsEditing);
-      if (savingsGoalTextEl)
-        savingsGoalTextEl.addEventListener("click", handleSetGoal);
-      if (savingsHeaderTrigger)
-        savingsHeaderTrigger.addEventListener("click", handleSetGoal);
 
       // --- Initial Load ---
       document.addEventListener("DOMContentLoaded", loadState);
