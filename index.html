@@ -150,9 +150,48 @@
         // !! IMPORTANT !!
         // If you actually need to NAVIGATE to a different HTML file,
 
-        window.location.href = "home.html";
+        window.location.href = "warning_license.html";
         // In that case, the #next-page-content div is just a visual trick
       }, 5000); // 5000 milliseconds = 5 seconds
+      // This script runs immediately when index.html is loaded.
+      (function () {
+        const warningAcknowledgedKey =
+          "licenseWarningPageAcknowledgedPersistent_v1"; // Must match key in warning_license.html
+        const targetHomePage = "home.html"; // The page to go to after acknowledgment or if already acknowledged
+
+        try {
+          if (localStorage.getItem(warningAcknowledgedKey) !== "true") {
+            // If not acknowledged, redirect to the warning page.
+            // Pass 'home.html' as the explicit returnTo destination after warning.
+            console.log(
+              "License not acknowledged on index.html, redirecting to warning page."
+            );
+            window.location.replace(
+              `warning_license.html?returnTo=${encodeURIComponent(
+                targetHomePage
+              )}`
+            );
+          } else {
+            // If already acknowledged, redirect straight to home.html.
+            console.log(
+              "License already acknowledged on index.html. Redirecting to home.html."
+            );
+            window.location.replace(targetHomePage);
+          }
+        } catch (e) {
+          console.warn(
+            "Could not access localStorage on index.html for warning page check:",
+            e
+          );
+          // Fallback if localStorage is blocked/errors: still redirect to warning page,
+          // as we can't confirm acknowledgment.
+          window.location.replace(
+            `warning_license.html?returnTo=${encodeURIComponent(
+              targetHomePage
+            )}`
+          );
+        }
+      })(); // Immediately Invoked Function Expression (IIFE) to run the code right away
     </script>
     <script src="activity.js"></script>
   </body>
