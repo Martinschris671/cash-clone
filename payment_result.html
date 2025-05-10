@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Payment Details - Cash App</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+      :root {
+        --app-bg-color: #ffffff;
+        --text-primary: #000000;
+        --text-secondary: #6c757d; /* Softer gray */
+        --text-light-gray: #aeaeb2; /* For "Payment from" */
+        --accent-green: #00d54b;
+        --button-secondary-bg: #f2f2f7; /* Lighter gray button */
+        --button-secondary-text: #000000;
+        --border-color: #e5e5ea; /* Lighter border */
+        --avatar-bg-pending: #0052ff; /* Blue for pending avatar like image */
+        --button-radius: 25px; /* Rounded buttons */
+        --padding-screen: 20px;
+        --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        font-family: var(--font-family);
+        background-color: #f0f0f0;
+        color: var(--text-primary);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .app-container {
+        max-width: 450px;
+        width: 100%;
+        height: 100%;
+        margin: 0 auto;
+        background-color: var(--app-bg-color);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      /* --- Header --- */
+      .result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px var(--padding-screen);
+        height: 55px;
+        flex-shrink: 0;
+        background-color: var(--app-bg-color);
+        z-index: 10;
+      }
+      .header-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: var(--text-primary);
+        cursor: pointer;
+        padding: 5px;
+        line-height: 1;
+        position: relative;
+      }
+      .header-btn.options-btn::after {
+        content: "NEW";
+        position: absolute;
+        top: -8px;
+        right: -15px;
+        background-color: var(--accent-green);
+        color: white;
+        font-size: 8px;
+        font-weight: bold;
+        padding: 2px 4px;
+        border-radius: 4px;
+        display: none;
+      }
+      .header-btn.options-btn.new-feature::after {
+        display: inline-block;
+      }
+
+      /* --- Main Result Content (Scrollable) --- */
+      .result-body {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 20px var(--padding-screen) 30px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+      }
+      .result-avatar-section {
+        margin-bottom: 10px;
+      }
+      .result-avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background-color: var(--icon-bg-default, #e0e0e0);
+        margin: 0 auto 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+      }
+      .result-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .result-avatar .initial {
+        font-size: 30px;
+        font-weight: 600;
+        color: white;
+      }
+      .result-name {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+      .result-source-text {
+        font-size: 15px;
+        color: var(--text-light-gray);
+        margin-bottom: 40px;
+      }
+      .result-amount {
+        font-size: 64px;
+        font-weight: 400;
+        margin-bottom: 15px;
+        line-height: 1;
+        letter-spacing: -1px;
+      }
+      .result-message {
+        font-size: 16px;
+        color: var(--text-primary);
+        margin-bottom: 5px;
+        line-height: 1.5;
+        word-break: break-word;
+      }
+      .result-timestamp {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 40px;
+      }
+
+      /* Buttons at the bottom */
+      .result-actions {
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+        padding-top: 20px;
+      }
+      .result-actions button {
+        width: 100%;
+        padding: 15px;
+        border-radius: var(--button-radius);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.2s;
+      }
+      .result-actions .primary-action {
+        background-color: var(--accent-green);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .result-actions .primary-action.pending-action {
+        background-color: #ffa500 !important;
+        cursor: default !important;
+      } /* Override for pending */
+      .result-actions .primary-action i {
+        font-size: 14px;
+      }
+      .result-actions .secondary-action {
+        background-color: var(--button-secondary-bg);
+        color: var(--button-secondary-text);
+        border: 1px solid var(--border-color);
+      }
+      .result-actions .secondary-action:hover {
+        background-color: #e0e0e0;
+      }
+
+      /* --- Options Menu (for receipt type/edit) --- */
+      .options-menu-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 1050;
+        animation: fadeIn 0.2s ease-out;
+      }
+      .options-menu-overlay.show {
+        display: flex;
+      }
+      .options-menu {
+        position: absolute;
+        top: 55px;
+        right: var(--padding-screen);
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        z-index: 1060;
+        min-width: 200px;
+        overflow: hidden;
+        animation: slideDownFadeIn 0.2s ease-out;
+      }
+      .options-menu button {
+        display: block;
+        width: 100%;
+        padding: 12px 18px;
+        background: none;
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        text-align: left;
+        font-size: 15px;
+        cursor: pointer;
+        color: var(--text-primary);
+      }
+      .options-menu button:last-child {
+        border-bottom: none;
+      }
+      .options-menu button:hover {
+        background-color: #f5f5f5;
+      }
+      .options-menu button i {
+        margin-right: 10px;
+        color: var(--text-secondary);
+      }
+
+      @keyframes slideDownFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Edit Form Overlay */
+      #edit-transaction-form-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 1100;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        animation: fadeIn 0.2s ease-out;
+      }
+      #edit-transaction-form-overlay.show {
+        display: flex;
+      }
+      .edit-form-content {
+        background-color: white;
+        padding: 25px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 380px;
+        position: relative;
+        animation: slideUp 0.3s ease-out;
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .edit-form-content h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .edit-form-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 26px;
+        color: #888;
+        cursor: pointer;
+      }
+      .edit-input-group {
+        margin-bottom: 15px;
+      }
+      .edit-input-group label {
+        display: block;
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 5px;
+      }
+      .edit-input-group input,
+      .edit-input-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 16px;
+      }
+      .edit-input-group textarea {
+        resize: vertical;
+        min-height: 70px;
+      }
+      .edit-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .edit-form-actions button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .edit-form-actions .save {
+        background-color: var(--accent-green);
+        color: white;
+      }
+      .edit-form-actions .cancel {
+        background-color: #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="result-header">
+        <button class="header-btn" id="close-result-btn" aria-label="Close">
+          ×
+        </button>
+        <div></div>
+        <!-- Spacer -->
+        <button
+          class="header-btn options-btn"
+          id="result-options-btn"
+          aria-label="Options"
+        >
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </header>
+
+      <main class="result-body" id="result-body-content">
+        <!-- Dynamic Receipt Content Generated Here -->
+      </main>
+
+      <!-- Options Menu -->
+      <div class="options-menu-overlay" id="options-menu-overlay">
+        <div class="options-menu" id="result-options-menu-content">
+          <button data-receipt-type="pending_verification">
+            <i class="fa-solid fa-hourglass-half"></i> Pending Verification
+          </button>
+          <button data-receipt-type="direct_success">
+            <i class="fa-solid fa-circle-check"></i> Direct Success
+          </button>
+          <button data-receipt-type="standard_received">
+            <i class="fa-solid fa-arrow-down"></i> Standard Received
+          </button>
+          <hr
+            style="
+              margin: 5px 0;
+              border: none;
+              border-top: 1px solid var(--border-color);
+            "
+          />
+          <button id="edit-current-transaction-btn">
+            <i class="fa-solid fa-pencil"></i> Edit Transaction
+          </button>
+        </div>
+      </div>
+
+      <!-- Edit Transaction Form Overlay -->
+      <div id="edit-transaction-form-overlay">
+        <div class="edit-form-content">
+          <button class="edit-form-close-btn" id="edit-form-close-btn">
+            ×
+          </button>
+          <h2>Edit Transaction Details</h2>
+          <form id="edit-transaction-form">
+            <input type="hidden" id="editing-transaction-id" />
+            <div class="edit-input-group">
+              <label for="edit-recipient-name">Recipient Name</label>
+              <input type="text" id="edit-recipient-name" required />
+            </div>
+            <div class="edit-input-group">
+              <label for="edit-recipient-cashtag">$Cashtag</label>
+              <input
+                type="text"
+                id="edit-recipient-cashtag"
+                pattern="^\$.+"
+                title="Must start with $"
+              />
+            </div>
+            <div class="edit-input-group">
+              <label for="edit-payment-amount">Amount</label>
+              <input
+                type="number"
+                id="edit-payment-amount"
+                step="0.01"
+                required
+              />
+            </div>
+            <div class="edit-input-group">
+              <label for="edit-payment-message">Message/Note</label>
+              <textarea id="edit-payment-message"></textarea>
+            </div>
+            <div class="edit-input-group">
+              <label for="edit-payment-timestamp">Timestamp</label>
+              <input
+                type="text"
+                id="edit-payment-timestamp"
+                placeholder="e.g., Today at 1:44 AM"
+              />
+            </div>
+            <div class="edit-form-actions">
+              <button type="button" class="cancel" id="edit-form-cancel-btn">
+                Cancel
+              </button>
+              <button type="submit" class="save">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- End app-container -->
+
+    <script>
+      // --- DOM Elements ---
+      const closeResultBtn = document.getElementById("close-result-btn");
+      const resultOptionsBtn = document.getElementById("result-options-btn");
+      const optionsMenuOverlay = document.getElementById(
+        "options-menu-overlay"
+      );
+      const optionsMenuContent = document.getElementById(
+        "result-options-menu-content"
+      );
+      const resultBody = document.getElementById("result-body-content");
+      const editCurrentTransactionBtn = document.getElementById(
+        "edit-current-transaction-btn"
+      );
+      // Edit Form elements
+      const editFormOverlay = document.getElementById(
+        "edit-transaction-form-overlay"
+      );
+      const editForm = document.getElementById("edit-transaction-form");
+      const editFormCloseBtn = document.getElementById("edit-form-close-btn");
+      const editFormCancelBtn = document.getElementById("edit-form-cancel-btn");
+      const editingTransactionIdInput = document.getElementById(
+        "editing-transaction-id"
+      );
+      const editRecipientNameInput = document.getElementById(
+        "edit-recipient-name"
+      );
+      const editRecipientCashtagInput = document.getElementById(
+        "edit-recipient-cashtag"
+      );
+      const editPaymentAmountInput = document.getElementById(
+        "edit-payment-amount"
+      );
+      const editPaymentMessageInput = document.getElementById(
+        "edit-payment-message"
+      );
+      const editPaymentTimestampInput = document.getElementById(
+        "edit-payment-timestamp"
+      );
+
+      // --- State & Constants ---
+      const localStoragePaymentAmountKey = "pendingPaymentAmount";
+      const localStorageRecipientDataKey = "pendingRecipientData";
+      const localStorageBalanceKey = "cashAppBalance"; // For actual balance update
+      const newFeatureIndicatorKey = "paymentResultNewFeatureClicked_v1"; // Versioned key
+      let currentReceiptData = {};
+      let currentReceiptType = "pending_verification"; // Default
+      const { jsPDF } = window.jspdf; // jsPDF
+
+      // --- Functions ---
+      function formatAmount(amount, showSign = false) {
+        /* ... (same) ... */
+        const number = Number(amount);
+        if (isNaN(number))
+          return showSign ? (number < 0 ? "-$?.??" : "+$?.??") : "$?.??";
+        const sign = number > 0 && showSign ? "+" : number < 0 ? "-" : "";
+        return `${sign}$${Math.abs(number).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
+      }
+      function generateCashtag(name) {
+        if (!name) return "$unknown";
+        return (
+          "$" +
+          name
+            .toLowerCase()
+            .replace(/\s+/g, "")
+            .replace(/[^a-z0-9]/g, "")
+            .substring(0, 12)
+        );
+      }
+
+      // **MODIFIED** renderReceiptContent to handle navigation
+      function renderReceiptContent() {
+        resultBody.innerHTML = "";
+        const recipient = currentReceiptData.recipient || {
+          name: "Recipient",
+          cashtag: "$recipient",
+          avatar: null,
+          initial: "R",
+          color: "#0052FF",
+        };
+        const amount = currentReceiptData.amount || 0;
+        const message = currentReceiptData.message || "";
+        const rawTimestamp =
+          currentReceiptData.timestamp || new Date().toLocaleString();
+        let displayTimestamp = rawTimestamp;
+        try {
+          const dateObj = new Date(rawTimestamp);
+          if (!isNaN(dateObj.getTime())) {
+            displayTimestamp =
+              dateObj.toLocaleDateString([], {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              }) +
+              " at " +
+              dateObj.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+          }
+        } catch (e) {}
+
+        let avatarHtml = "";
+        if (recipient.avatar) {
+          avatarHtml = `<img src="${recipient.avatar}" alt="${
+            recipient.name
+          }" onerror="this.parentElement.innerHTML = '<span class=\\'initial\\'>${
+            recipient.initial || recipient.name.charAt(0) || "?"
+          }</span>'; this.parentElement.style.backgroundColor='${
+            recipient.color || "var(--pending-avatar-blue)"
+          }';">`;
+        } else {
+          avatarHtml = `<span class="initial">${
+            recipient.initial || recipient.name.charAt(0) || "?"
+          }</span>`;
+        }
+
+        let sourceText = `Payment to ${recipient.cashtag}`;
+        let primaryActionText = `<i class="fa-solid fa-check"></i> Sent`;
+        let primaryActionClass = "primary-action";
+        let showWebReceiptButton = true;
+
+        if (currentReceiptType === "pending_verification") {
+          primaryActionText = `<i class="fa-solid fa-hourglass-half"></i> Pending Verification`;
+          primaryActionClass = "primary-action pending-action";
+          showWebReceiptButton = false; // No web receipt for this state
+          resultBody.innerHTML = `
+                    <div class="result-avatar-section"><div class="result-avatar" style="background-color:${
+                      recipient.avatar
+                        ? "transparent"
+                        : recipient.color || "var(--pending-avatar-blue)"
+                    };">${avatarHtml}</div></div>
+                    <div class="result-name">${recipient.name}</div>
+                    <div class="result-source-text">${recipient.cashtag}</div>
+                    <div class="result-amount">${formatAmount(amount)}</div>
+                    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px; max-width: 100%; line-height:1.4;">The funds have been sent, but will not be available until ${
+                      recipient.cashtag
+                    } meets the minimum transaction requirement.</p>
+                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 30px; max-width: 100%; line-height:1.4;">You must receive at least $50 from ${
+                      recipient.cashtag
+                    } to instantly release the ${formatAmount(
+            amount
+          )} into their account.</p>
+                    <div class="result-actions">
+                        <button class="${primaryActionClass}">${primaryActionText}</button>
+                        <button class="secondary-action" id="pending-ok-btn">OK</button>
+                    </div>`;
+          const pendingOkBtn = document.getElementById("pending-ok-btn");
+          if (pendingOkBtn)
+            pendingOkBtn.addEventListener("click", () => {
+              window.location.href = "history.html";
+            });
+          return;
+        } else if (currentReceiptType === "direct_success") {
+          primaryActionText = `<i class="fa-solid fa-check-circle"></i> Successful`;
+        } else if (currentReceiptType === "standard_received") {
+          sourceText = `Payment from ${recipient.cashtag}`;
+          primaryActionText = `<i class="fa-solid fa-check"></i> Received`;
+        }
+
+        resultBody.innerHTML = `
+                <div class="result-avatar-section"><div class="result-avatar" style="background-color:${
+                  recipient.avatar
+                    ? "transparent"
+                    : recipient.color || "var(--icon-bg-default)"
+                };">${avatarHtml}</div></div>
+                <div class="result-name">${recipient.name}</div>
+                <div class="result-source-text">${sourceText}</div>
+                <div class="result-amount">${formatAmount(amount)}</div>
+                <div class="result-message">${message}</div>
+                <div class="result-timestamp">${displayTimestamp}</div>
+                <div class="result-actions">
+                    <button class="${primaryActionClass}" id="main-action-btn">${primaryActionText}</button>
+                    ${
+                      showWebReceiptButton
+                        ? '<button class="secondary-action" id="web-receipt-btn">Web Receipt</button>'
+                        : ""
+                    }
+                </div>`;
+
+        const mainActionBtn = document.getElementById("main-action-btn");
+        if (mainActionBtn)
+          mainActionBtn.addEventListener("click", () => {
+            window.location.href = "history.html";
+          }); // Navigate on primary action
+
+        const webReceiptBtn = document.getElementById("web-receipt-btn");
+        if (webReceiptBtn)
+          webReceiptBtn.addEventListener("click", downloadPdfReceipt);
+      }
+
+      // **NEW** Download PDF Receipt Function
+      function downloadPdfReceipt() {
+        console.log("Generating PDF receipt for:", currentReceiptData);
+        const doc = new jsPDF({
+          orientation: "portrait",
+          unit: "pt",
+          format: "letter",
+        });
+        const recipient = currentReceiptData.recipient || {
+          name: "N/A",
+          cashtag: "$N/A",
+        };
+        const amount = currentReceiptData.amount || 0;
+        const message = currentReceiptData.message || "-";
+        const rawTimestamp =
+          currentReceiptData.timestamp || new Date().toISOString();
+        let formattedTimestamp = rawTimestamp;
+        try {
+          const dateObj = new Date(rawTimestamp);
+          if (!isNaN(dateObj.getTime())) {
+            formattedTimestamp = dateObj.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            });
+          }
+        } catch (e) {}
+        const statusText =
+          currentReceiptType === "standard_received"
+            ? "Received"
+            : currentReceiptType === "direct_success"
+            ? "Successful"
+            : "Sent";
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 40;
+        let currentY = margin;
+        doc.setFontSize(22);
+        doc.setFont(undefined, "bold");
+        doc.text("Transaction Receipt", pageWidth / 2, currentY, {
+          align: "center",
+        });
+        currentY += 30;
+        doc.setFontSize(11);
+        doc.setFont(undefined, "normal");
+        doc.text(
+          `Cash App - ${new Date().toLocaleDateString()}`,
+          pageWidth / 2,
+          currentY,
+          { align: "center" }
+        );
+        currentY += 40;
+        doc.setLineWidth(0.5);
+        doc.line(margin, currentY, pageWidth - margin, currentY);
+        currentY += 25;
+
+        doc.setFontSize(12);
+        doc.setFont(undefined, "bold");
+        doc.text("Recipient:", margin, currentY);
+        doc.setFont(undefined, "normal");
+        doc.text(
+          `${recipient.name} (${recipient.cashtag})`,
+          margin + 100,
+          currentY
+        );
+        currentY += 20;
+        doc.setFont(undefined, "bold");
+        doc.text("Amount:", margin, currentY);
+        doc.setFont(undefined, "normal");
+        doc.setFontSize(18);
+        doc.setFont(undefined, "bold");
+        doc.text(formatAmount(amount, true), margin + 100, currentY);
+        doc.setFontSize(12);
+        doc.setFont(undefined, "normal");
+        currentY += 25;
+        doc.setFont(undefined, "bold");
+        doc.text("Status:", margin, currentY);
+        doc.setFont(undefined, "normal");
+        doc.setTextColor(
+          statusText === "Received" || statusText === "Successful"
+            ? "#008000"
+            : "#333333"
+        );
+        doc.text(statusText, margin + 100, currentY);
+        doc.setTextColor(0, 0, 0);
+        currentY += 20;
+        doc.setFont(undefined, "bold");
+        doc.text("Date:", margin, currentY);
+        doc.setFont(undefined, "normal");
+        doc.text(formattedTimestamp, margin + 100, currentY);
+        currentY += 20;
+        if (message && message !== "-") {
+          doc.setFont(undefined, "bold");
+          doc.text("Note:", margin, currentY);
+          doc.setFont(undefined, "normal");
+          const noteLines = doc.splitTextToSize(
+            message,
+            pageWidth - margin * 2 - 100
+          );
+          doc.text(noteLines, margin + 100, currentY);
+          currentY += noteLines.length * 15 + 5;
+        }
+        currentY += 30;
+        doc.line(margin, currentY, pageWidth - margin, currentY);
+        currentY += 25;
+        doc.setFontSize(9);
+        doc.setTextColor(150);
+        doc.text(
+          "This is a digitally generated receipt. For support, visit help.cash.app.",
+          pageWidth / 2,
+          doc.internal.pageSize.getHeight() - margin + 10,
+          { align: "center" }
+        );
+        const filename = `CashApp_Receipt_${recipient.cashtag.replace(
+          "$",
+          ""
+        )}_${new Date().toISOString().split("T")[0]}.pdf`;
+        doc.save(filename);
+        console.log("PDF download initiated.");
+      }
+
+      function loadReceiptData() {
+        /* ... same as before ... */
+        const amountStr = localStorage.getItem(localStoragePaymentAmountKey);
+        const recipientDataString = localStorage.getItem(
+          localStorageRecipientDataKey
+        );
+        if (!amountStr || !recipientDataString) {
+          console.error("Missing payment data. Redirecting.");
+          window.location.replace("pay.html");
+          return false;
+        }
+        currentReceiptData.amount = parseFloat(amountStr);
+        try {
+          const parsedRecipient = JSON.parse(recipientDataString);
+          currentReceiptData.recipient = {
+            name: parsedRecipient.name || "Recipient",
+            cashtag:
+              parsedRecipient.cashtag || generateCashtag(parsedRecipient.name),
+            avatar: parsedRecipient.avatar || null,
+            initial:
+              parsedRecipient.initial ||
+              (parsedRecipient.name
+                ? parsedRecipient.name.charAt(0).toUpperCase()
+                : "R"),
+            color: parsedRecipient.color || "#0052FF",
+          };
+        } catch (e) {
+          console.error("Error parsing recipient data:", e);
+          currentReceiptData.recipient = {
+            name: "Recipient Error",
+            cashtag: "$error",
+            avatar: null,
+            initial: "E",
+            color: "#FF0000",
+          };
+        }
+        currentReceiptData.message =
+          localStorage.getItem("pendingPaymentMessage") || ``;
+        currentReceiptData.timestamp =
+          localStorage.getItem("pendingPaymentTimestamp") ||
+          `Today at ${new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}`;
+        const savedReceiptType = sessionStorage.getItem("currentReceiptType");
+        if (savedReceiptType) {
+          currentReceiptType = savedReceiptType;
+        }
+        return true;
+      }
+      function handleNewFeatureIndicator() {
+        /* ... same ... */ if (localStorage.getItem(newFeatureIndicatorKey)) {
+          resultOptionsBtn.classList.remove("new-feature");
+        } else {
+          resultOptionsBtn.classList.add("new-feature");
+        }
+      }
+      function openEditTransactionForm() {
+        /* ... same ... */ optionsMenuOverlay.classList.remove("show");
+        if (!currentReceiptData || !editFormOverlay) return;
+        editingTransactionIdInput.value =
+          currentReceiptData.recipient.id || Date.now();
+        editRecipientNameInput.value = currentReceiptData.recipient.name || "";
+        editRecipientCashtagInput.value =
+          currentReceiptData.recipient.cashtag || "";
+        editPaymentAmountInput.value = currentReceiptData.amount.toFixed(2);
+        editPaymentMessageInput.value = currentReceiptData.message || "";
+        editPaymentTimestampInput.value = currentReceiptData.timestamp || "";
+        editFormOverlay.classList.add("show");
+      }
+      function closeEditTransactionForm() {
+        if (editFormOverlay) editFormOverlay.classList.remove("show");
+      }
+      function saveEditedTransaction(event) {
+        /* ... same ... */
+        event.preventDefault();
+        currentReceiptData.recipient.name = editRecipientNameInput.value.trim();
+        currentReceiptData.recipient.cashtag =
+          editRecipientCashtagInput.value.trim();
+        currentReceiptData.amount = parseFloat(editPaymentAmountInput.value);
+        currentReceiptData.message = editPaymentMessageInput.value.trim();
+        currentReceiptData.timestamp = editPaymentTimestampInput.value.trim();
+        renderReceiptContent();
+        closeEditTransactionForm();
+        alert("Details updated (locally for demo).");
+      }
+
+      // --- Event Listeners ---
+      closeResultBtn.addEventListener("click", () => {
+        /* ... same ... (navigates to history.html) */
+        localStorage.removeItem(localStoragePaymentAmountKey);
+        localStorage.removeItem(localStorageRecipientDataKey);
+        sessionStorage.removeItem("currentReceiptType");
+        window.location.href = "history.html";
+      });
+      resultOptionsBtn.addEventListener("click", (e) => {
+        /* ... same ... */ e.stopPropagation();
+        optionsMenuOverlay.classList.toggle("show");
+        if (!localStorage.getItem(newFeatureIndicatorKey)) {
+          localStorage.setItem(newFeatureIndicatorKey, "true");
+          resultOptionsBtn.classList.remove("new-feature");
+        }
+      });
+      optionsMenuContent.addEventListener("click", (e) => {
+        /* ... same ... */
+        const button = e.target.closest("button");
+        if (button) {
+          const receiptType = button.dataset.receiptType;
+          if (receiptType) {
+            currentReceiptType = receiptType;
+            sessionStorage.setItem("currentReceiptType", currentReceiptType);
+            renderReceiptContent();
+            optionsMenuOverlay.classList.remove("show");
+          } else if (button.id === "edit-current-transaction-btn") {
+            openEditTransactionForm();
+          }
+        }
+      });
+      document.addEventListener("click", (e) => {
+        if (
+          optionsMenuOverlay.classList.contains("show") &&
+          !optionsMenuContent.contains(e.target) &&
+          e.target !== resultOptionsBtn &&
+          !resultOptionsBtn.contains(e.target)
+        ) {
+          optionsMenuOverlay.classList.remove("show");
+        }
+      });
+      if (editForm) editForm.addEventListener("submit", saveEditedTransaction);
+      if (editFormCloseBtn)
+        editFormCloseBtn.addEventListener("click", closeEditTransactionForm);
+      if (editFormCancelBtn)
+        editFormCancelBtn.addEventListener("click", closeEditTransactionForm);
+      if (editFormOverlay)
+        editFormOverlay.addEventListener("click", (event) => {
+          if (event.target === editFormOverlay) closeEditTransactionForm();
+        });
+
+      // --- Initial Load ---
+      document.addEventListener("DOMContentLoaded", () => {
+        if (loadReceiptData()) {
+          renderReceiptContent();
+          handleNewFeatureIndicator();
+        }
+        // Clear keys used to pass data to *this* page after they've been used
+        localStorage.removeItem(localStoragePaymentAmountKey);
+        localStorage.removeItem(localStorageRecipientDataKey);
+        localStorage.removeItem(localStorageBalanceBeforeKey); // This was from PIN page to here
+      });
+    </script>
+  </body>
+</html>

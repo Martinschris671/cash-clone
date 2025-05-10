@@ -68,13 +68,12 @@
       .app-container {
         max-width: 450px;
         width: 100%;
-        height: 100vh;
-        max-height: 900px;
+        height: 100%;
+        margin: 0 auto;
         background-color: var(--app-bg-color);
         display: flex;
         flex-direction: column;
         position: relative;
-        overflow: hidden;
       }
 
       /* --- Header --- */
@@ -1344,7 +1343,9 @@
         }
       }
 
-      // Handle Final Payment -> Navigate to PIN (Using original filenames)
+      // ----- INSIDE contact_pay.html SCRIPT -----
+
+      // Handle Final Payment Confirmation
       function handleConfirmPayment() {
         if (confirmPayBtn.disabled) return;
         if (paymentAmount > currentBalance) {
@@ -1386,19 +1387,30 @@
           color: recipientDataForPin.color || "#8e8e93",
         };
 
+        // **NEW: Get the note/message**
+        const paymentNote = forInput.value.trim(); // 'forInput' is your 'For' note field
+
         localStorage.setItem("pendingPaymentAmount", paymentAmount.toString());
         localStorage.setItem(
           "pendingRecipientData",
           JSON.stringify(recipientDataForPin)
         );
         localStorage.setItem("pendingBalanceBefore", currentBalance.toString());
+        if (paymentNote) {
+          // Only save if there's a note
+          localStorage.setItem("pendingPaymentMessage", paymentNote);
+        } else {
+          localStorage.removeItem("pendingPaymentMessage"); // Ensure it's clear if no note
+        }
+
         console.log(
           "Proceeding to PIN with recipient data:",
-          recipientDataForPin
+          recipientDataForPin,
+          "and note:",
+          paymentNote
         );
-        window.location.href = "pin.html"; // *** USE CORRECT PIN FILENAME ***
+        window.location.href = "pin.html"; // Or 'pin.html' - your actual PIN page
       }
-
       // Simple Navigation Placeholder (Using original filenames)
       function navigateTo(page) {
         const pageMap = {

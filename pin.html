@@ -63,13 +63,12 @@
       .app-container {
         max-width: 450px;
         width: 100%;
-        height: 100vh;
-        max-height: 900px;
+        height: 100%;
+        margin: 0 auto;
         background-color: var(--app-bg-color);
         display: flex;
         flex-direction: column;
         position: relative;
-        overflow: hidden;
       }
 
       /* --- PIN Header --- */
@@ -584,26 +583,59 @@
         localStorage.removeItem(localStorageBalanceBeforeKey);
       }
 
-      // Check the entered PIN
+      // Inside checkPin function in pin_confirm.html
       function checkPin() {
         if (currentPin === DEFAULT_PIN) {
           console.log("PIN Correct!");
-          const paymentAmount = parseFloat(
-            localStorage.getItem(localStoragePaymentAmountKey) || 0
+          const paymentAmountStr = localStorage.getItem(
+            localStoragePaymentAmountKey
           );
-          const balanceBefore = parseFloat(
-            localStorage.getItem(localStorageBalanceBeforeKey) || 0
+          const balanceBeforeStr = localStorage.getItem(
+            localStorageBalanceBeforeKey
+          );
+          const recipientDataStr = localStorage.getItem(
+            localStorageRecipientDataKey
           );
 
-          if (paymentAmount > 0 && balanceBefore >= paymentAmount) {
+          if (
+            paymentAmountStr === null ||
+            balanceBeforeStr === null ||
+            recipientDataStr === null
+          ) {
+            console.error("Missing pending payment data when confirming PIN.");
+            alert("An error occurred. Please try the payment again.");
+            window.location.replace("contact_pay.html"); // Go back if data is missing
+            return;
+          }
+
+          const paymentAmount = parseFloat(paymentAmountStr);
+          const balanceBefore = parseFloat(balanceBeforeStr);
+
+          if (
+            !isNaN(paymentAmount) &&
+            paymentAmount > 0 &&
+            !isNaN(balanceBefore) &&
+            balanceBefore >= paymentAmount
+          ) {
             const newBalance = balanceBefore - paymentAmount;
-            localStorage.setItem(localStorageBalanceKey, newBalance.toString());
+            localStorage.setItem(localStorageBalanceKey, newBalance.toString()); // Update the main balance
             console.log(`Balance updated in storage: ${newBalance}`);
-            showResultScreen(true); // Show PENDING state
+
+            // **Navigate to the new payment_result.html**
+            // The necessary data (pendingPaymentAmount, pendingRecipientData)
+            // is already in localStorage for payment_result.html to pick up.
+            // The pendingPaymentNote should also have been saved by contact_pay.html
+            console.log("PIN success, navigating to payment result page.");
+            window.location.href = "payment_result.html";
+
+            // The old showResultScreen(true) from pin_confirm.html is no longer called here.
+            // The result display logic is now entirely within payment_result.html.
           } else {
-            console.error("Error finalizing payment post-PIN.");
-            alert("There was an issue processing your payment.");
-            resetPinInput();
+            console.error(
+              "Error finalizing payment post-PIN: Invalid amount or insufficient funds."
+            );
+            alert("Invalid amount or insufficient funds to complete payment.");
+            resetPinInput(); // Allow PIN retry
           }
         } else {
           console.log("PIN Incorrect!");
@@ -611,7 +643,6 @@
           setTimeout(resetPinInput, 500);
         }
       }
-
       // Handle keypad presses
       function handleKeyPress(value) {
         if (value === "<") {
