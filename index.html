@@ -26,22 +26,22 @@
         background-color: #ffffff; /* Default background for the page underneath */
       }
 
-      /* The "Next Page" content placeholder - sits underneath */
+      /* The "Next Page" content placeholder - sits underneath (OPTIONAL, not really used if redirecting) */
       #next-page-content {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: #f0f0f0; /* Light gray background for contrast */
+        background-color: #f0f0f0;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
         color: #555;
         font-size: 1.2em;
-        opacity: 1; /* It's visible, just covered initially */
-        z-index: 1; /* Ensures it's below the loading screen */
+        opacity: 1;
+        z-index: 1;
       }
 
       #next-page-content h1 {
@@ -51,7 +51,7 @@
 
       /* The Loading Screen Overlay */
       #loading-screen {
-        position: fixed; /* Use fixed to ensure it covers viewport */
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;
@@ -60,17 +60,17 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 1000; /* High z-index to be on top */
-        opacity: 1; /* Start fully visible */
+        z-index: 1000;
+        opacity: 1;
         /* Apply the fade-out animation to the entire screen */
-        animation: screenFadeOut 5s ease-in-out forwards;
+        /* MODIFICATION: We will trigger fade-out with JS if going to warning,
+           or let it fade naturally if going to home (and then redirect) */
+        /* animation: screenFadeOut 5s ease-in-out forwards; */
       }
 
-      /* Logo Container - inherits opacity fade from parent, adds scale */
       #logo-container {
-        transform: scale(1); /* Start normal size */
-        /* Apply the shrink animation (fade is handled by parent now) */
-        animation: logoShrink 5s ease-in-out forwards;
+        transform: scale(1);
+        /* animation: logoShrink 5s ease-in-out forwards; */
       }
 
       #logo-container svg {
@@ -79,35 +79,29 @@
         height: 120px;
       }
 
-      /* Keyframes for the LOGO SHRINKING animation */
-      @keyframes logoShrink {
+      /* Keyframes for the LOGO SHRINKING animation (if used with JS timing) */
+      @keyframes logoShrinkEffect {
         0% {
           transform: scale(1);
         }
         70% {
-          /* Hold size for a bit */
           transform: scale(1);
         }
         100% {
-          /* Smoothly shrink */
           transform: scale(0.85);
         }
       }
 
-      /* Keyframes for the SCREEN FADE-OUT animation */
-      @keyframes screenFadeOut {
+      /* Keyframes for the SCREEN FADE-OUT animation (if used with JS timing) */
+      @keyframes screenFadeOutEffect {
         0% {
           opacity: 1;
         }
         70% {
-          /* Hold opacity for a bit */
           opacity: 1;
         }
         100% {
-          /* Smoothly fade out the entire screen */
           opacity: 0;
-          /* Optional: make it non-interactive after fade */
-          /* pointer-events: none; */
         }
       }
     </style>
@@ -116,7 +110,6 @@
     <!-- Layer 1: The Loading Screen (Top Layer) -->
     <div id="loading-screen">
       <div id="logo-container">
-        <!-- SVG Logo (Same as before) -->
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 31 31">
           <path
             fill="#FFF"
@@ -132,66 +125,78 @@
       </div>
     </div>
 
-    <script>
-      // Wait for the 5-second animation to visually complete
-      setTimeout(() => {
-        // Action to perform after loading:
+    <!-- Optional: Content that would be under the loading screen if not redirecting
+    <div id="next-page-content">
+      <h1>Welcome!</h1>
+      <p>This is the content that appears after loading.</p>
+    </div>
+    -->
 
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
         const loadingScreen = document.getElementById("loading-screen");
+        const logoContainer = document.getElementById("logo-container");
+        const animationDuration = 3000; // Shorter duration for testing, you can set to 5000 (5s)
+
+        // Apply animations via JS
+        if (logoContainer) {
+          logoContainer.style.animation = `logoShrinkEffect ${
+            animationDuration / 1000
+          }s ease-in-out forwards`;
+        }
         if (loadingScreen) {
-          loadingScreen.style.display = "none"; // Hide it completely
-          // Or: loadingScreen.remove(); // Remove it from the DOM
+          loadingScreen.style.animation = `screenFadeOutEffect ${
+            animationDuration / 1000
+          }s ease-in-out forwards`;
         }
 
-        console.log(
-          "Loading animation finished. Underlying page is now fully visible and interactive."
-        );
+        // Wait for the animation to visually complete before making decisions
+        setTimeout(() => {
+          // Action to perform after loading:
+          // The loadingScreen will have faded due to animation,
+          // but we can hide it fully to prevent any lingering elements or interactions.
+          if (loadingScreen) {
+            loadingScreen.style.display = "none";
+          }
 
-        // !! IMPORTANT !!
-        // If you actually need to NAVIGATE to a different HTML file,
+          console.log(
+            "Loading animation visually finished. Checking license..."
+          );
 
-        window.location.href = "warning_license.html";
-        // In that case, the #next-page-content div is just a visual trick
-      }, 5000); // 5000 milliseconds = 5 seconds
-      // This script runs immediately when index.html is loaded.
-      (function () {
-        const warningAcknowledgedKey =
-          "licenseWarningPageAcknowledgedPersistent_v1"; // Must match key in warning_license.html
-        const targetHomePage = "home.html"; // The page to go to after acknowledgment or if already acknowledged
+          // --- Redirection Logic ---
+          const warningAcknowledgedKey =
+            "licenseWarningPageAcknowledgedPersistent_v1";
+          const targetHomePage = "home.html";
 
-        try {
-          if (localStorage.getItem(warningAcknowledgedKey) !== "true") {
-            // If not acknowledged, redirect to the warning page.
-            // Pass 'home.html' as the explicit returnTo destination after warning.
-            console.log(
-              "License not acknowledged on index.html, redirecting to warning page."
+          try {
+            if (localStorage.getItem(warningAcknowledgedKey) !== "true") {
+              console.log(
+                "License not acknowledged, redirecting to warning page."
+              );
+              window.location.replace(
+                `warning_license.html?returnTo=${encodeURIComponent(
+                  targetHomePage
+                )}`
+              );
+            } else {
+              console.log(
+                "License already acknowledged. Redirecting to home.html."
+              );
+              window.location.replace(targetHomePage);
+            }
+          } catch (e) {
+            console.warn(
+              "Could not access localStorage for warning page check:",
+              e
             );
             window.location.replace(
               `warning_license.html?returnTo=${encodeURIComponent(
                 targetHomePage
               )}`
             );
-          } else {
-            // If already acknowledged, redirect straight to home.html.
-            console.log(
-              "License already acknowledged on index.html. Redirecting to home.html."
-            );
-            window.location.replace(targetHomePage);
           }
-        } catch (e) {
-          console.warn(
-            "Could not access localStorage on index.html for warning page check:",
-            e
-          );
-          // Fallback if localStorage is blocked/errors: still redirect to warning page,
-          // as we can't confirm acknowledgment.
-          window.location.replace(
-            `warning_license.html?returnTo=${encodeURIComponent(
-              targetHomePage
-            )}`
-          );
-        }
-      })(); // Immediately Invoked Function Expression (IIFE) to run the code right away
+        }, animationDuration); // Wait for animation duration
+      });
     </script>
     <script src="activity.js"></script>
   </body>
