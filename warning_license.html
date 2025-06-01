@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Important Notice - App License</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        --app-bg-color: #ffffff;
+        --text-primary: #000000;
+        --text-secondary: #585858; /* Slightly darker secondary for better readability */
+        --accent-green: #00d54b;
+        --danger-color: #ff3b30;
+        --button-primary-text: #ffffff;
+        --button-radius: 30px;
+        --padding-screen: 15px;
+        --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        --messenger-blue: #0084ff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html,
+      body {
+        height: 100%;
+        overflow: hidden; /* CRUCIAL: Prevents scrolling on body */
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: var(--app-bg-color);
+        color: var(--text-primary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 var(--padding-screen); /* Padding on sides, not top/bottom for body */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .warning-container {
+        width: 100%;
+        max-width: 400px;
+        height: 100%; /* Full height of parent (body) */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Try to center overall block, space-around might be too aggressive for more text */
+        align-items: center;
+        text-align: center;
+        padding: 15px 10px; /* Vertical padding for content inside container */
+      }
+
+      .warning-icon {
+        margin-bottom: 10px; /* Reduced margin */
+        flex-shrink: 0;
+      }
+
+      .warning-icon svg {
+        fill: var(--danger-color, #ff3b30);
+        width: 44px; /* Slightly smaller icon if needed */
+        height: 44px;
+      }
+
+      .warning-container h1 {
+        font-size: 19px; /* Smaller title */
+        font-weight: 600;
+        margin-bottom: 10px; /* Reduced margin */
+        flex-shrink: 0;
+      }
+
+      .text-content {
+        overflow-y: auto; /* ALLOW SCROLLING *WITHIN THIS BOX* if text overflows */
+        flex-grow: 1; /* Allow it to take available space */
+        width: 100%;
+        scrollbar-width: thin; /* For Firefox */
+        scrollbar-color: #ccc #f0f0f0; /* For Firefox */
+        padding: 0 5px; /* Small padding so text isn't against scrollbar */
+      }
+      /* Webkit Scrollbar for text-content */
+      .text-content::-webkit-scrollbar {
+        width: 6px;
+      }
+      .text-content::-webkit-scrollbar-track {
+        background: #f0f0f0;
+        border-radius: 3px;
+      }
+      .text-content::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 3px;
+      }
+      .text-content::-webkit-scrollbar-thumb:hover {
+        background: #bbb;
+      }
+
+      .warning-container p {
+        font-size: 13.5px; /* Further reduced paragraph text */
+        line-height: 1.45; /* Adjusted line height */
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+
+      .warning-container p.contact-link-paragraph {
+        margin-top: 8px;
+        margin-bottom: 10px;
+        font-size: 13px;
+      }
+
+      .warning-container a.messenger-link {
+        color: var(--messenger-blue);
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .warning-container a.messenger-link:hover {
+        text-decoration: underline;
+      }
+
+      .warning-container p.warning-subtext {
+        font-size: 11.5px; /* Smaller subtext */
+        opacity: 0.8;
+        margin-bottom: 12px; /* Space before button wrapper */
+      }
+
+      .acknowledge-button-wrapper {
+        width: 100%;
+        margin-top: auto; /* Pushes button to bottom of flex container if using justify-content: center */
+        padding-top: 10px; /* Space above button */
+        flex-shrink: 0;
+        background-color: var(
+          --app-bg-color
+        ); /* Ensure it overlays text if text scrolls under */
+      }
+
+      .acknowledge-button {
+        background-color: var(--accent-green, #00d54b);
+        color: var(--button-primary-text, #ffffff);
+        border: none;
+        border-radius: var(--button-radius, 50px);
+        font-size: 15px;
+        font-weight: 600;
+        padding: 11px 20px; /* Slightly smaller padding */
+        cursor: pointer;
+        transition: background-color 0.2s, opacity 0.2s;
+        width: 100%;
+        max-width: 300px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .acknowledge-button:hover {
+        background-color: #00b33f;
+      }
+      .acknowledge-button:active {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="warning-container">
+      <div class="warning-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            d="M12 1.75C6.344 1.75 1.75 6.344 1.75 12S6.344 22.25 12 22.25 22.25 17.656 22.25 12 17.656 1.75 12 1.75ZM11.125 7.563C11.125 7.117 11.508 6.75 11.969 6.75C12.422 6.75 12.813 7.117 12.813 7.563V12.938C12.813 13.391 12.422 13.75 11.969 13.75C11.508 13.75 11.125 13.391 11.125 12.938V7.563ZM12 17.313C11.289 17.313 10.688 16.719 10.688 16C10.688 15.281 11.289 14.688 12 14.688C12.711 14.688 13.313 15.281 13.313 16C13.313 16.719 12.711 17.313 12 17.313Z"
+          />
+        </svg>
+      </div>
+
+      <h1>Important License Notice</h1>
+
+      <div class="text-content">
+        <p>
+          This application is licensed for your personal use only. Unauthorized
+          distribution, sharing, or use by multiple individuals or on
+          unauthorized devices is strictly prohibited and against our terms of
+          service.
+        </p>
+        <p>
+          Violation of these terms may result in the permanent termination of
+          your access to this application and any associated data without prior
+          notice or refund.
+        </p>
+        <p class="contact-link-paragraph">
+          If you have questions regarding your license, wish to discuss options
+          for multiple users, or believe you have received this message in
+          error, please
+          <a
+            href="https://m.me/61570196188337"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="messenger-link"
+            >contact us on Messenger</a
+          >.
+        </p>
+        <p class="warning-subtext">
+          We actively monitor for compliance with our licensing agreement. By
+          clicking "I Understand & Agree", you acknowledge that you have read,
+          understood, and agree to these terms.
+        </p>
+      </div>
+
+      <div class="acknowledge-button-wrapper">
+        <button id="acknowledge-warning-btn" class="acknowledge-button">
+          I Understand & Agree
+        </button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const acknowledgeButton = document.getElementById(
+          "acknowledge-warning-btn"
+        );
+        const warningAcknowledgedKey =
+          "licenseWarningPageAcknowledgedPersistent_v1";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnUrl = urlParams.get("returnTo") || "home.html";
+
+        if (acknowledgeButton) {
+          acknowledgeButton.addEventListener("click", () => {
+            try {
+              localStorage.setItem(warningAcknowledgedKey, "true");
+            } catch (e) {
+              console.warn(
+                "Could not set localStorage for warning page acknowledgement:",
+                e
+              );
+            }
+            window.location.replace(returnUrl);
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
